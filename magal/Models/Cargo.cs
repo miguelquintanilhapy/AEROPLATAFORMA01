@@ -7,10 +7,10 @@ namespace magal.Models
 {
     public class Cargo : BaseModel
     {
-        public int Id { get; set; } // id_cargo
+        public int Id { get; set; } 
         public string Nome { get; set; }
-        public string Nivel { get; set; } // Jr/Pl/Sr
-        public decimal CustoMedioHora { get; set; } // custo_medio_hora
+        public string Nivel { get; set; }
+        public decimal CustoMedioHora { get; set; }
         public string Descricao { get; set; }
     }
 }
