@@ -16,10 +16,9 @@ namespace magal.Models
 
         public override string ToString()
         {
-            return Nome; // Agora, por padrão, o objeto 'se apresenta' como o Nome
+            return Nome; 
         }
-
-        // UX: Propriedade para o "Avatar" de texto na interface
+        
         public string Iniciais
         {
             get
