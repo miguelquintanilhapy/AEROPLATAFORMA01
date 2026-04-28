@@ -32,14 +32,11 @@ namespace magal.ViewModels
             "Transporte/Deslocamento", "Manutenção", "Aluguel/Estrutura", "EPIs/Ferramentas"
         };
 
-        // Propriedade que o XAML usa para habilitar/desabilitar o botão de PDF
         public bool BotaoAtivo => !_processando;
-
-        // COMANDOS
         public RelayCommand AdicionarTarefaCommand { get; }
-        public RelayCommand DeletarTarefaCommand { get; } // ADICIONADO
+        public RelayCommand DeletarTarefaCommand { get; } 
         public RelayCommand AdicionarCustoCommand { get; }
-        public RelayCommand DeletarCustoCommand { get; }  // ADICIONADO
+        public RelayCommand DeletarCustoCommand { get; }  
         public RelayCommand GerarPdfCommand { get; }
 
         public OrcamentoViewModel()
@@ -47,7 +44,6 @@ namespace magal.ViewModels
             NovoProjeto();
             CarregarDadosIniciais();
 
-            // Inicialização dos comandos
             AdicionarTarefaCommand = new RelayCommand(_ => AdicionarTarefa());
             DeletarTarefaCommand = new RelayCommand(param => DeletarTarefa(param as Tarefa));
 
@@ -123,7 +119,6 @@ namespace magal.ViewModels
                         ProjetoAtual.Tarefas.ToList(),
                         CustosExtras.ToList()
                     );
-                    // Notifica a UI que o valor final mudou
                     OnPropertyChanged(nameof(ProjetoAtual));
                 }
             }));
