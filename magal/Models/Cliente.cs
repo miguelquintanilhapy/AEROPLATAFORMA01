@@ -7,12 +7,21 @@ namespace magal.Models
 {
     public class Cliente : BaseModel
     {
-        public int Id { get; set; } 
-        public string Nome { get; set; }
-        public string Tipo { get; set; } 
-        public string CpfCnpj { get; set; }
-        public string Cidade { get; set; }
-        public string Estado { get; set; }
-        public string Contato { get; set; }
+        // Alterado para id_cliente conforme seu DER
+        public int id_cliente { get; set; }
+
+        public string nome { get; set; }
+
+        // Mantido tipo (conforme seu DER: PF/PJ)
+        public string tipo { get; set; }
+
+        // Alterado para cpf_cnpj conforme seu DER
+        public string cpf_cnpj { get; set; }
+
+        public string cidade { get; set; }
+
+        public string estado { get; set; }
+
+        public string contato { get; set; }
     }
 }

@@ -48,18 +48,21 @@ namespace magal.Services
                             row.RelativeItem().Column(c =>
                             {
                                 c.Item().Text("CLIENTE").FontSize(7).FontColor("#999999").Bold();
-                                c.Item().Text(projeto.Cliente?.Nome ?? "Consumidor Final").FontSize(12).Bold().FontColor("#1E3A5F");
+                                // Alterado para .nome (minúsculo)
+                                c.Item().Text(projeto.Cliente?.nome ?? "Consumidor Final").FontSize(12).Bold().FontColor("#1E3A5F");
                             });
                             row.ConstantItem(20);
                             row.RelativeItem().Column(c =>
                             {
                                 c.Item().Text("PROJETO").FontSize(7).FontColor("#999999").Bold();
-                                c.Item().Text(projeto.Nome).FontSize(12).Bold().FontColor("#1E3A5F");
+                                // Alterado para .nome (minúsculo)
+                                c.Item().Text(projeto.nome).FontSize(12).Bold().FontColor("#1E3A5F");
                             });
                             row.ConstantItem(130).Column(c =>
                             {
                                 c.Item().Text("DATA DE EMISSÃO").FontSize(7).FontColor("#999999").Bold();
-                                c.Item().Text(projeto.Orcamento.DataCriacao.ToString("dd/MM/yyyy"))
+                                // Alterado para data_criacao (minúsculo)
+                                c.Item().Text(projeto.Orcamento.data_criacao.ToString("dd/MM/yyyy"))
                                     .FontSize(12).Bold().FontColor("#1E3A5F");
                             });
                         });
@@ -68,7 +71,7 @@ namespace magal.Services
                     // CONTEÚDO
                     page.Content().PaddingTop(16).Column(col =>
                     {
-                        //TABELA DE MÃO DE OBRA
+                        // TABELA DE MÃO DE OBRA
                         col.Item().Text("1. COMPOSIÇÃO DE MÃO DE OBRA E ETAPAS")
                             .FontSize(9).Bold().FontColor("#555555");
 
@@ -87,15 +90,20 @@ namespace magal.Services
 
                             foreach (var item in projeto.Tarefas)
                             {
-                                table.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).Text(item.Descricao).FontSize(9);
-                                table.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).Text(item.Funcionario?.Nome ?? "N/D").FontSize(9);
-                                table.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).AlignCenter().Text($"{item.HorasEstimadas:0.#}h").FontSize(9);
-                                table.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).AlignRight().Text((item.Funcionario?.Cargo?.CustoMedioHora ?? 0).ToString("C2", _ptBR)).FontSize(9);
-                                table.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).AlignRight().Text(item.CustoReal.ToString("C2", _ptBR)).FontSize(9).Bold();
+                                // Alterado para .descricao, .nome, .horas_estimadas, .custo_real
+                                table.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).Text(item.descricao).FontSize(9);
+                                table.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).Text(item.Funcionario?.nome ?? "N/D").FontSize(9);
+                                table.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).AlignCenter().Text($"{item.horas_estimadas:0.#}h").FontSize(9);
+
+                                // Acessando o custo_medio_hora do cargo do funcionário
+                                decimal vHora = item.Funcionario?.Cargo?.custo_medio_hora ?? 0;
+                                table.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).AlignRight().Text(vHora.ToString("C2", _ptBR)).FontSize(9);
+
+                                table.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).AlignRight().Text(item.custo_real.ToString("C2", _ptBR)).FontSize(9).Bold();
                             }
                         });
 
-                        //TABELA DE CUSTOS EXTRAS
+                        // TABELA DE CUSTOS EXTRAS
                         if (custosExtras != null && custosExtras.Any())
                         {
                             col.Item().Text("2. EQUIPAMENTOS, LICENÇAS E CUSTOS ADICIONAIS")
@@ -116,14 +124,15 @@ namespace magal.Services
 
                                 foreach (var custo in custosExtras)
                                 {
-                                    table.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).Text(custo.Nome).FontSize(9);
-                                    table.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).Text(custo.Categoria).FontSize(9);
-                                    table.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).AlignRight().Text(custo.Valor.ToString("C2", _ptBR)).FontSize(9).Bold();
+                                    // Alterado para .nome, .categoria, .valor
+                                    table.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).Text(custo.nome).FontSize(9);
+                                    table.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).Text(custo.categoria).FontSize(9);
+                                    table.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).AlignRight().Text(custo.valor.ToString("C2", _ptBR)).FontSize(9).Bold();
                                 }
                             });
                         }
 
-                        //RESUMO FINANCEIRO
+                        // RESUMO FINANCEIRO
                         col.Item().PaddingTop(30).Row(row =>
                         {
                             row.RelativeItem();
@@ -140,11 +149,9 @@ namespace magal.Services
                                         var bg = destaque ? "#1E3A5F" : "#FFFFFF";
                                         var fg = destaque ? "#FFFFFF" : "#333333";
 
-                                         
                                         void CriarCelula(string texto, bool centralizar = false, bool alinharDireita = false)
                                         {
                                             var container = t.Cell().Background(bg).Padding(6);
-
                                             if (centralizar) container = container.AlignCenter();
                                             if (alinharDireita) container = container.AlignRight();
                                             var textoFormatado = container.Text(texto).FontSize(9).FontColor(fg);
@@ -156,16 +163,17 @@ namespace magal.Services
                                         CriarCelula(valor, alinharDireita: true);
                                     }
 
-                                    Linha("Custo Total Base", "", projeto.Orcamento.CustoBase.ToString("C2", _ptBR));
-                                    Linha("Impostos", $"{projeto.Orcamento.PercentualImpostos:0.#}%", projeto.Orcamento.ValorImpostos.ToString("C2", _ptBR));
-                                    Linha("Margem de Lucro", $"{projeto.Orcamento.MargemPercentual:0.#}%", (projeto.Orcamento.CustoBase * projeto.Orcamento.MargemPercentual / 100).ToString("C2", _ptBR));
-                                    Linha("VALOR TOTAL DA PROPOSTA", "", projeto.Orcamento.ValorFinal.ToString("C2", _ptBR), destaque: true);
+                                    // Adaptado para os nomes minúsculos do Orcamento
+                                    Linha("Custo Total Base", "", projeto.Orcamento.custo_base.ToString("C2", _ptBR));
+                                    Linha("Impostos", $"{projeto.Orcamento.percentual_impostos:0.#}%", projeto.Orcamento.valor_impostos.ToString("C2", _ptBR));
+                                    Linha("Margem de Lucro", $"{projeto.Orcamento.margem_percentual:0.#}%", projeto.Orcamento.valor_margem.ToString("C2", _ptBR));
+                                    Linha("VALOR TOTAL DA PROPOSTA", "", projeto.Orcamento.valor_final.ToString("C2", _ptBR), destaque: true);
                                 });
                             });
                         });
                     });
 
-                    //RODAPÉ
+                    // RODAPÉ
                     page.Footer().BorderTop(1).BorderColor("#E0E0E0").PaddingTop(8).Row(row =>
                     {
                         row.RelativeItem().Text("Aero Concepts — Tecnologia em Engenharia Aeronáutica").FontSize(7).FontColor("#AAAAAA");

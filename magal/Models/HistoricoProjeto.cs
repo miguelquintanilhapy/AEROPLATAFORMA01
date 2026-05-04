@@ -4,15 +4,26 @@ namespace magal.Models
 {
     public class HistoricoProjeto : BaseModel
     {
-        public int Id { get; set; } 
-        public int ProjetoId { get; set; } 
-        public string TipoProjeto { get; set; }
-        public string Complexidade { get; set; }
-        public decimal CustoReal { get; set; }
-        public decimal MargemEstimada { get; set; }
-        public decimal MargemReal { get; set; }
-        public decimal DesvioPercentual { get; set; }
-        public DateTime DataConclusao { get; set; }
-        public string Observacoes { get; set; }
+        // id_historico (PK) conforme seu DER
+        public int id_historico { get; set; }
+
+        // id_projeto (FK) conforme seu DER
+        public int id_projeto { get; set; }
+
+        public string tipo_projeto { get; set; }
+
+        public string complexidade { get; set; }
+
+        public decimal custo_real { get; set; }
+
+        public decimal margem_estimada { get; set; }
+
+        public decimal margem_real { get; set; }
+
+        public decimal desvio_percentual { get; set; }
+
+        public DateTime data_conclusao { get; set; }
+
+        public string observacoes { get; set; }
     }
 }

@@ -1,117 +1,119 @@
 ﻿CREATE DATABASE IF NOT EXISTS sad_precificacao;
 USE sad_precificacao;
 
--- 1. TABELA USUARIO
-CREATE TABLE IF NOT EXISTS Usuario (
-    Id INT AUTO_INCREMENT PRIMARY KEY,
-    Nome VARCHAR(255) NOT NULL,
-    Email VARCHAR(255) NOT NULL UNIQUE,
-    Senha VARCHAR(255) NOT NULL,
-    Status VARCHAR(50) DEFAULT 'Ativo'
+-- 1. USUARIO
+CREATE TABLE IF NOT EXISTS usuario (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    senha VARCHAR(255) NOT NULL,
+    status VARCHAR(50) DEFAULT 'Ativo'
 );
 
--- 2. TABELA CARGO
-CREATE TABLE IF NOT EXISTS Cargo (
-    Id INT AUTO_INCREMENT PRIMARY KEY,
-    Nome VARCHAR(255) NOT NULL,
-    Nivel VARCHAR(50),
-    CustoMedioHora DECIMAL(18, 2) NOT NULL,
-    Descricao TEXT
+-- 2. CLIENTE
+CREATE TABLE IF NOT EXISTS cliente (
+    id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    tipo VARCHAR(50), -- PF/PJ
+    cpf_cnpj VARCHAR(20),
+    cidade VARCHAR(100),
+    estado VARCHAR(50),
+    contato VARCHAR(100)
 );
 
--- 3. TABELA CLIENTE
-CREATE TABLE IF NOT EXISTS Cliente (
-    Id INT AUTO_INCREMENT PRIMARY KEY,
-    Nome VARCHAR(255) NOT NULL,
-    Tipo VARCHAR(50),
-    CpfCnpj VARCHAR(20),
-    Cidade VARCHAR(100),
-    Estado VARCHAR(50),
-    Contato VARCHAR(100)
+-- 3. CARGO
+CREATE TABLE IF NOT EXISTS cargo (
+    id_cargo INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    nivel VARCHAR(50), -- Jr/Pl/Sr
+    custo_medio_hora DECIMAL(18, 2) NOT NULL,
+    descricao TEXT
 );
 
--- 4. TABELA FUNCIONARIO
-CREATE TABLE IF NOT EXISTS Funcionario (
-    Id INT AUTO_INCREMENT PRIMARY KEY,
-    CargoId INT NOT NULL,
-    Nome VARCHAR(255) NOT NULL,
-    CustoHora DECIMAL(18, 2) NOT NULL,
-    TipoVinculo VARCHAR(50),
-    Status VARCHAR(50) DEFAULT 'Ativo',
-    FOREIGN KEY (CargoId) REFERENCES Cargo(Id)
+-- 4. FUNCIONARIO
+CREATE TABLE IF NOT EXISTS funcionario (
+    id_funcionario INT AUTO_INCREMENT PRIMARY KEY,
+    id_cargo INT NOT NULL,
+    nome VARCHAR(255) NOT NULL,
+    custo_hora DECIMAL(18, 2) NOT NULL,
+    tipo_vinculo VARCHAR(50), -- CLT/PJ/Autônomo
+    status VARCHAR(50) DEFAULT 'Ativo',
+    FOREIGN KEY (id_cargo) REFERENCES cargo(id_cargo)
 );
 
--- 5. TABELA ORCAMENTO
-CREATE TABLE IF NOT EXISTS Orcamento (
-    Id INT AUTO_INCREMENT PRIMARY KEY,
-    MargemPercentual DECIMAL(18, 2) DEFAULT 0,
-    PercentualImpostos DECIMAL(18, 2) DEFAULT 0,
-    CustoBase DECIMAL(18, 2) DEFAULT 0,
-    ValorFinal DECIMAL(18, 2) DEFAULT 0,
-    DataCriacao DATETIME DEFAULT CURRENT_TIMESTAMP
+-- 5. PROJETO
+CREATE TABLE IF NOT EXISTS projeto (
+    id_projeto INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    id_cliente INT NOT NULL,
+    nome VARCHAR(255) NOT NULL,
+    tipo VARCHAR(100), -- Produto/Serviço
+    status VARCHAR(50) DEFAULT 'Rascunho', -- Rascunho/Orçado/Aprovado/Executando/Concluído
+    data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_conclusao_prevista DATE,
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
+    FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente)
 );
 
--- 6. TABELA PROJETO
-CREATE TABLE IF NOT EXISTS Projeto (
-    Id INT AUTO_INCREMENT PRIMARY KEY,
-    UsuarioId INT NOT NULL,
-    ClienteId INT NOT NULL,
-    OrcamentoId INT,
-    Nome VARCHAR(255) NOT NULL,
-    Tipo VARCHAR(100),
-    Status VARCHAR(50) DEFAULT 'Em Planejamento',
-    DataCriacao DATETIME DEFAULT CURRENT_TIMESTAMP,
-    DataConclusaoPrevista DATETIME,
-    FOREIGN KEY (UsuarioId) REFERENCES Usuario(Id),
-    FOREIGN KEY (ClienteId) REFERENCES Cliente(Id),
-    FOREIGN KEY (OrcamentoId) REFERENCES Orcamento(Id)
+-- 6. TAREFA
+CREATE TABLE IF NOT EXISTS tarefa (
+    id_tarefa INT AUTO_INCREMENT PRIMARY KEY,
+    id_projeto INT NOT NULL,
+    id_funcionario INT NOT NULL,
+    descricao VARCHAR(255),
+    horas_estimadas DECIMAL(18, 2) DEFAULT 0,
+    horas_reais DECIMAL(18, 2) DEFAULT 0,
+    custo_real DECIMAL(18, 2) DEFAULT 0,
+    status VARCHAR(50) DEFAULT 'Pendente', -- Pendente/Executando/Concluída
+    FOREIGN KEY (id_projeto) REFERENCES projeto(id_projeto) ON DELETE CASCADE,
+    FOREIGN KEY (id_funcionario) REFERENCES funcionario(id_funcionario)
 );
 
--- 7. TABELA TAREFA
-CREATE TABLE IF NOT EXISTS Tarefa (
-    Id INT AUTO_INCREMENT PRIMARY KEY,
-    ProjetoId INT NOT NULL,
-    FuncionarioId INT NOT NULL,
-    Descricao VARCHAR(255),
-    HorasEstimadas DECIMAL(18, 2) DEFAULT 0,
-    HorasReais DECIMAL(18, 2) DEFAULT 0,
-    Status VARCHAR(50) DEFAULT 'Pendente',
-    FOREIGN KEY (ProjetoId) REFERENCES Projeto(Id) ON DELETE CASCADE,
-    FOREIGN KEY (FuncionarioId) REFERENCES Funcionario(Id)
+-- 7. CUSTO
+CREATE TABLE IF NOT EXISTS custo (
+    id_custo INT AUTO_INCREMENT PRIMARY KEY,
+    id_projeto INT NOT NULL,
+    nome VARCHAR(255) NOT NULL,
+    categoria VARCHAR(100),
+    tipo VARCHAR(50), -- Direto/Indireto
+    valor DECIMAL(18, 2) NOT NULL,
+    unidade VARCHAR(50), -- Unitário/Hora/Dia/Mês
+    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_projeto) REFERENCES projeto(id_projeto) ON DELETE CASCADE
 );
 
--- 8. TABELA CUSTO (EXTRAS)
-CREATE TABLE IF NOT EXISTS Custo (
-    Id INT AUTO_INCREMENT PRIMARY KEY,
-    ProjetoId INT NOT NULL,
-    Nome VARCHAR(255) NOT NULL,
-    Categoria VARCHAR(100),
-    Tipo VARCHAR(50),
-    Valor DECIMAL(18, 2) NOT NULL,
-    Unidade VARCHAR(50),
-    DataCadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (ProjetoId) REFERENCES Projeto(Id) ON DELETE CASCADE
+-- 8. ORCAMENTO
+CREATE TABLE IF NOT EXISTS orcamento (
+    id_orcamento INT AUTO_INCREMENT PRIMARY KEY,
+    id_projeto INT NOT NULL UNIQUE, -- Relacionamento 1:1
+    custo_base DECIMAL(18, 2) DEFAULT 0,
+    percentual_impostos DECIMAL(18, 2) DEFAULT 0,
+    valor_impostos DECIMAL(18, 2) DEFAULT 0,
+    margem_percentual DECIMAL(18, 2) DEFAULT 0,
+    valor_margem DECIMAL(18, 2) DEFAULT 0,
+    valor_final DECIMAL(18, 2) DEFAULT 0,
+    data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_projeto) REFERENCES projeto(id_projeto) ON DELETE CASCADE
 );
 
--- 9. TABELA HISTORICO PROJETO
-CREATE TABLE IF NOT EXISTS HistoricoProjeto (
-    Id INT AUTO_INCREMENT PRIMARY KEY,
-    ProjetoId INT NOT NULL,
-    TipoProjeto VARCHAR(100),
-    Complexidade VARCHAR(50),
-    CustoReal DECIMAL(18, 2),
-    MargemEstimada DECIMAL(18, 2),
-    MargemReal DECIMAL(18, 2),
-    DesvioPercentual DECIMAL(18, 2),
-    DataConclusao DATETIME,
-    Observacoes TEXT
+-- 9. HISTORICO_PROJETO
+CREATE TABLE IF NOT EXISTS historico_projeto (
+    id_historico INT AUTO_INCREMENT PRIMARY KEY,
+    id_projeto INT NOT NULL UNIQUE, -- Relacionamento 1:1
+    tipo_projeto VARCHAR(100),
+    complexidade VARCHAR(50),
+    custo_real DECIMAL(18, 2),
+    margem_estimada DECIMAL(18, 2),
+    margem_real DECIMAL(18, 2),
+    desvio_percentual DECIMAL(18, 2),
+    data_conclusao DATETIME,
+    observacoes TEXT,
+    FOREIGN KEY (id_projeto) REFERENCES projeto(id_projeto)
 );
 
--- ==========================================
--- DADOS INICIAIS (AERO CONCEPTS)
--- ==========================================
+-- --- DADOS INICIAIS ---
 
-INSERT IGNORE INTO Cargo (Id, Nome, Nivel, CustoMedioHora) VALUES 
+INSERT IGNORE INTO cargo (id_cargo, nome, nivel, custo_medio_hora) VALUES 
 (1, 'Engenheiro Elétrico', 'Sr', 160.00),
 (2, 'Supervisor Eletroeletrônico', 'Pl', 130.00),
 (3, 'Engenheiro Especialista Turbomáquinas', 'Espec', 220.00),
@@ -124,7 +126,7 @@ INSERT IGNORE INTO Cargo (Id, Nome, Nivel, CustoMedioHora) VALUES
 (10, 'Gerente de Projetos', 'Sr', 230.00),
 (11, 'Consultor Especialista PD&I/Eng', 'Espec', 300.00);
 
-INSERT IGNORE INTO Funcionario (Id, CargoId, Nome, CustoHora, TipoVinculo, Status) VALUES 
+INSERT IGNORE INTO funcionario (id_funcionario, id_cargo, nome, custo_hora, tipo_vinculo, status) VALUES 
 (1, 1, 'Paulino Rubião', 165.00, 'CLT', 'Ativo'),
 (2, 2, 'Eduardo Sedano', 135.00, 'CLT', 'Ativo'),
 (3, 3, 'Flavio Natal', 225.00, 'PJ', 'Ativo'),
@@ -141,6 +143,5 @@ INSERT IGNORE INTO Funcionario (Id, CargoId, Nome, CustoHora, TipoVinculo, Statu
 (14, 10, 'Eduard Müller', 240.00, 'CLT', 'Ativo'),
 (15, 11, 'Marco Antônio Carvalho', 310.00, 'PJ', 'Ativo');
 
--- USUÁRIO INICIAL PARA TESTES
-INSERT IGNORE INTO Usuario (Id, Nome, Email, Senha, Status) 
-VALUES (1, 'Admin', 'admin@aeroconcepts.com', 'admin123', 'Ativo');
+INSERT IGNORE INTO usuario (id_usuario, nome, email, senha, status) VALUES 
+(1, 'Admin', 'admin@aeroconcepts.com', 'admin123', 'Ativo');

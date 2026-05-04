@@ -1,66 +1,109 @@
 ﻿using magal.Models;
+using System;
 
-public class Tarefa : BaseModel
+namespace magal.Models
 {
-    public int Id { get; set; }
-    public int ProjetoId { get; set; }
-
-    private string _descricao;
-    public string Descricao
+    public class Tarefa : BaseModel
     {
-        get => _descricao;
-        set { _descricao = value; OnPropertyChanged(); }
-    }
-
-    private int _funcionarioId;
-    public int FuncionarioId
-    {
-        get => _funcionarioId;
-        set { _funcionarioId = value; OnPropertyChanged(); }
-    }
-
-    private Funcionario _funcionario;
-    public Funcionario Funcionario
-    {
-        get => _funcionario;
-        set
+        private int _id_tarefa;
+        public int id_tarefa
         {
-            _funcionario = value;
-            if (_funcionario != null) _funcionarioId = _funcionario.Id;
-
-            OnPropertyChanged();
-            // Notifica o cálculo do subtotal
-            OnPropertyChanged(nameof(CustoReal));
+            get => _id_tarefa;
+            set { _id_tarefa = value; OnPropertyChanged(); }
         }
-    }
 
-    private decimal _horasEstimadas;
-    public decimal HorasEstimadas
-    {
-        get => _horasEstimadas;
-        set
+        private int _id_projeto;
+        public int id_projeto
         {
-            _horasEstimadas = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(CustoReal));
+            get => _id_projeto;
+            set { _id_projeto = value; OnPropertyChanged(); }
         }
-    }
 
-    public decimal HorasReais { get; set; } 
-
-    public decimal CustoReal
-    {
-        get
+        private string _descricao;
+        public string descricao
         {
-            decimal valorHora = Funcionario?.Cargo?.CustoMedioHora ?? Funcionario?.CustoHora ?? 0;
-            return HorasEstimadas * valorHora;
+            get => _descricao;
+            set { if (_descricao == value) return; _descricao = value; OnPropertyChanged(); }
         }
-    }
 
-    private string _status = "Pendente";
-    public string Status
-    {
-        get => _status;
-        set { _status = value; OnPropertyChanged(); }
+        private int _id_funcionario;
+        public int id_funcionario
+        {
+            get => _id_funcionario;
+            set
+            {
+                if (_id_funcionario == value) return;
+                _id_funcionario = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Funcionario _funcionario;
+        public Funcionario Funcionario
+        {
+            get => _funcionario;
+            set
+            {
+                // Verificação de referência para evitar loops e processamento desnecessário
+                if (ReferenceEquals(_funcionario, value)) return;
+
+                _funcionario = value;
+
+                // FIX: Sincroniza o ID usando o campo privado (_id_funcionario)
+                // Isso evita disparar o set da propriedade id_funcionario, quebrando o loop.
+                if (_funcionario != null)
+                {
+                    _id_funcionario = _funcionario.id_funcionario;
+                }
+
+                OnPropertyChanged();
+                // Notificamos a UI que o ID e o Custo Real mudaram
+                OnPropertyChanged(nameof(id_funcionario));
+                OnPropertyChanged(nameof(custo_real));
+            }
+        }
+
+        private decimal _horas_estimadas;
+        public decimal horas_estimadas
+        {
+            get => _horas_estimadas;
+            set
+            {
+                if (_horas_estimadas == value) return;
+                _horas_estimadas = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(custo_real)); // Recalcula o subtotal na tela
+            }
+        }
+
+        private decimal _horas_reais;
+        public decimal horas_reais
+        {
+            get => _horas_reais;
+            set { if (_horas_reais == value) return; _horas_reais = value; OnPropertyChanged(); }
+        }
+
+        // Propriedade calculada: não precisa de variável privada, pois depende de outras
+        public decimal custo_real
+        {
+            get
+            {
+                // Se o funcionário for nulo, retorna 0 imediatamente sem processar nada
+                if (Funcionario == null) return 0;
+
+                decimal valorHora = Funcionario.custo_hora > 0
+                                    ? Funcionario.custo_hora
+                                    : (Funcionario.Cargo?.custo_medio_hora ?? 0);
+
+                return horas_estimadas * valorHora;
+            }
+        }
+
+        private string _status = "Pendente";
+        public string status
+        {
+            get => _status;
+            set { if (_status == value) return; _status = value; OnPropertyChanged(); }
+        }
     }
 }

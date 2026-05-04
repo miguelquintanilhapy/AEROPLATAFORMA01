@@ -15,13 +15,16 @@ namespace magal.Data.Repositories
             {
                 using (var conn = DbConnectionFactory.CreateConnection())
                 {
-                    string query = @"SELECT f.id_funcionario AS Id, 
-                        f.nome AS Nome, 
-                        f.id_cargo AS CargoId, 
-                        c.nome AS CargoNome, 
-                        c.custo_medio_hora AS ValorHora 
-                 FROM funcionario f 
-                 INNER JOIN cargo c ON f.id_cargo = c.id_cargo";
+                    // Query conforme o novo init.sql
+                    string query = @"
+                        SELECT f.id_funcionario, 
+                               f.nome, 
+                               f.id_cargo, 
+                               c.nome AS cargo_nome, 
+                               c.custo_medio_hora 
+                        FROM funcionario f 
+                        INNER JOIN cargo c ON f.id_cargo = c.id_cargo";
+
                     using (var cmd = conn.CreateCommand())
                     {
                         cmd.CommandText = query;
@@ -30,21 +33,20 @@ namespace magal.Data.Repositories
                         {
                             while (reader.Read())
                             {
-                                // Criamos o objeto Funcionário
-                                var func = new Funcionario();
-
-                                // Usamos GetOrdinal para pegar a posição da coluna pelo nome
-                                func.Id = reader.GetInt32(reader.GetOrdinal("Id"));
-                                func.Nome = reader.GetString(reader.GetOrdinal("Nome"));
-                                func.CargoId = reader.GetInt32(reader.GetOrdinal("CargoId"));
-
-                                // Criamos o objeto Cargo dentro do Funcionário
-                                // Nota: Verifique se na sua classe Funcionario a propriedade se chama 'Cargo'
-                                func.Cargo = new Cargo
+                                // Sincronizado com os Models em snake_case
+                                var func = new Funcionario
                                 {
-                                    Id = reader.GetInt32(reader.GetOrdinal("CargoId")),
-                                    Nome = reader.GetString(reader.GetOrdinal("CargoNome")),
-                                    CustoMedioHora = reader.GetDecimal(reader.GetOrdinal("ValorHora"))
+                                    id_funcionario = reader.GetInt32(reader.GetOrdinal("id_funcionario")),
+                                    nome = reader.GetString(reader.GetOrdinal("nome")),
+                                    id_cargo = reader.GetInt32(reader.GetOrdinal("id_cargo")),
+
+                                    // Preenche o objeto Cargo (usando as propriedades minúsculas do Cargo.cs)
+                                    Cargo = new Cargo
+                                    {
+                                        id_cargo = reader.GetInt32(reader.GetOrdinal("id_cargo")),
+                                        nome = reader.GetString(reader.GetOrdinal("cargo_nome")),
+                                        custo_medio_hora = reader.GetDecimal(reader.GetOrdinal("custo_medio_hora"))
+                                    }
                                 };
 
                                 lista.Add(func);

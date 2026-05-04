@@ -15,6 +15,7 @@ namespace magal.ViewModels
     {
         private Projeto _projetoAtual;
         private bool _processando = false;
+        private bool _isUpdating = false; // TRAVA CRÍTICA: Impede o StackOverflow (loop infinito)
 
         public Projeto ProjetoAtual
         {
@@ -22,9 +23,9 @@ namespace magal.ViewModels
             set { _projetoAtual = value; OnPropertyChanged(); }
         }
 
-        public ObservableCollection<Cliente> Clientes { get; set; }
-        public ObservableCollection<Funcionario> Funcionarios { get; set; }
-        public ObservableCollection<Custo> CustosExtras { get; set; }
+        public ObservableCollection<Cliente> Clientes { get; } = new ObservableCollection<Cliente>();
+        public ObservableCollection<Funcionario> Funcionarios { get; } = new ObservableCollection<Funcionario>();
+        public ObservableCollection<Custo> CustosExtras { get; } = new ObservableCollection<Custo>();
 
         public List<string> CategoriasCustos { get; } = new List<string>
         {
@@ -34,46 +35,73 @@ namespace magal.ViewModels
 
         public bool BotaoAtivo => !_processando;
         public RelayCommand AdicionarTarefaCommand { get; }
-        public RelayCommand DeletarTarefaCommand { get; } 
+        public RelayCommand DeletarTarefaCommand { get; }
         public RelayCommand AdicionarCustoCommand { get; }
-        public RelayCommand DeletarCustoCommand { get; }  
+        public RelayCommand DeletarCustoCommand { get; }
         public RelayCommand GerarPdfCommand { get; }
 
         public OrcamentoViewModel()
         {
-            NovoProjeto();
-            CarregarDadosIniciais();
-
             AdicionarTarefaCommand = new RelayCommand(_ => AdicionarTarefa());
             DeletarTarefaCommand = new RelayCommand(param => DeletarTarefa(param as Tarefa));
-
             AdicionarCustoCommand = new RelayCommand(_ => AdicionarCustoExtra());
             DeletarCustoCommand = new RelayCommand(param => DeletarCustoExtra(param as Custo));
-
             GerarPdfCommand = new RelayCommand(_ => ExecutarFluxoFinal());
+
+            NovoProjeto();
+            CarregarDadosIniciais();
         }
 
         private void NovoProjeto()
         {
             ProjetoAtual = new Projeto
             {
-                Orcamento = new Orcamento { MargemPercentual = 20, PercentualImpostos = 15 },
+                Orcamento = new Orcamento { margem_percentual = 20, percentual_impostos = 15 },
                 Tarefas = new ObservableCollection<Tarefa>(),
-                UsuarioId = 1,
-                Nome = "Novo Orçamento Aero"
+                id_usuario = 1,
+                nome = "Novo Orçamento Aero"
             };
 
-            CustosExtras = new ObservableCollection<Custo>();
-            ProjetoAtual.Orcamento.PropertyChanged += (s, e) => AtualizarFinanceiro();
-            OnPropertyChanged(nameof(CustosExtras));
+            CustosExtras.Clear();
+
+            // CORREÇÃO: Removido o PropertyChanged do Orcamento aqui, 
+            // pois ele gerava loop infinito ao chamar o CalcularTotal.
+
+            OnPropertyChanged(nameof(ProjetoAtual));
+        }
+
+        private void CarregarDadosIniciais()
+        {
+            try
+            {
+                var listaClientes = new ClienteRepository().ListarTodos();
+                var listaFuncionarios = new FuncionarioRepository().ListarTodos();
+
+                Clientes.Clear();
+
+                foreach (var c in listaClientes) Clientes.Add(c);
+
+                Funcionarios.Clear();
+                foreach (var f in listaFuncionarios) Funcionarios.Add(f);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao carregar dados: " + ex.Message);
+            }
         }
 
         private void AdicionarTarefa()
         {
-            var novaTarefa = new Tarefa { Descricao = "Nova Atividade Técnica", HorasEstimadas = 0 };
+            var novaTarefa = new Tarefa { descricao = "Nova Atividade Técnica", horas_estimadas = 0 };
+
             novaTarefa.PropertyChanged += (s, e) => {
-                if (e.PropertyName == nameof(Tarefa.CustoReal) || e.PropertyName == nameof(Tarefa.Funcionario))
+                // Escutamos apenas as entradas manuais. 
+                // O custo_real é uma consequência, não precisa ser escutado aqui.
+                if (e.PropertyName == nameof(Tarefa.Funcionario) ||
+                    e.PropertyName == nameof(Tarefa.horas_estimadas))
+                {
                     AtualizarFinanceiro();
+                }
             };
 
             ProjetoAtual.Tarefas.Add(novaTarefa);
@@ -91,9 +119,10 @@ namespace magal.ViewModels
 
         private void AdicionarCustoExtra()
         {
-            var novoCusto = new Custo { Nome = "Novo Item", Valor = 0, Categoria = "Equipamentos", Tipo = "Direto" };
+            var novoCusto = new Custo { nome = "Novo Item", valor = 0, categoria = "Equipamentos", tipo = "Direto" };
+
             novoCusto.PropertyChanged += (s, e) => {
-                if (e.PropertyName == nameof(Custo.Valor)) AtualizarFinanceiro();
+                if (e.PropertyName == nameof(Custo.valor)) AtualizarFinanceiro();
             };
 
             CustosExtras.Add(novoCusto);
@@ -111,26 +140,42 @@ namespace magal.ViewModels
 
         private void AtualizarFinanceiro()
         {
-            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            // PROTEÇÃO: Se já estiver calculando ou se o projeto sumiu, aborta.
+            if (_isUpdating || ProjetoAtual?.Orcamento == null) return;
+
+            try
             {
-                if (ProjetoAtual?.Orcamento != null)
-                {
-                    ProjetoAtual.Orcamento.CalcularTotal(
-                        ProjetoAtual.Tarefas.ToList(),
-                        CustosExtras.ToList()
-                    );
-                    OnPropertyChanged(nameof(ProjetoAtual));
-                }
-            }));
+                _isUpdating = true;
+
+                // 1. Executa a lógica matemática no Model
+                ProjetoAtual.Orcamento.CalcularTotal(
+                    ProjetoAtual.Tarefas.ToList(),
+                    CustosExtras.ToList()
+                );
+
+                // 2. Notifica a UI especificamente sobre o que mudou no objeto Orçamento.
+                // Isso evita o OnPropertyChanged(nameof(ProjetoAtual)) que travava a tela.
+                ProjetoAtual.Orcamento.OnPropertyChanged("valor_total");
+                ProjetoAtual.Orcamento.OnPropertyChanged("valor_impostos");
+                ProjetoAtual.Orcamento.OnPropertyChanged("lucro_estimado");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Erro no cálculo: " + ex.Message);
+            }
+            finally
+            {
+                _isUpdating = false; // Libera para a próxima atualização
+            }
         }
 
         private void ExecutarFluxoFinal()
         {
             if (_processando) return;
 
-            if (string.IsNullOrWhiteSpace(ProjetoAtual.Nome) || ProjetoAtual.Cliente == null)
+            if (string.IsNullOrWhiteSpace(ProjetoAtual.nome) || (ProjetoAtual.id_cliente == 0 && ProjetoAtual.Cliente == null))
             {
-                MessageBox.Show("Preencha o Nome do Projeto e o Cliente.", "Aero Concepts");
+                MessageBox.Show("Preencha o Nome do Projeto e selecione um Cliente.", "Aero Concepts");
                 return;
             }
 
@@ -143,7 +188,7 @@ namespace magal.ViewModels
                 {
                     if (GerarRelatorioPdf())
                     {
-                        MessageBox.Show("Proposta finalizada com sucesso!", "Sucesso");
+                        MessageBox.Show("Proposta finalizada e salva com sucesso!", "Sucesso");
                         NovoProjeto();
                     }
                 }
@@ -159,13 +204,18 @@ namespace magal.ViewModels
         {
             try
             {
+                if (ProjetoAtual.Cliente != null)
+                {
+                    ProjetoAtual.id_cliente = ProjetoAtual.Cliente.id_cliente;
+                }
+
                 var repo = new ProjetoRepository();
                 repo.SalvarProjetoCompleto(ProjetoAtual, CustosExtras.ToList());
                 return true;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erro ao salvar: " + ex.Message);
+                MessageBox.Show("Erro ao salvar no banco: " + ex.Message, "Erro");
                 return false;
             }
         }
@@ -175,7 +225,7 @@ namespace magal.ViewModels
             var sfd = new SaveFileDialog
             {
                 Filter = "PDF|*.pdf",
-                FileName = $"Proposta_{ProjetoAtual.Nome}"
+                FileName = $"Proposta_{ProjetoAtual.nome}"
             };
 
             if (sfd.ShowDialog() == true)
@@ -184,16 +234,6 @@ namespace magal.ViewModels
                 return true;
             }
             return false;
-        }
-
-        private void CarregarDadosIniciais()
-        {
-            try
-            {
-                Clientes = new ObservableCollection<Cliente>(new ClienteRepository().ListarTodos());
-                Funcionarios = new ObservableCollection<Funcionario>(new FuncionarioRepository().ListarTodos());
-            }
-            catch { /* Log error */ }
         }
     }
 }

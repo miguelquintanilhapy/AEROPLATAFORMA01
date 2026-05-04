@@ -15,13 +15,14 @@ namespace magal.Data.Repositories
             {
                 using (var conn = DbConnectionFactory.CreateConnection())
                 {
-                    string query = @"SELECT id_cliente AS Id, 
-                                            nome AS Nome, 
-                                            tipo AS Tipo, 
-                                            cpf_cnpj AS CpfCnpj, 
-                                            cidade AS Cidade, 
-                                            estado AS Estado, 
-                                            contato AS Contato 
+                    // Query limpa: busca exatamente os nomes das colunas do banco
+                    string query = @"SELECT id_cliente, 
+                                            nome, 
+                                            tipo, 
+                                            cpf_cnpj, 
+                                            cidade, 
+                                            estado, 
+                                            contato 
                                      FROM cliente";
 
                     using (var cmd = conn.CreateCommand())
@@ -32,23 +33,29 @@ namespace magal.Data.Repositories
                         {
                             while (reader.Read())
                             {
-                                var cliente = new Cliente();
+                                // Mapeando do banco (snake_case) para o Model (snake_case)
+                                var cliente = new Cliente
+                                {
+                                    id_cliente = reader.GetInt32(reader.GetOrdinal("id_cliente")),
 
-                                cliente.Id = reader.GetInt32(reader.GetOrdinal("Id"));
-                                cliente.Nome = reader.IsDBNull(reader.GetOrdinal("Nome")) ? "" : reader.GetString(reader.GetOrdinal("Nome"));
-                                cliente.Tipo = reader.IsDBNull(reader.GetOrdinal("Tipo")) ? "" : reader.GetString(reader.GetOrdinal("Tipo"));
+                                    nome = reader.IsDBNull(reader.GetOrdinal("nome"))
+                                           ? "" : reader.GetString(reader.GetOrdinal("nome")),
 
-                                int colCpfCnpj = reader.GetOrdinal("CpfCnpj");
-                                cliente.CpfCnpj = reader.IsDBNull(colCpfCnpj) ? "" : reader.GetString(colCpfCnpj);
+                                    tipo = reader.IsDBNull(reader.GetOrdinal("tipo"))
+                                           ? "" : reader.GetString(reader.GetOrdinal("tipo")),
 
-                                int colCidade = reader.GetOrdinal("Cidade");
-                                cliente.Cidade = reader.IsDBNull(colCidade) ? "" : reader.GetString(colCidade);
+                                    cpf_cnpj = reader.IsDBNull(reader.GetOrdinal("cpf_cnpj"))
+                                               ? "" : reader.GetString(reader.GetOrdinal("cpf_cnpj")),
 
-                                int colEstado = reader.GetOrdinal("Estado");
-                                cliente.Estado = reader.IsDBNull(colEstado) ? "" : reader.GetString(colEstado);
+                                    cidade = reader.IsDBNull(reader.GetOrdinal("cidade"))
+                                             ? "" : reader.GetString(reader.GetOrdinal("cidade")),
 
-                                int colContato = reader.GetOrdinal("Contato");
-                                cliente.Contato = reader.IsDBNull(colContato) ? "" : reader.GetString(colContato);
+                                    estado = reader.IsDBNull(reader.GetOrdinal("estado"))
+                                             ? "" : reader.GetString(reader.GetOrdinal("estado")),
+
+                                    contato = reader.IsDBNull(reader.GetOrdinal("contato"))
+                                              ? "" : reader.GetString(reader.GetOrdinal("contato"))
+                                };
 
                                 lista.Add(cliente);
                             }

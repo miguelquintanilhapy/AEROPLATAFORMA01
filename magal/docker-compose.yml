@@ -7,6 +7,6 @@
       MYSQL_ROOT_PASSWORD: miguel1001
       MYSQL_DATABASE: sad_precificacao
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
-      - ./Scripts:/docker-entrypoint-initdb.d
+      - ./Scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
