@@ -166,23 +166,37 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="DATA" Binding="{Binding data_criacao, StringFormat=dd/MM/yyyy}" Width="120"/>
                         <DataGridTextColumn Header="NOME DO PROJETO" Binding="{Binding nome}" Width="*"/>
-                        <DataGridTextColumn Header="TIPO" Binding="{Binding tipo}" Width="150"/>
-                        <DataGridTextColumn Header="STATUS" Binding="{Binding status}" Width="120"/>
+                        <DataGridTextColumn Header="TIPO" Binding="{Binding tipo}" Width="130"/>
+
+                        <DataGridTextColumn Header="VALOR" 
+                        Binding="{Binding Orcamento.valor_final, StringFormat=C}" 
+                        Width="130">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="Padding" Value="0,0,50,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="STATUS" Binding="{Binding status}" Width="110"/>
 
                         <DataGridTemplateColumn Header="AÇÕES" Width="180">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
                                         <Button Content="Editar" 
-                                                Command="{Binding DataContext.EditarCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"
-                                                Margin="0,0,8,0" Foreground="{StaticResource AeroAccent}" 
-                                                Background="Transparent" BorderThickness="0" Cursor="Hand" FontWeight="Bold"/>
+                            Command="{Binding DataContext.EditarCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            CommandParameter="{Binding}"
+                            Margin="0,0,8,0" Foreground="{StaticResource AeroAccent}" 
+                            Background="Transparent" BorderThickness="0" Cursor="Hand" FontWeight="Bold"/>
                                         <Button Content="Excluir" 
-                                                Command="{Binding DataContext.ExcluirCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"
-                                                Foreground="{StaticResource AeroDanger}" 
-                                                Background="Transparent" BorderThickness="0" Cursor="Hand" FontWeight="Bold"/>
+                            Command="{Binding DataContext.ExcluirCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            CommandParameter="{Binding}"
+                            Foreground="{StaticResource AeroDanger}" 
+                            Background="Transparent" BorderThickness="0" Cursor="Hand" FontWeight="Bold"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
