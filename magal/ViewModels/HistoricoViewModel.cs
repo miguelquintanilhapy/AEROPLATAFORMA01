@@ -2,8 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.ComponentModel; // Necessário para ICollectionView
-using System.Windows.Data;    // Necessário para CollectionViewSource
+using System.ComponentModel;
+using System.Windows.Data;
 using magal.Models;
 using magal.Data.Repositories;
 
@@ -14,16 +14,15 @@ namespace magal.ViewModels
         private readonly ProjetoRepository _repository;
         private Projeto _projetoSelecionado;
         private string _filtroTexto;
-
-        // Propriedades para o Dashboard
         private string _totalFinanceiro;
+        private int _quantidadeProjetos;
+
         public string TotalFinanceiro
         {
             get => _totalFinanceiro;
             set { _totalFinanceiro = value; OnPropertyChanged(); }
         }
 
-        private int _quantidadeProjetos;
         public int QuantidadeProjetos
         {
             get => _quantidadeProjetos;
@@ -38,9 +37,14 @@ namespace magal.ViewModels
                 _filtroTexto = value;
                 OnPropertyChanged();
                 ProjetosView?.Refresh();
-                // Opcional: Atualizar indicadores com base no que está filtrado
-                // AtualizarIndicadores(); 
             }
+        }
+
+        private string _totalLucro;
+        public string TotalLucro
+        {
+            get => _totalLucro;
+            set { _totalLucro = value; OnPropertyChanged(); }
         }
 
         public Projeto ProjetoSelecionado
@@ -50,8 +54,7 @@ namespace magal.ViewModels
         }
 
         public ObservableCollection<Projeto> Projetos { get; } = new ObservableCollection<Projeto>();
-
-        public ICollectionView ProjetosView { get; set; }
+        public ICollectionView ProjetosView { get; private set; }
 
         public RelayCommand ExcluirCommand { get; }
         public RelayCommand EditarCommand { get; }
@@ -61,6 +64,9 @@ namespace magal.ViewModels
         {
             _repository = new ProjetoRepository();
 
+            ProjetosView = CollectionViewSource.GetDefaultView(Projetos);
+            ProjetosView.Filter = FiltroDeProjetos;
+
             ExcluirCommand = new RelayCommand(p => ExecutarExclusao(p as Projeto));
             EditarCommand = new RelayCommand(p => ExecutarEdicao(p as Projeto));
             AtualizarCommand = new RelayCommand(_ => CarregarHistorico());
@@ -68,94 +74,94 @@ namespace magal.ViewModels
             CarregarHistorico();
         }
 
+        private bool FiltroDeProjetos(object obj)
+        {
+            if (string.IsNullOrWhiteSpace(FiltroTexto)) return true;
+            var projeto = obj as Projeto;
+            if (projeto == null) return false;
+
+            var busca = FiltroTexto.ToLower().Trim();
+
+            // Adicionamos a verificação do 'tipo' aqui:
+            return (projeto.nome?.ToLower().Contains(busca) ?? false) ||
+                   (projeto.status?.ToLower().Contains(busca) ?? false) ||
+                   (projeto.tipo?.ToLower().Contains(busca) ?? false);
+        }
+
         private void CarregarHistorico()
         {
             try
             {
+                // Busca os dados do banco
                 var lista = _repository.BuscarTodosPorUsuario(1);
 
                 Projetos.Clear();
+
                 foreach (var p in lista)
                 {
+                    if (p.Orcamento != null)
+                    {
+                        // IMPORTANTE: Como você mudou o Model, aqui forçamos a interface 
+                        // a ler a propriedade 'valor_final' calculada. 
+                        // Se você criou o método AtualizarNotificacoes() no Model, use-o aqui:
+                        // p.Orcamento.AtualizarNotificacoes();
+                    }
                     Projetos.Add(p);
                 }
 
-                ProjetosView = CollectionViewSource.GetDefaultView(Projetos);
-
-                ProjetosView.Filter = (obj) =>
-                {
-                    if (string.IsNullOrWhiteSpace(FiltroTexto)) return true;
-
-                    var projeto = obj as Projeto;
-                    var busca = FiltroTexto.ToLower().Trim();
-
-                    bool nomeProjetoOk = projeto.nome?.ToLower().Contains(busca) ?? false;
-                    bool nomeClienteOk = projeto.Cliente?.nome?.ToLower().Contains(busca) ?? false;
-                    bool statusOk = projeto.status?.ToLower().Contains(busca) ?? false;
-
-                    return nomeProjetoOk || nomeClienteOk || statusOk;
-                };
-
-                // Atualiza os cards do topo
+                // Atualiza os indicadores de tela (Soma e Quantidade)
                 AtualizarIndicadores();
 
-                OnPropertyChanged(nameof(ProjetosView));
+                // Força o Refresh da lista visual
+                ProjetosView?.Refresh();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erro ao carregar histórico: " + ex.Message);
+                MessageBox.Show($"Erro ao carregar histórico: {ex.Message}", "Aero Concepts", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void AtualizarIndicadores()
         {
-            QuantidadeProjetos = Projetos.Count;
+            var listaFiltrada = ProjetosView.Cast<Projeto>().ToList();
+            QuantidadeProjetos = listaFiltrada.Count;
 
-            // Verifique se o valor_total realmente existe nos itens da lista
-            decimal soma = 0;
-            foreach (var p in Projetos)
-            {
-                // Se p.Orcamento for null, o valor não será somado
-                if (p.Orcamento != null)
-                {
-                    soma += p.Orcamento.valor_final;
-                }
-            }
+            // Soma do Valor Final (Faturamento)
+            decimal somaFaturamento = listaFiltrada
+                .Where(p => p.Orcamento != null)
+                .Sum(p => p.Orcamento.valor_final);
 
-            TotalFinanceiro = soma.ToString("C2");
+            // Soma do Lucro (valor_margem que criamos na Model)
+            decimal somaLucro = listaFiltrada
+                .Where(p => p.Orcamento != null)
+                .Sum(p => p.Orcamento.valor_margem);
+
+            TotalFinanceiro = somaFaturamento.ToString("C2");
+            TotalLucro = somaLucro.ToString("C2");
         }
 
         private void ExecutarExclusao(Projeto projeto)
         {
             if (projeto == null) return;
 
-            var msg = $"Tem certeza que deseja excluir o projeto '{projeto.nome}'?\nEsta ação não pode ser desfeita.";
-            if (MessageBox.Show(msg, "Confirmar Exclusão", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            var msg = $"Tem certeza que deseja excluir o projeto '{projeto.nome}'?";
+            if (MessageBox.Show(msg, "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 try
                 {
                     _repository.ExcluirProjeto(projeto.id_projeto);
                     Projetos.Remove(projeto);
-
-                    // Recalcula os indicadores após a remoção
                     AtualizarIndicadores();
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Erro ao excluir: " + ex.Message);
-                }
+                catch (Exception ex) { MessageBox.Show(ex.Message); }
             }
         }
 
         private void ExecutarEdicao(Projeto projeto)
         {
             if (projeto == null) return;
-
-            var mainWindow = Application.Current.MainWindow as magal.MainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.IrParaEdicao(projeto);
-            }
+            var mainWindow = Application.Current.Windows.OfType<magal.MainWindow>().FirstOrDefault();
+            if (mainWindow != null) mainWindow.IrParaEdicao(projeto);
         }
     }
 }

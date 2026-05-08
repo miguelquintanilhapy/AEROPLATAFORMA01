@@ -50,7 +50,6 @@ namespace magal.Data.Repositories
                                 cmd.ExecuteNonQuery();
                             }
 
-                            // Limpeza de tabelas filhas para reinserção (estratégia mais segura para edição)
                             new MySqlCommand($"DELETE FROM orcamento WHERE id_projeto={projeto.id_projeto}", conn, transaction).ExecuteNonQuery();
                             new MySqlCommand($"DELETE FROM tarefa WHERE id_projeto={projeto.id_projeto}", conn, transaction).ExecuteNonQuery();
                             new MySqlCommand($"DELETE FROM custo WHERE id_projeto={projeto.id_projeto}", conn, transaction).ExecuteNonQuery();
@@ -77,14 +76,13 @@ namespace magal.Data.Repositories
                                 cmd.Parameters.AddWithValue("@idProj", projeto.id_projeto);
                                 cmd.Parameters.AddWithValue("@desc", tarefa.descricao);
                                 cmd.Parameters.AddWithValue("@idFunc", tarefa.id_funcionario);
-                                // Correção de tipo: Convertendo para decimal para bater com a Model
                                 cmd.Parameters.AddWithValue("@horas", Convert.ToDecimal(tarefa.horas_estimadas));
                                 cmd.Parameters.AddWithValue("@status", tarefa.status ?? "Pendente");
                                 cmd.ExecuteNonQuery();
                             }
                         }
 
-                        // --- INSERIR/REINSERIR CUSTOS (Usando o nome da lista da Model: 'custosExtras' vindo do parâmetro) ---
+                        // --- INSERIR/REINSERIR CUSTOS 
                         foreach (var custo in custosExtras)
                         {
                             using (var cmd = new MySqlCommand(@"INSERT INTO custo (id_projeto, nome, categoria, tipo, valor, unidade) 
@@ -118,7 +116,7 @@ namespace magal.Data.Repositories
             {
                 conn.Open();
 
-                // 1. Dados Básicos e Orçamento
+                // Dados Básicos e Orçamento
                 string sqlProj = @"SELECT p.*, o.custo_base, o.percentual_impostos, o.margem_percentual, o.valor_final 
                                  FROM projeto p 
                                  LEFT JOIN orcamento o ON p.id_projeto = o.id_projeto 
@@ -149,7 +147,7 @@ namespace magal.Data.Repositories
                     }
                 }
 
-                // 2. Carregar Tarefas
+                // Carregar Tarefas
                 projeto.Tarefas = new ObservableCollection<Tarefa>();
                 using (var cmd = new MySqlCommand("SELECT * FROM tarefa WHERE id_projeto = @id", conn))
                 {
@@ -161,8 +159,8 @@ namespace magal.Data.Repositories
                             projeto.Tarefas.Add(new Tarefa
                             {
                                 id_tarefa = Convert.ToInt32(reader["id_tarefa"]),
-                                descricao = reader["descricao"].ToString(), // <-- Verifique se esta linha existe
-                                horas_estimadas = Convert.ToDecimal(reader["horas_estimadas"]), // <-- E esta
+                                descricao = reader["descricao"].ToString(),
+                                horas_estimadas = Convert.ToDecimal(reader["horas_estimadas"]), 
                                 id_funcionario = Convert.ToInt32(reader["id_funcionario"]),
                                 status = reader["status"].ToString()
                             });
@@ -170,7 +168,6 @@ namespace magal.Data.Repositories
                     }
                 }
 
-                // 3. Carregar Custos (Nome da propriedade na sua Model: Custos)
                 projeto.Custos = new ObservableCollection<Custo>();
                 using (var cmd = new MySqlCommand("SELECT * FROM custo WHERE id_projeto = @id", conn))
                 {
@@ -201,7 +198,6 @@ namespace magal.Data.Repositories
             using (var conn = (MySqlConnection)DbConnectionFactory.CreateConnection())
             {
                 conn.Open();
-                // ADICIONADO: o.valor_final e o LEFT JOIN com a tabela orcamento
                 string sql = @"SELECT p.*, c.nome as nome_cliente, o.valor_final 
                        FROM projeto p 
                        INNER JOIN cliente c ON p.id_cliente = c.id_cliente 
@@ -225,11 +221,9 @@ namespace magal.Data.Repositories
                                 status = reader["status"].ToString(),
                                 tipo = reader["tipo"].ToString(),
 
-                                // PREENCHENDO O OBJETO CLIENTE (para o filtro funcionar melhor)
                                 Cliente = new Cliente { nome = reader["nome_cliente"].ToString() }
                             };
 
-                            // PREENCHENDO O ORÇAMENTO (Para o Dashboard somar corretamente)
                             if (reader["valor_final"] != DBNull.Value)
                             {
                                 projeto.Orcamento = new Orcamento

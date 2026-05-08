@@ -165,7 +165,7 @@ namespace magal.ViewModels
                 // Limpa os impostos e margem no orçamento
                 if (ProjetoAtual.Orcamento.margem_percentual < 0) ProjetoAtual.Orcamento.margem_percentual = 0;
                 if (ProjetoAtual.Orcamento.percentual_impostos < 0) ProjetoAtual.Orcamento.percentual_impostos = 0;
-                // ----------------------------------
+              
 
                 ProjetoAtual.Orcamento.CalcularTotal(
                     ProjetoAtual.Tarefas.ToList(),

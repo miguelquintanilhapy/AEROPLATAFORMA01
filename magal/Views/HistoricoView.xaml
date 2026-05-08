@@ -3,21 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d"
+             mc:Ignorable="d" 
+             Language="pt-BR"
              d:DesignHeight="900" d:DesignWidth="1200"
              Background="#F0F4FA">
 
     <UserControl.Resources>
-        <SolidColorBrush x:Key="AeroPrimary"    Color="#1E3A8A"/>
-        <SolidColorBrush x:Key="AeroAccent"     Color="#3B82F6"/>
-        <SolidColorBrush x:Key="AeroDanger"     Color="#EF4444"/>
-        <SolidColorBrush x:Key="AeroTextDark"   Color="#0F172A"/>
-        <SolidColorBrush x:Key="AeroTextMuted"  Color="#64748B"/>
-        <SolidColorBrush x:Key="AeroTextHint"   Color="#94A3B8"/>
-        <SolidColorBrush x:Key="AeroBorder"     Color="#E2E8F0"/>
+        <SolidColorBrush x:Key="AzulAero"        Color="#131C49"/>
+        <SolidColorBrush x:Key="AeroAccent"      Color="#3B82F6"/>
+        <SolidColorBrush x:Key="AeroDanger"      Color="#EF4444"/>
+        <SolidColorBrush x:Key="AeroTextMuted"   Color="#64748B"/>
+        <SolidColorBrush x:Key="AeroTextHint"    Color="#94A3B8"/>
+        <SolidColorBrush x:Key="AeroBorder"      Color="#E2E8F0"/>
+        <SolidColorBrush x:Key="VerdeAero"       Color="#009140"/>
 
         <Style x:Key="PrimaryBtn" TargetType="Button">
-            <Setter Property="Background"   Value="{StaticResource AeroPrimary}"/>
+            <Setter Property="Background"   Value="{StaticResource AzulAero}"/>
             <Setter Property="Foreground"   Value="White"/>
             <Setter Property="FontWeight"   Value="Bold"/>
             <Setter Property="FontSize"     Value="11"/>
@@ -31,7 +32,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="#1e40af"/>
+                                <Setter TargetName="Bd" Property="Background" Value="#1E3A8A"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -49,19 +50,16 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Height="80" Margin="0,0,0,10">
-            <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Histórico de Projetos" 
-                           FontSize="28" 
-                           FontWeight="Bold"
-                           Foreground="{StaticResource AeroTextDark}"/>
-            </StackPanel>
+            <TextBlock Text="Histórico de Projetos" 
+                       FontSize="28" FontWeight="Bold"
+                       Foreground="{StaticResource AzulAero}"
+                       VerticalAlignment="Center"/>
 
             <Button Content="ATUALIZAR LISTA" 
                     Command="{Binding AtualizarCommand}"
                     Style="{StaticResource PrimaryBtn}"
                     HorizontalAlignment="Right" 
-                    VerticalAlignment="Center" 
-                    Padding="15,8"/>
+                    VerticalAlignment="Center"/>
         </Grid>
 
         <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,20">
@@ -69,53 +67,43 @@
                     BorderThickness="1" BorderBrush="{StaticResource AeroBorder}">
                 <StackPanel>
                     <TextBlock Text="PROJETOS TOTAIS" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AeroTextHint}" Margin="0,0,0,5"/>
-                    <TextBlock Text="{Binding QuantidadeProjetos}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource AeroPrimary}"/>
+                    <TextBlock Text="{Binding QuantidadeProjetos}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource AzulAero}"/>
                 </StackPanel>
             </Border>
 
-            <Border Background="White" CornerRadius="12" Margin="5,0" Padding="20,15"
-                    BorderThickness="1" BorderBrush="{StaticResource AeroBorder}">
+            <Border Background="{StaticResource AzulAero}" CornerRadius="12" Margin="5,0" Padding="20,15">
                 <StackPanel>
-                    <TextBlock Text="VALOR TOTAL EM PROPOSTAS" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AeroTextHint}" Margin="0,0,0,5"/>
-                    <TextBlock Text="{Binding TotalFinanceiro}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource AeroPrimary}"/>
+                    <TextBlock Text="VALOR TOTAL DAS PROPOSTAS" FontSize="10" FontWeight="Bold" Foreground="#93C5FD" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding TotalFinanceiro}" FontSize="24" FontWeight="Bold" Foreground="White"/>
                 </StackPanel>
             </Border>
 
-            <Border Background="{StaticResource AeroPrimary}" CornerRadius="12" Margin="10,0,0,0" Padding="20,15">
+            <Border Background="White" CornerRadius="12" Margin="10,0,0,0" Padding="20,15"
+        BorderThickness="1" BorderBrush="{StaticResource AeroBorder}">
                 <StackPanel>
-                    <TextBlock Text="STATUS DO SISTEMA" FontSize="10" FontWeight="Bold" Foreground="#93C5FD" Margin="0,0,0,5"/>
-                    <TextBlock Text="AERO v2.0" FontSize="24" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock Text="LUCRO TOTAL ESTIMADO" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AeroTextHint}" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding TotalLucro}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource VerdeAero}"/>
                 </StackPanel>
             </Border>
         </UniformGrid>
 
         <StackPanel Grid.Row="2" Margin="0,0,0,15">
-            <TextBlock Text="PESQUISAR PROJETO OU STATUS" 
-                       FontSize="10" FontWeight="Bold" 
-                       Foreground="{StaticResource AeroTextHint}" 
-                       Margin="0,0,0,5"/>
+            <TextBlock Text="FILTRE POR PROJETO, TIPO OU STATUS" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AzulAero}" Margin="0,0,0,4"/>
             <Grid>
                 <TextBox Text="{Binding FiltroTexto, UpdateSourceTrigger=PropertyChanged}"
-                         Height="38"
-                         VerticalContentAlignment="Center"
-                         Padding="12,0,40,0"
-                         FontSize="14"
-                         Background="White"
-                         BorderThickness="1"
-                         BorderBrush="{StaticResource AeroBorder}">
+                         Height="38" VerticalContentAlignment="Center" Padding="12,0,40,0"
+                         FontSize="14" Background="White" BorderThickness="1" BorderBrush="{StaticResource AeroBorder}">
                     <TextBox.Resources>
                         <Style TargetType="{x:Type Border}">
                             <Setter Property="CornerRadius" Value="8"/>
                         </Style>
                     </TextBox.Resources>
                 </TextBox>
-                <TextBlock Text="🔍" HorizontalAlignment="Right" VerticalAlignment="Center" 
-                           Margin="0,0,12,0" Foreground="{StaticResource AeroTextHint}"/>
+                <TextBlock Text="🔍" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,12,0" Foreground="{StaticResource AeroTextHint}"/>
             </Grid>
         </StackPanel>
 
-        <Border Grid.Row="3" Background="White" CornerRadius="16" 
-                BorderThickness="1" BorderBrush="{StaticResource AeroBorder}" Padding="1">
+        <Border Grid.Row="3" Background="White" CornerRadius="16" BorderThickness="1" BorderBrush="{StaticResource AeroBorder}" Padding="1">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -124,15 +112,10 @@
 
                 <DataGrid ItemsSource="{Binding ProjetosView}" 
                           SelectedItem="{Binding ProjetoSelecionado}"
-                          AutoGenerateColumns="False" 
-                          IsReadOnly="True"
-                          Background="Transparent"
-                          BorderThickness="0"
-                          GridLinesVisibility="Horizontal"
-                          HorizontalGridLinesBrush="#F1F5F9"
-                          HeadersVisibility="Column"
-                          FontSize="13"
-                          RowHeight="45">
+                          AutoGenerateColumns="False" IsReadOnly="True"
+                          Background="Transparent" BorderThickness="0"
+                          GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9"
+                          HeadersVisibility="Column" RowHeight="45">
 
                     <DataGrid.Resources>
                         <Style TargetType="DataGridColumnHeader">
@@ -143,6 +126,7 @@
                             <Setter Property="BorderThickness" Value="0,0,0,1"/>
                             <Setter Property="BorderBrush" Value="{StaticResource AeroBorder}"/>
                         </Style>
+
                         <Style TargetType="DataGridCell">
                             <Setter Property="Padding" Value="15,0"/>
                             <Setter Property="Template">
@@ -157,46 +141,48 @@
                             <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="Background" Value="#EFF6FF"/>
-                                    <Setter Property="Foreground" Value="{StaticResource AeroPrimary}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource AzulAero}"/>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
                     </DataGrid.Resources>
 
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="DATA" Binding="{Binding data_criacao, StringFormat=dd/MM/yyyy}" Width="120"/>
-                        <DataGridTextColumn Header="NOME DO PROJETO" Binding="{Binding nome}" Width="*"/>
-                        <DataGridTextColumn Header="TIPO" Binding="{Binding tipo}" Width="130"/>
+                        <DataGridTextColumn Header="DATA" Binding="{Binding data_criacao, StringFormat=dd/MM/yyyy}" Width="110" FontWeight="SemiBold" />
+                        <DataGridTextColumn Header="NOME DO PROJETO" Binding="{Binding nome}" Width="*" FontWeight="SemiBold"/>
+                        <DataGridTextColumn Header="TIPO" Binding="{Binding tipo}" Width="130" />
 
-                        <DataGridTextColumn Header="VALOR" 
-                        Binding="{Binding Orcamento.valor_final, StringFormat=C}" 
-                        Width="130">
+                        <DataGridTextColumn Header="VALOR DE VENDA" 
+                    Binding="{Binding Orcamento.valor_final, StringFormat='{}{0:C}'}" 
+                    Width="160" FontWeight="Bold">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
                                     <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="Padding" Value="0,0,50,0"/>
+                                    <Setter Property="Foreground" Value="{StaticResource VerdeAero}"/>
+                                    <Setter Property="Padding" Value="0,0,70,0"/>
+                                    <Setter Property="ToolTip" Value="Custo + Margem + Impostos"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="STATUS" Binding="{Binding status}" Width="110"/>
-
-                        <DataGridTemplateColumn Header="AÇÕES" Width="180">
+                        <DataGridTextColumn Header="STATUS" Binding="{Binding status}" Width="110" FontWeight="SemiBold" />
+                        
+                        <DataGridTemplateColumn Header="AÇÕES" Width="150">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
                                         <Button Content="Editar" 
-                            Command="{Binding DataContext.EditarCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            CommandParameter="{Binding}"
-                            Margin="0,0,8,0" Foreground="{StaticResource AeroAccent}" 
-                            Background="Transparent" BorderThickness="0" Cursor="Hand" FontWeight="Bold"/>
+                                                Command="{Binding DataContext.EditarCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Foreground="{StaticResource AeroAccent}"
+                                                Background="Transparent" BorderThickness="0" Cursor="Hand" FontWeight="Bold" Margin="0,0,12,0"/>
+
                                         <Button Content="Excluir" 
-                            Command="{Binding DataContext.ExcluirCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            CommandParameter="{Binding}"
-                            Foreground="{StaticResource AeroDanger}" 
-                            Background="Transparent" BorderThickness="0" Cursor="Hand" FontWeight="Bold"/>
+                                                Command="{Binding DataContext.ExcluirCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Foreground="{StaticResource AeroDanger}"
+                                                Background="Transparent" BorderThickness="0" Cursor="Hand" FontWeight="Bold"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -204,9 +190,8 @@
                     </DataGrid.Columns>
                 </DataGrid>
 
-                <Border Grid.Row="1" Background="#F8FAFC" BorderThickness="0,1,0,0"
-                        BorderBrush="#F1F5F9" CornerRadius="0,0,16,16" Padding="20,12">
-                    <TextBlock Text="{Binding Projetos.Count, StringFormat='{}{0} projetos encontrados'}"
+                <Border Grid.Row="1" Background="#F8FAFC" BorderThickness="0,1,0,0" BorderBrush="#F1F5F9" CornerRadius="0,0,16,16" Padding="20,12">
+                    <TextBlock Text="{Binding ProjetosView.Count, StringFormat='{}{0} projetos encontrados'}"
                                FontSize="12" Foreground="{StaticResource AeroTextHint}" VerticalAlignment="Center"/>
                 </Border>
             </Grid>

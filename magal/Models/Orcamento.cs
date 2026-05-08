@@ -54,16 +54,44 @@ namespace magal.Models
         public decimal custo_base
         {
             get => _custo_base;
-            set { if (_custo_base == value) return; _custo_base = value; OnPropertyChanged(); }
-        }
+            set
+            {
+                if (_custo_base == value) return;
+                _custo_base = value;
+                OnPropertyChanged();
 
-        private decimal _valor_final;
+                OnPropertyChanged(nameof(valor_final));
+                OnPropertyChanged(nameof(valor_margem));
+                OnPropertyChanged(nameof(valor_impostos));
+            }
+        }
         public decimal valor_final
         {
-            get => _valor_final;
-            set { if (_valor_final == value) return; _valor_final = value; OnPropertyChanged(); }
-        }
+            get
+            {
+                // 1. Calculamos a margem de lucro sobre o custo base
+                decimal margemCalculada = custo_base * (margem_percentual / 100);
 
+                // 2. Somamos para ter o valor com margem
+                decimal valorComMargem = custo_base + margemCalculada;
+
+                // 3. Calculamos o imposto sobre o valor com margem
+                decimal impostoCalculado = valorComMargem * (percentual_impostos / 100);
+
+                // 4. Retornamos a soma total
+                decimal total = valorComMargem + impostoCalculado;
+
+                // Se a conta der zero (caso campos estejam nulos), 
+                // usamos o valor que veio direto da coluna 'valor_final' do banco
+                return total > 0 ? total : _valor_final;
+            }
+            set
+            {
+                _valor_final = value;
+                OnPropertyChanged();
+            }
+        }
+        private decimal _valor_final;
         public DateTime data_criacao { get; set; } = DateTime.Now;
 
         // Propriedades calculadas que não vão para o banco, somente leitura

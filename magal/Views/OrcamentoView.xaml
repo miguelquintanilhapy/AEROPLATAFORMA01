@@ -20,6 +20,9 @@
         <SolidColorBrush x:Key="AeroCardBorder" Color="#E8EEF8"/>
         <SolidColorBrush x:Key="AeroPillBg"     Color="#EFF6FF"/>
         <SolidColorBrush x:Key="AeroPillFg"     Color="#1D4ED8"/>
+        <SolidColorBrush x:Key="AzulAero" Color="#131C49"/>
+        <SolidColorBrush x:Key="CinzaAero" Color="#ACACAC"/>
+
 
         <Style x:Key="PrimaryBtn" TargetType="Button">
             <Setter Property="Background"   Value="{StaticResource AeroPrimary}"/>
@@ -174,12 +177,12 @@
 
         <Grid Grid.Row="0" Margin="0,0,0,24">
             <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Gestão de Orçamentos" FontSize="28" FontWeight="Bold" Foreground="{StaticResource AeroTextDark}"/>
+                <TextBlock Text="Gestão de Orçamentos" FontSize="28" FontWeight="Bold" Foreground="{StaticResource AzulAero}"/>
             </StackPanel>
 
             <Border Background="White" CornerRadius="14" Padding="18,14"
                     HorizontalAlignment="Right"
-                    BorderThickness="1" BorderBrush="{StaticResource AeroBorder}">
+                    BorderThickness="2" BorderBrush="{StaticResource AeroBorder}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200"/>
@@ -248,7 +251,7 @@
                                                VerticalAlignment="Center"/>
                                 </Border>
                                 <TextBlock Text="COMPOSIÇÃO DE MÃO DE OBRA" FontSize="11"
-                                           FontWeight="Bold" Foreground="{StaticResource AeroTextDark}"
+                                           FontWeight="Bold" Foreground="{StaticResource AzulAero}"
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                             <Button Content="+ ADICIONAR ETAPA"
@@ -335,7 +338,7 @@
                                         <Border Background="{StaticResource AeroPrimary}" CornerRadius="6" Width="24" Height="24" Margin="0,0,10,0">
                                             <TextBlock Text="2" Foreground="White" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
-                                        <TextBlock Text="EQUIPAMENTOS E INSUMOS" FontSize="11" FontWeight="Bold" Foreground="{StaticResource AeroTextDark}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="EQUIPAMENTOS E INSUMOS" FontSize="11" FontWeight="Bold" Foreground="{StaticResource AzulAero}" VerticalAlignment="Center"/>
                                     </StackPanel>
                                     <Button Content="+ ADICIONAR CUSTO" Command="{Binding AdicionarCustoCommand}" Style="{StaticResource PrimaryBtn}" Width="140" HorizontalAlignment="Right"/>
                                 </Grid>

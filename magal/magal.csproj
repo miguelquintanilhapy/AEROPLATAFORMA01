@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Imagens\2026 2.png" />
+    <None Remove="Imagens\AERO_CONCEPTS_2.png" />
+    <None Remove="Imagens\AERO_CONCEPTS_4.png" />
+    <None Remove="Imagens\AERO_GROUP CONCEPTS_4.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Fonts\" />
     <Folder Include="resources\" />
   </ItemGroup>
@@ -21,6 +28,18 @@
 		<Resource Include="Fonts\GeistMono-Regular.ttf" />
 		<Resource Include="Fonts\GeistMono-Medium.ttf" />
 		<Resource Include="Fonts\GeistMono-SemiBold.ttf" />
+		<Resource Include="Imagens\2026 2.png">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Imagens\AERO_CONCEPTS_2.png">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Imagens\AERO_CONCEPTS_4.png">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Imagens\AERO_GROUP CONCEPTS_4.png">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
 	</ItemGroup>
 	
   <ItemGroup>
