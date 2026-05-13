@@ -80,6 +80,7 @@ namespace magal.ViewModels
         {
             try
             {
+                FiltroTexto = string.Empty;
                 var lista = _repository.BuscarTodosPorUsuario(1);
                 Projetos.Clear();
 

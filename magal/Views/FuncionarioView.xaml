@@ -163,7 +163,7 @@
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
                                     <Setter Property="VerticalAlignment" Value="Center"/>
                                     <Setter Property="Foreground" Value="{StaticResource VerdeAero}"/>
-                                    <Setter Property="Padding" Value="0,0,20,0"/>
+                                    <Setter Property="Padding" Value="0,0,55,0"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>

@@ -75,6 +75,8 @@ namespace magal.ViewModels
         {
             try
             {
+                FiltroTexto = string.Empty;
+
                 var lista = _repository.ListarTodos();
                 Funcionarios.Clear();
                 foreach (var f in lista)

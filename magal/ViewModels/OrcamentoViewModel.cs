@@ -266,7 +266,7 @@ namespace magal.ViewModels
                 {
                     if (GerarRelatorioPdf())
                     {
-                        MessageBox.Show("Proposta finalizada e salva com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show("Proposta finalizada e salva com sucesso!", "Sucesso", MessageBoxButton.OK);
                         NovoProjeto();
                     }
                 }
