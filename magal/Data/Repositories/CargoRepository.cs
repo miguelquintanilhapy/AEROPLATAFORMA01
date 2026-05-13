@@ -42,5 +42,105 @@ namespace magal.Data.Repositories
             }
             return lista;
         }
+
+        public void Inserir(Cargo cargo)
+        {
+            try
+            {
+                using (var conn = (MySql.Data.MySqlClient.MySqlConnection)DbConnectionFactory.CreateConnection())
+                {
+                    conn.Open();
+
+                    string sql = @"
+                INSERT INTO cargo
+                (
+                    nome,
+                    nivel,
+                    custo_medio_hora,
+                    descricao
+                )
+                VALUES
+                (
+                    @nome,
+                    @nivel,
+                    @custo,
+                    @descricao
+                )";
+
+                    using (var cmd = new MySql.Data.MySqlClient.MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@nome", cargo.nome);
+                        cmd.Parameters.AddWithValue("@nivel", cargo.nivel);
+                        cmd.Parameters.AddWithValue("@custo", cargo.custo_medio_hora);
+                        cmd.Parameters.AddWithValue("@descricao", cargo.descricao);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao inserir cargo: " + ex.Message);
+            }
+        }
+
+        public void Atualizar(Cargo cargo)
+        {
+            try
+            {
+                using (var conn = (MySql.Data.MySqlClient.MySqlConnection)DbConnectionFactory.CreateConnection())
+                {
+                    conn.Open();
+
+                    string sql = @"
+                UPDATE cargo
+                SET
+                    nome = @nome,
+                    nivel = @nivel,
+                    custo_medio_hora = @custo,
+                    descricao = @descricao
+                WHERE id_cargo = @id";
+
+                    using (var cmd = new MySql.Data.MySqlClient.MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@id", cargo.id_cargo);
+                        cmd.Parameters.AddWithValue("@nome", cargo.nome);
+                        cmd.Parameters.AddWithValue("@nivel", cargo.nivel);
+                        cmd.Parameters.AddWithValue("@custo", cargo.custo_medio_hora);
+                        cmd.Parameters.AddWithValue("@descricao", cargo.descricao);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao atualizar cargo: " + ex.Message);
+            }
+        }
+
+        public void Excluir(int idCargo)
+        {
+            try
+            {
+                using (var conn = (MySql.Data.MySqlClient.MySqlConnection)DbConnectionFactory.CreateConnection())
+                {
+                    conn.Open();
+
+                    string sql = "DELETE FROM cargo WHERE id_cargo = @id";
+
+                    using (var cmd = new MySql.Data.MySqlClient.MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@id", idCargo);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao excluir cargo: " + ex.Message);
+            }
+        }
     }
 }
