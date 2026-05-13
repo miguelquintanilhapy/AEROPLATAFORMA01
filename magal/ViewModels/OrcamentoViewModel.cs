@@ -17,6 +17,10 @@ namespace magal.ViewModels
         private bool _processando = false;
         private bool _isUpdating = false;
 
+        // Variáveis para controle de descarte e verificação
+        private Projeto _projetoOriginal;
+        private List<decimal> _custosValoresOriginais; 
+
         public Projeto ProjetoAtual
         {
             get => _projetoAtual;
@@ -32,21 +36,9 @@ namespace magal.ViewModels
         public ObservableCollection<Funcionario> Funcionarios { get; } = new ObservableCollection<Funcionario>();
         public ObservableCollection<Custo> CustosExtras { get; } = new ObservableCollection<Custo>();
 
-        public List<string> CategoriasCustos { get; } = new List<string>
-        {
-            "Equipamentos", "Licenças de Software", "Energia Elétrica",
-            "Transporte/Deslocamento", "Manutenção", "Aluguel/Estrutura", "EPIs/Ferramentas"
-        };
-
-        public List<string> OpcoesStatus { get; } = new List<string>
-        {
-            "Rascunho", "Orçado", "Aprovado", "Executando", "Concluído", "Cancelado"
-        };
-
-        public List<string> OpcoesTipo { get; } = new List<string>
-        {
-            "Serviço", "Produto", "Consultoria", "P&D"
-        };
+        public List<string> CategoriasCustos { get; } = new List<string> { "Equipamentos", "Licenças de Software", "Energia Elétrica", "Transporte/Deslocamento", "Manutenção", "Aluguel/Estrutura", "EPIs/Ferramentas" };
+        public List<string> OpcoesStatus { get; } = new List<string> { "Rascunho", "Orçado", "Aprovado", "Executando", "Concluído", "Cancelado" };
+        public List<string> OpcoesTipo { get; } = new List<string> { "Serviço", "Produto", "Consultoria", "P&D" };
 
         public bool BotaoAtivo => !_processando;
         public RelayCommand AdicionarTarefaCommand { get; }
@@ -54,6 +46,7 @@ namespace magal.ViewModels
         public RelayCommand AdicionarCustoCommand { get; }
         public RelayCommand DeletarCustoCommand { get; }
         public RelayCommand GerarPdfCommand { get; }
+        public RelayCommand DescartarCommand { get; }
 
         public OrcamentoViewModel()
         {
@@ -62,29 +55,44 @@ namespace magal.ViewModels
             AdicionarCustoCommand = new RelayCommand(_ => AdicionarCustoExtra());
             DeletarCustoCommand = new RelayCommand(param => DeletarCustoExtra(param as Custo));
             GerarPdfCommand = new RelayCommand(_ => ExecutarFluxoFinal());
+            DescartarCommand = new RelayCommand(_ => ExecutarDescarte());
 
             NovoProjeto();
             CarregarDadosIniciais();
         }
 
-        private void NovoProjeto()
+        private bool TemAlteracoes()
         {
-            _isUpdating = true;
-            var p = new Projeto
-            {
-                Orcamento = new Orcamento { margem_percentual = 20, percentual_impostos = 15 },
-                Tarefas = new ObservableCollection<Tarefa>(),
-                id_usuario = 1,
-                nome = "",
-                status = "Rascunho",
-                tipo = "Serviço",
-                data_criacao = DateTime.Now
-            };
-            CustosExtras.Clear();
-            ProjetoAtual = p;
-            _isUpdating = false;
-            AtualizarFinanceiro();
+            if (_projetoOriginal == null) return !string.IsNullOrWhiteSpace(ProjetoAtual.nome) || ProjetoAtual.Tarefas.Count > 0;
+
+            bool basicoAlterado = ProjetoAtual.nome != _projetoOriginal.nome ||
+                                  ProjetoAtual.id_cliente != _projetoOriginal.id_cliente ||
+                                  ProjetoAtual.status != _projetoOriginal.status ||
+                                  ProjetoAtual.tipo != _projetoOriginal.tipo ||
+                                  ProjetoAtual.Orcamento.margem_percentual != _projetoOriginal.Orcamento.margem_percentual ||
+                                  ProjetoAtual.Orcamento.percentual_impostos != _projetoOriginal.Orcamento.percentual_impostos;
+
+            if (basicoAlterado) return true;
+            if (ProjetoAtual.Tarefas.Count != _projetoOriginal.Tarefas.Count) return true;
+            if (CustosExtras.Count != _custosValoresOriginais.Count) return true;
+
+            return false;
         }
+
+        private void ExecutarDescarte()
+        {
+            var result = MessageBox.Show("Deseja descartar todas as alterações e voltar ao histórico?", "Atenção",
+                MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                var mainWindow = Application.Current.Windows.OfType<magal.MainWindow>().FirstOrDefault();
+                mainWindow?.AbrirHistorico();
+            }
+        }
+
+        public Visibility VisibilidadeBotaoDescartar =>
+            (_projetoOriginal != null) ? Visibility.Visible : Visibility.Collapsed;
 
         public void CarregarProjetoParaEdicao(Projeto projetoDoBanco)
         {
@@ -93,6 +101,25 @@ namespace magal.ViewModels
             try
             {
                 this.ProjetoAtual = projetoDoBanco;
+
+                // BACKUP PARA COMPARAÇÃO
+                _projetoOriginal = new Projeto
+                {
+                    nome = projetoDoBanco.nome,
+                    id_cliente = projetoDoBanco.id_cliente,
+                    status = projetoDoBanco.status,
+                    tipo = projetoDoBanco.tipo,
+                    Orcamento = new Orcamento
+                    {
+                        margem_percentual = projetoDoBanco.Orcamento.margem_percentual,
+                        percentual_impostos = projetoDoBanco.Orcamento.percentual_impostos
+                    },
+                    Tarefas = new ObservableCollection<Tarefa>(projetoDoBanco.Tarefas.ToList())
+                };
+
+                _custosValoresOriginais = projetoDoBanco.Custos?.Select(c => c.valor).ToList() ?? new List<decimal>();
+
+                OnPropertyChanged(nameof(VisibilidadeBotaoDescartar));
                 AssinarEventosOrcamento();
 
                 if (this.ProjetoAtual.id_cliente > 0)
@@ -118,6 +145,7 @@ namespace magal.ViewModels
                             AtualizarFinanceiro();
                     };
                 }
+
                 _isUpdating = false;
                 AtualizarFinanceiro();
             }
@@ -125,7 +153,81 @@ namespace magal.ViewModels
             {
                 MessageBox.Show("Erro ao carregar edição: " + ex.Message, "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-            finally { _isUpdating = false; }
+            finally
+            {
+                _isUpdating = false;
+            }
+        }
+
+        private void ExecutarFluxoFinal()
+        {
+            if (_processando) return;
+
+            // VERIFICAÇÃO DE ALTERAÇÕES
+            if (!TemAlteracoes())
+            {
+                MessageBox.Show("Nenhuma alteração foi detectada no projeto.", "Informação", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(ProjetoAtual.nome))
+            {
+                MessageBox.Show("O campo 'Nome do Projeto' deve ser preenchido.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (ProjetoAtual.Cliente == null)
+            {
+                MessageBox.Show("Selecione um cliente antes de finalizar.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var confirm = MessageBox.Show("Deseja salvar as alterações e gerar o PDF?", "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (confirm != MessageBoxResult.Yes) return;
+
+            try
+            {
+                _processando = true;
+                OnPropertyChanged(nameof(BotaoAtivo));
+
+                if (SalvarNoBancoSilencioso())
+                {
+                    if (GerarRelatorioPdf())
+                    {
+                        MessageBox.Show("Alterações salvas com sucesso!", "Sucesso", MessageBoxButton.OK);
+
+                        var mainWindow = Application.Current.Windows.OfType<magal.MainWindow>().FirstOrDefault();
+                        mainWindow?.AbrirHistorico();
+                    }
+                }
+            }
+            finally
+            {
+                _processando = false;
+                OnPropertyChanged(nameof(BotaoAtivo));
+            }
+        }
+
+        private void NovoProjeto()
+        {
+            _isUpdating = true;
+            var p = new Projeto
+            {
+                Orcamento = new Orcamento { margem_percentual = 20, percentual_impostos = 15 },
+                Tarefas = new ObservableCollection<Tarefa>(),
+                id_usuario = 1,
+                nome = "",
+                status = "Rascunho",
+                tipo = "Serviço",
+                
+
+                data_criacao = DateTime.Now
+            };
+            CustosExtras.Clear();
+            ProjetoAtual = p;
+            _projetoOriginal = null;
+            _isUpdating = false;
+            AtualizarFinanceiro();
         }
 
         private void AssinarEventosOrcamento()
@@ -149,10 +251,21 @@ namespace magal.ViewModels
             {
                 var listaClientes = new ClienteRepository().ListarTodos();
                 var listaFuncionarios = new FuncionarioRepository().ListarTodos();
+
                 Clientes.Clear();
                 foreach (var c in listaClientes) Clientes.Add(c);
+
                 Funcionarios.Clear();
                 foreach (var f in listaFuncionarios) Funcionarios.Add(f);
+
+                if (ProjetoAtual != null && _projetoOriginal == null)
+                {
+                    if (ProjetoAtual.Cliente == null && Clientes.Count > 0)
+                    {
+                        ProjetoAtual.Cliente = Clientes[0];
+                        ProjetoAtual.id_cliente = Clientes[0].id_cliente;
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -162,11 +275,19 @@ namespace magal.ViewModels
 
         private void AdicionarTarefa()
         {
-            var novaTarefa = new Tarefa { descricao = "", horas_estimadas = 0 };
+            var novaTarefa = new Tarefa
+            {
+                descricao = "",
+                horas_estimadas = 0,
+                Funcionario = Funcionarios.FirstOrDefault(),
+                id_funcionario = Funcionarios.FirstOrDefault()?.id_funcionario ?? 0
+            };
+
             novaTarefa.PropertyChanged += (s, e) => {
                 if (e.PropertyName == nameof(Tarefa.Funcionario) || e.PropertyName == nameof(Tarefa.horas_estimadas))
                     AtualizarFinanceiro();
             };
+
             ProjetoAtual.Tarefas.Add(novaTarefa);
             AtualizarFinanceiro();
         }
@@ -225,58 +346,6 @@ namespace magal.ViewModels
             finally { _isUpdating = false; }
         }
 
-        private void ExecutarFluxoFinal()
-        {
-            if (_processando) return;
-
-            // 1. Validação de Nome
-            if (string.IsNullOrWhiteSpace(ProjetoAtual.nome))
-            {
-                MessageBox.Show("Não é possível gerar a proposta. O campo 'Nome do Projeto' deve ser preenchido.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            // 2. Validação de Cliente
-            if (ProjetoAtual.Cliente == null)
-            {
-                MessageBox.Show("Por favor, selecione um cliente antes de finalizar a proposta.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            // --- NOVA VALIDAÇÃO DE ITENS VAZIOS ---
-            // Verifica se a lista de tarefas E a lista de custos extras estão vazias
-            if ((ProjetoAtual.Tarefas == null || ProjetoAtual.Tarefas.Count == 0) &&
-                (CustosExtras == null || CustosExtras.Count == 0))
-            {
-                MessageBox.Show("A proposta não contém nenhum item (Tarefa ou Custo). Adicione pelo menos um item para continuar.", "Atenção", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            // ---------------------------------------
-
-            // 3. Confirmação Final
-            var confirm = MessageBox.Show("Deseja salvar os dados e gerar o PDF da proposta agora?", "Confirmar Proposta", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (confirm != MessageBoxResult.Yes) return;
-
-            try
-            {
-                _processando = true;
-                OnPropertyChanged(nameof(BotaoAtivo));
-
-                if (SalvarNoBancoSilencioso())
-                {
-                    if (GerarRelatorioPdf())
-                    {
-                        MessageBox.Show("Proposta finalizada e salva com sucesso!", "Sucesso", MessageBoxButton.OK);
-                        NovoProjeto();
-                    }
-                }
-            }
-            finally
-            {
-                _processando = false;
-                OnPropertyChanged(nameof(BotaoAtivo));
-            }
-        }
         private bool SalvarNoBancoSilencioso()
         {
             try
