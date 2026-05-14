@@ -219,13 +219,16 @@ namespace magal.ViewModels
                 nome = "",
                 status = "Rascunho",
                 tipo = "Serviço",
-                
-
                 data_criacao = DateTime.Now
             };
-            CustosExtras.Clear();
+
             ProjetoAtual = p;
             _projetoOriginal = null;
+            CustosExtras.Clear();
+
+            AdicionarTarefa();     
+            AdicionarCustoExtra(); 
+
             _isUpdating = false;
             AtualizarFinanceiro();
         }
@@ -275,12 +278,13 @@ namespace magal.ViewModels
 
         private void AdicionarTarefa()
         {
+            var primeiroFunc = Funcionarios.FirstOrDefault();
             var novaTarefa = new Tarefa
             {
                 descricao = "",
                 horas_estimadas = 0,
-                Funcionario = Funcionarios.FirstOrDefault(),
-                id_funcionario = Funcionarios.FirstOrDefault()?.id_funcionario ?? 0
+                Funcionario = primeiroFunc,
+                id_funcionario = primeiroFunc?.id_funcionario ?? 0
             };
 
             novaTarefa.PropertyChanged += (s, e) => {

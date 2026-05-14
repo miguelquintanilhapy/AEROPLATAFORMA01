@@ -90,10 +90,15 @@ namespace magal.Views
                         {
                             if (reader.Read())
                             {
-                                // PADRÃO DE SISTEMA: Armazenar o usuário logado
-                                // Se você tiver uma classe estática de Sessão, alimente-a aqui
-                                // App.UsuarioLogado = new Usuario { ... };
+                                // Criamos o objeto usuario com os dados que vieram do banco
+                                var usuarioLogado = new Usuario
+                                {
+                                    id_usuario = Convert.ToInt32(reader["id_usuario"]),
+                                    nome = reader["nome"].ToString(),
+                                    email = reader["email"].ToString()
+                                };
 
+                                magal.Sessao.UsuarioLogado = usuarioLogado;
                                 ExecutarAnimacaoSaida();
                             }
                             else
