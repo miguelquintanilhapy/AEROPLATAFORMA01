@@ -301,7 +301,13 @@ namespace magal.ViewModels
         {
             if (tarefa != null && ProjetoAtual.Tarefas.Contains(tarefa))
             {
-                var result = MessageBox.Show($"Remover a tarefa '{tarefa.descricao}'?", "Atenção", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                string identificador = string.IsNullOrWhiteSpace(tarefa.descricao)
+                    ? "esta tarefa"
+                    : $"a tarefa '{tarefa.descricao}'";
+
+                var result = MessageBox.Show($"Deseja remover {identificador}?", "Atenção",
+                    MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
                 if (result == MessageBoxResult.Yes)
                 {
                     ProjetoAtual.Tarefas.Remove(tarefa);
@@ -325,7 +331,14 @@ namespace magal.ViewModels
         {
             if (custo != null && CustosExtras.Contains(custo))
             {
-                var result = MessageBox.Show($"Remover o custo '{custo.nome}'?", "Atenção", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                // Verifica se o nome está vazio ou nulo para personalizar a mensagem
+                string identificador = string.IsNullOrWhiteSpace(custo.nome)
+                    ? "este item"
+                    : $"o custo '{custo.nome}'";
+
+                var result = MessageBox.Show($"Deseja remover {identificador}?", "Atenção",
+                    MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
                 if (result == MessageBoxResult.Yes)
                 {
                     CustosExtras.Remove(custo);
