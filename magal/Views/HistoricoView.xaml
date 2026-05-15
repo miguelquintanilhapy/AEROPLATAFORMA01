@@ -148,19 +148,33 @@
                             </Style.Triggers>
                         </Style>
                     </DataGrid.Resources>
-
+                    
+                    
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="DATA" 
-                            Binding="{Binding data_criacao, StringFormat=dd/MM/yyyy}" 
-                            Width="120" 
-                            FontSize="14" 
-                            FontWeight="SemiBold" />
+            Binding="{Binding data_criacao, StringFormat=dd/MM/yyyy}" 
+            Width="110" 
+            FontSize="14" 
+            FontWeight="SemiBold" />
+
+                        <DataGridTextColumn Header="EXPIRA EM" 
+            Binding="{Binding DataExpiracao, StringFormat=dd/MM/yyyy}" 
+            Width="110" 
+            FontSize="14" 
+            FontWeight="SemiBold">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="{StaticResource AeroTextMuted}"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
 
                         <DataGridTextColumn Header="NOME DO PROJETO" 
-                            Binding="{Binding nome}" 
-                            Width="*" 
-                            FontSize="15" 
-                           FontWeight="SemiBold">
+            Binding="{Binding nome}" 
+            Width="*" 
+            FontSize="15" 
+           FontWeight="SemiBold">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
@@ -171,38 +185,38 @@
                         </DataGridTextColumn>
 
                         <DataGridTextColumn Header="CLIENTE" 
-                            Binding="{Binding Cliente.nome}" 
-                            Width="140" 
-                                             FontWeight="SemiBold"
-                            FontSize="14" />
+            Binding="{Binding Cliente.nome}" 
+            Width="140" 
+            FontWeight="SemiBold"
+            FontSize="14" />
 
                         <DataGridTextColumn Header="TIPO" 
-                            Binding="{Binding tipo}" 
-                            Width="140" 
-                                            FontWeight="SemiBold"
-                            FontSize="14" />
+            Binding="{Binding tipo}" 
+            Width="120" 
+            FontWeight="SemiBold"
+            FontSize="14" />
 
                         <DataGridTextColumn Header="VALOR DE VENDA" 
-                            Binding="{Binding Orcamento.valor_final, StringFormat='{}{0:C}', ConverterCulture=pt-BR}" 
-                            Width="180" 
-                            FontSize="16"  FontWeight="Bold">
+            Binding="{Binding Orcamento.valor_final, StringFormat='{}{0:C}', ConverterCulture=pt-BR}" 
+            Width="160" 
+            FontSize="16"  FontWeight="Bold">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
                                     <Setter Property="VerticalAlignment" Value="Center"/>
                                     <Setter Property="Foreground" Value="{StaticResource VerdeAero}"/>
-                                    <Setter Property="Padding" Value="0,0,30,0"/>
+                                    <Setter Property="Padding" Value="0,0,20,0"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
                         <DataGridTextColumn Header="STATUS" 
-                            Binding="{Binding status}" 
-                            Width="130" 
-                            FontSize="14" 
-                            FontWeight="SemiBold" />
+            Binding="{Binding status}" 
+            Width="120" 
+            FontSize="14" 
+            FontWeight="SemiBold" />
 
-                        <DataGridTemplateColumn Header="AÇÕES" Width="170">
+                        <DataGridTemplateColumn Header="AÇÕES" Width="150">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
