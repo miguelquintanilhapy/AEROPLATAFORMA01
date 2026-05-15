@@ -439,7 +439,7 @@
                HorizontalAlignment="Right" 
                Margin="0,0,0,4"/>
     
-    <TextBox Text="{Binding valor, UpdateSourceTrigger=PropertyChanged, Delay=500}"
+    <TextBox Text="{Binding valor, UpdateSourceTrigger=PropertyChanged}"
              FontSize="15" 
              FontWeight="Bold" 
              Foreground="{StaticResource AeroTextDark}"
