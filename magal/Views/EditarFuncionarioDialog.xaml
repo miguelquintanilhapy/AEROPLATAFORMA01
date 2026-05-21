@@ -123,7 +123,7 @@
         <ComboBox x:Name="ComboNivel"
                   Style="{StaticResource ComboStyle}"
                   Margin="0,0,0,14"
-                  FontWeight="SemiBold"/>
+                  FontWeight="SemiBold">
 
             <ComboBoxItem Content="Júnior"/>
             <ComboBoxItem Content="Pleno"/>
@@ -147,7 +147,7 @@
         <ComboBox x:Name="ComboTipoVinculo"
                   Style="{StaticResource ComboStyle}"
                   Margin="0,0,0,14"
-                  FontWeight="SemiBold"/>
+                  FontWeight="SemiBold">
 
             <ComboBoxItem Content="CLT"/>
             <ComboBoxItem Content="PJ"/>
@@ -162,7 +162,7 @@
         <ComboBox x:Name="ComboStatus"
                   Style="{StaticResource ComboStyle}"
                   Margin="0,0,0,24"
-                  FontWeight="SemiBold"/>
+                  FontWeight="SemiBold">
 
             <ComboBoxItem Content="Ativo"/>
             <ComboBoxItem Content="Inativo"/>

@@ -15,7 +15,7 @@ namespace magal.Models
         public DateTime data_criacao { get; set; } = DateTime.Now;
         public DateTime? data_conclusao_prevista { get; set; }
         public DateTime DataExpiracao => data_criacao.AddDays(Orcamento?.validade_dias ?? 0);
-        public bool EstaVencido => status == "Em Aberto" && DataExpiracao < DateTime.Today;
+        public bool EstaVencido => DataExpiracao.Date < DateTime.Today;
 
         // Objetos de navegação e coleções
         public Orcamento Orcamento { get; set; } = new Orcamento();

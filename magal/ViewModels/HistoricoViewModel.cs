@@ -156,13 +156,23 @@ namespace magal.ViewModels
                 _filtroTexto = string.Empty;
                 OnPropertyChanged(nameof(FiltroTexto));
 
-                // TODO: Substituir o ID fixo '1' pelo ID do usuário logado na sessão futuramente
                 var lista = _repository.BuscarTodosPorUsuario(1);
                 Projetos.Clear();
 
                 foreach (var p in lista)
                 {
+                    //Se o banco trouxe o orçamento nulo nesta query simplificada,
+                    // criamos uma instância vazia para evitar que a propriedade jogue a data para o passado.
+                    if (p.Orcamento == null)
+                    {
+                        p.Orcamento = new Orcamento();
+                    }
+
                     Projetos.Add(p);
+
+                    // Força o WPF a recalcular os gatilhos visuais da linha do DataGrid
+                    p.OnPropertyChanged(nameof(p.DataExpiracao));
+                    p.OnPropertyChanged(nameof(p.EstaVencido));
                 }
 
                 AtualizarIndicadores();
