@@ -59,15 +59,36 @@ namespace magal.Services
             {
                 container.Page(page =>
                 {
-                    page.Size(PageSizes.A4.Landscape()); // Modo Paisagem
+                    page.Size(PageSizes.A4.Landscape());
                     page.Margin(1.5f, Unit.Centimetre);
                     page.PageColor(Colors.White);
-
-                    // ALTERADO: Aumentada a fonte padrão do relatório para maior legibilidade
                     page.DefaultTextStyle(x => x.FontSize(11).FontFamily("Arial"));
 
-                    page.Header().Column(col => ConstruirCabecalhoRelatorio(col, projetos.Count));
+                    page.Header().Column(col => ConstruirCabecalhoRelatorio(col, "PROJETOS", projetos.Count));
                     page.Content().PaddingTop(16).Column(col => ConstruirTabelaRelatorioProjetos(col, projetos));
+                    page.Footer().BorderTop(1).BorderColor("#E0E0E0").PaddingTop(8).Row(ConstruirRodape);
+                });
+            }).GeneratePdf(caminhoArquivo);
+        }
+
+        /// <summary>
+        /// NOVO: Gera e salva um relatório gerencial em PDF contendo a listagem tabular dos funcionários filtrados.
+        /// </summary>
+        public void GerarRelatorioTabelaFuncionarios(List<Funcionario> funcionarios, string caminhoArquivo)
+        {
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4.Landscape()); // Modo Paisagem para leitura confortável
+                    page.Margin(1.5f, Unit.Centimetre);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(11).FontFamily("Arial"));
+
+                    page.Header().Column(col => ConstruirCabecalhoRelatorio(col, "FUNCIONÁRIOS", funcionarios.Count));
+                    page.Content().PaddingTop(16).Column(col => ConstruirTabelaRelatorioFuncionarios(col, funcionarios));
                     page.Footer().BorderTop(1).BorderColor("#E0E0E0").PaddingTop(8).Row(ConstruirRodape);
                 });
             }).GeneratePdf(caminhoArquivo);
@@ -224,13 +245,13 @@ namespace magal.Services
             });
         }
 
-        private void ConstruirCabecalhoRelatorio(ColumnDescriptor col, int totalRegistros)
+        private void ConstruirCabecalhoRelatorio(ColumnDescriptor col, string tipoRelatorio, int totalRegistros)
         {
             col.Item().Background("#1E3A5F").Padding(14).Row(row =>
             {
                 row.RelativeItem().Column(c =>
                 {
-                    c.Item().Text("RELATÓRIO GERENCIAL DE PROJETOS").FontSize(18).Bold().FontColor(Colors.White);
+                    c.Item().Text($"RELATÓRIO GERENCIAL DE {tipoRelatorio}").FontSize(18).Bold().FontColor(Colors.White);
                     c.Item().Text("AERO CONCEPTS — SISTEMA INTERNO DE HISTÓRICO").FontSize(10).FontColor("#A8C4E0");
                 });
 
@@ -246,7 +267,6 @@ namespace magal.Services
         {
             col.Item().Table(table =>
             {
-                // ALTERADO: Distribuição das colunas ajustada para acomodar letras maiores sem quebras drásticas
                 table.ColumnsDefinition(cols =>
                 {
                     cols.ConstantColumn(45);   // ID
@@ -258,7 +278,6 @@ namespace magal.Services
                     cols.RelativeColumn(2.2f); // Valor Final
                 });
 
-                // ALTERADO: Fonte do cabeçalho subiu para 9.5 e padding aumentou para 8
                 table.Header(header =>
                 {
                     header.Cell().Background("#2D3748").Padding(8).Text("ID").FontColor(Colors.White).Bold().FontSize(9.5f);
@@ -275,7 +294,6 @@ namespace magal.Services
                 {
                     string corFundo = listraAlternada ? "#F8FAFC" : "#FFFFFF";
 
-                    // ALTERADO: Fonte das células aumentou para 10 e padding aumentou para 8 (espaçamento vertical maior para idosos)
                     table.Cell().Background(corFundo).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).AlignCenter().Text(p.id_projeto.ToString()).FontSize(10);
                     table.Cell().Background(corFundo).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).Text(p.nome ?? "-").FontSize(10).Bold();
                     table.Cell().Background(corFundo).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).Text(p.Cliente?.nome ?? "Consumidor Final").FontSize(10);
@@ -295,7 +313,6 @@ namespace magal.Services
             decimal totalFaturado = projetos.Where(p => p.Orcamento != null).Sum(p => p.Orcamento.valor_final);
             decimal totalLucro = projetos.Where(p => p.Orcamento != null).Sum(p => p.Orcamento.valor_margem);
 
-            // ALTERADO: Aumentado o tamanho do bloco de totais e o texto interno para 10
             col.Item().PaddingTop(12).AlignRight().Width(280).Table(t =>
             {
                 t.ColumnsDefinition(c => { c.RelativeColumn(1); c.RelativeColumn(1); });
@@ -308,6 +325,49 @@ namespace magal.Services
             });
         }
 
+        private void ConstruirTabelaRelatorioFuncionarios(ColumnDescriptor col, List<Funcionario> funcionarios)
+        {
+            col.Item().Table(table =>
+            {
+                table.ColumnsDefinition(cols =>
+                {
+                    cols.ConstantColumn(50);   // ID
+                    cols.RelativeColumn(4);    // Nome Completo
+                    cols.RelativeColumn(2.5f); // Tipo de Vínculo
+                    cols.RelativeColumn(2.2f); // Custo/Hora -> Agora com mais espaço interno
+                    cols.RelativeColumn(1.5f); // Status -> Isolado na ponta direita
+                });
+
+                table.Header(header =>
+                {
+                    header.Cell().Background("#2D3748").Padding(8).Text("ID").FontColor(Colors.White).Bold().FontSize(9.5f);
+                    header.Cell().Background("#2D3748").Padding(8).Text("NOME COMPLETO").FontColor(Colors.White).Bold().FontSize(9.5f);
+                    header.Cell().Background("#2D3748").Padding(8).Text("TIPO DE VÍNCULO").FontColor(Colors.White).Bold().FontSize(9.5f);
+                    header.Cell().Background("#2D3748").Padding(8).AlignLeft().Text("CUSTO/HORA").FontColor(Colors.White).Bold().FontSize(9.5f);
+                    header.Cell().Background("#2D3748").Padding(8).Text("STATUS").FontColor(Colors.White).Bold().FontSize(9.5f);
+                });
+
+                bool listraAlternada = false;
+                foreach (var f in funcionarios)
+                {
+                    string corFundo = listraAlternada ? "#F8FAFC" : "#FFFFFF";
+
+                    table.Cell().Background(corFundo).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).AlignCenter().Text(f.id_funcionario.ToString()).FontSize(10);
+                    table.Cell().Background(corFundo).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).Text(f.nome ?? "-").FontSize(10).Bold();
+                    table.Cell().Background(corFundo).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).Text(f.tipo_vinculo ?? "-").FontSize(10);
+
+                    // Puxando o valor correto direto do funcionário como combinado!
+                    decimal custoHora = f.custo_hora;
+                    table.Cell().Background(corFundo).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).AlignLeft().Text(custoHora.ToString("C2", _ptBR)).FontSize(10);
+
+                    // Agora usando a cor exata da sua View XAML
+                    string corStatus = (f.status?.ToLower() == "ativo") ? "#009140" : "#EF4444";
+                    table.Cell().Background(corFundo).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).Text(f.status?.ToUpper() ?? "N/D").FontSize(10).Bold().FontColor(corStatus);
+
+                    listraAlternada = !listraAlternada;
+                }
+            });
+        }
         private void ConstruirRodape(RowDescriptor row)
         {
             row.RelativeItem().Text("Aero Concepts — Tecnologia em Engenharia Aeronáutica").FontSize(8).FontColor("#AAAAAA");
