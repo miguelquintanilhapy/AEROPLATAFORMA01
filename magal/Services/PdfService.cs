@@ -325,6 +325,67 @@ namespace magal.Services
             });
         }
 
+
+
+        /// <summary>
+        /// NOVO: Gera e salva um relatório gerencial em PDF contendo a listagem tabular dos cargos.
+        /// </summary>
+        public void GerarRelatorioTabelaCargos(List<Cargo> cargos, string caminhoArquivo)
+        {
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4.Landscape()); // Modo Paisagem para leitura confortável
+                    page.Margin(1.5f, Unit.Centimetre);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(11).FontFamily("Arial"));
+
+                    page.Header().Column(col => ConstruirCabecalhoRelatorio(col, "CARGOS", cargos.Count));
+                    page.Content().PaddingTop(16).Column(col => ConstruirTabelaRelatorioCargos(col, cargos));
+                    page.Footer().BorderTop(1).BorderColor("#E0E0E0").PaddingTop(8).Row(ConstruirRodape);
+                });
+            }).GeneratePdf(caminhoArquivo);
+        }
+
+        private void ConstruirTabelaRelatorioCargos(ColumnDescriptor col, List<Cargo> cargos)
+        {
+            col.Item().Table(table =>
+            {
+                table.ColumnsDefinition(cols =>
+                {
+                    cols.ConstantColumn(60);   // ID
+                    cols.RelativeColumn(6);    // Nome do Cargo
+                    cols.RelativeColumn(3);    // Custo Médio/Hora (Com bastante espaço e respiro)
+                });
+
+                table.Header(header =>
+                {
+                    header.Cell().Background("#2D3748").Padding(8).Text("ID").FontColor(Colors.White).Bold().FontSize(9.5f);
+                    header.Cell().Background("#2D3748").Padding(8).Text("NOME DO CARGO").FontColor(Colors.White).Bold().FontSize(9.5f);
+                    header.Cell().Background("#2D3748").Padding(8).AlignCenter().Text("CUSTO MÉDIO / HORA").FontColor(Colors.White).Bold().FontSize(9.5f);
+                });
+
+                bool listraAlternada = false;
+                foreach (var c in cargos)
+                {
+                    string corFundo = listraAlternada ? "#F8FAFC" : "#FFFFFF";
+
+                    table.Cell().Background(corFundo).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).AlignCenter().Text(c.id_cargo.ToString()).FontSize(10);
+                    table.Cell().Background(corFundo).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).Text(c.nome ?? "-").FontSize(10).Bold();
+
+                    // Exibe o custo hora formatado em PT-BR com a cor VerdeAero da marca
+                    decimal custoHora = c.custo_medio_hora;
+                    table.Cell().Background(corFundo).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).AlignCenter()
+                        .Text(custoHora.ToString("C2", _ptBR)).FontSize(10).Bold().FontColor("#009140");
+
+                    listraAlternada = !listraAlternada;
+                }
+            });
+        }
+
         private void ConstruirTabelaRelatorioFuncionarios(ColumnDescriptor col, List<Funcionario> funcionarios)
         {
             col.Item().Table(table =>
