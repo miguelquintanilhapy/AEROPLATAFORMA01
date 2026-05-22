@@ -134,11 +134,7 @@
 
         <!-- CUSTO -->
         <TextBlock Text="CUSTO/HORA (R$)"
-                   Style="{StaticResource LabelStyle}"/>
-
-        <TextBox x:Name="TxtCustoHora"
-                 Style="{StaticResource InputStyle}"
-                 Margin="0,0,0,14"/>
+                   Style="{StaticResource LabelStyle}"/>       
 
         <!-- TIPO VÍNCULO -->
         <TextBlock Text="TIPO VÍNCULO"
