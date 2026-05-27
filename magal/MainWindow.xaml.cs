@@ -78,6 +78,11 @@ namespace magal
             MainContent.Content = _historicoView;
         }
 
+        private void BtnGraficos_Click(object sender, RoutedEventArgs e)
+        {
+            MainContent.Content = new GraficoHistoricoView();
+        }
+
         public void AbrirGerenciamento()
         {
             MainContent.Content = new GerenciamentoView();

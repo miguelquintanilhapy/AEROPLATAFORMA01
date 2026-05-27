@@ -1,0 +1,267 @@
+<UserControl x:Class="magal.Views.GraficoHistoricoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             mc:Ignorable="d"
+             Language="pt-BR"
+             d:DesignHeight="900"
+             d:DesignWidth="1200"
+             Background="#F0F4FA">
+
+    <UserControl.Resources>
+
+        <SolidColorBrush x:Key="AzulAero" Color="#131C49"/>
+        <SolidColorBrush x:Key="AeroAccent" Color="#3B82F6"/>
+        <SolidColorBrush x:Key="AeroDanger" Color="#EF4444"/>
+        <SolidColorBrush x:Key="AeroTextMuted" Color="#64748B"/>
+        <SolidColorBrush x:Key="AeroTextHint" Color="#94A3B8"/>
+        <SolidColorBrush x:Key="AeroBorder" Color="#E2E8F0"/>
+        <SolidColorBrush x:Key="VerdeAero" Color="#009140"/>
+
+        <Style x:Key="PrimaryBtn" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AzulAero}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Padding="14,7">
+
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+
+                                <Setter TargetName="Bd"
+                                        Property="Background"
+                                        Value="#1E3A8A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+        <Grid Margin="32,28">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- HEADER -->
+            <Grid Grid.Row="0"
+                  Height="80"
+                  Margin="0,0,0,10">
+
+                <TextBlock Text="Dashboard Financeiro"
+                           FontSize="28"
+                           FontWeight="Bold"
+                           Foreground="{StaticResource AzulAero}"
+                           VerticalAlignment="Center"/>
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center">
+
+                    <Button Command="{Binding AtualizarCommand}"
+                            Style="{StaticResource PrimaryBtn}">
+
+                        <StackPanel Orientation="Horizontal">
+
+                            <TextBlock Text="&#xE72C;"
+                                       FontFamily="Segoe MDL2 Assets"
+                                       FontSize="12"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,8,0"/>
+
+                            <TextBlock Text="ATUALIZAR GRÁFICOS"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                </StackPanel>
+
+            </Grid>
+
+            <!-- CARDS -->
+            <UniformGrid Grid.Row="1"
+                         Columns="3"
+                         Margin="0,0,0,25">
+
+                <!-- Projetos -->
+                <Border Background="White"
+                        CornerRadius="12"
+                        Margin="0,0,10,0"
+                        Padding="20,15"
+                        BorderThickness="1"
+                        BorderBrush="{StaticResource AeroBorder}">
+
+                    <StackPanel>
+
+                        <TextBlock Text="PROJETOS TOTAIS"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource AeroTextHint}"
+                                   Margin="0,0,0,5"/>
+
+                        <TextBlock Text="{Binding QuantidadeProjetos}"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource AzulAero}"/>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Valor -->
+                <Border Background="{StaticResource AzulAero}"
+                        CornerRadius="12"
+                        Margin="5,0"
+                        Padding="20,15">
+
+                    <StackPanel>
+
+                        <TextBlock Text="VALOR TOTAL DAS PROPOSTAS"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   Foreground="#93C5FD"
+                                   Margin="0,0,0,5"/>
+
+                        <TextBlock Text="{Binding TotalFinanceiro}"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Foreground="White"/>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Lucro -->
+                <Border Background="White"
+                        CornerRadius="12"
+                        Margin="10,0,0,0"
+                        Padding="20,15"
+                        BorderThickness="1"
+                        BorderBrush="{StaticResource AeroBorder}">
+
+                    <StackPanel>
+
+                        <TextBlock Text="LUCRO TOTAL ESTIMADO"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource AeroTextHint}"
+                                   Margin="0,0,0,5"/>
+
+                        <TextBlock Text="{Binding TotalLucro}"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource VerdeAero}"/>
+
+                    </StackPanel>
+                </Border>
+
+            </UniformGrid>
+
+            <!-- TÍTULO -->
+            <StackPanel Grid.Row="2"
+                        Margin="0,0,0,15">
+
+                <TextBlock Text="ANÁLISE VISUAL DOS PROJETOS"
+                           FontSize="11"
+                           FontWeight="Bold"
+                           Foreground="{StaticResource AzulAero}"
+                           Margin="0,0,0,4"/>
+
+                <TextBlock Text="Distribuição por status e tipo"
+                           FontSize="13"
+                           Foreground="{StaticResource AeroTextMuted}"/>
+
+            </StackPanel>
+
+            <!-- GRÁFICOS -->
+            <Grid Grid.Row="3">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- STATUS -->
+                <Border Grid.Column="0"
+                        Background="White"
+                        CornerRadius="16"
+                        BorderThickness="1"
+                        BorderBrush="{StaticResource AeroBorder}"
+                        Padding="20">
+
+                    <StackPanel>
+
+                        <TextBlock Text="PROJETOS POR STATUS"
+                                   FontSize="15"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource AzulAero}"
+                                   Margin="0,0,0,20"/>
+
+                        <lvc:PieChart Series="{Binding SeriesStatus}"
+                                      LegendLocation="Bottom"
+                                      HoverPushOut="15"
+                                      InnerRadius="30"
+                                      Height="420"/>
+
+                    </StackPanel>
+
+                </Border>
+
+                <!-- TIPO -->
+                <Border Grid.Column="2"
+                        Background="White"
+                        CornerRadius="16"
+                        BorderThickness="1"
+                        BorderBrush="{StaticResource AeroBorder}"
+                        Padding="20">
+
+                    <StackPanel>
+
+                        <TextBlock Text="PROJETOS POR TIPO"
+                                   FontSize="15"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource AzulAero}"
+                                   Margin="0,0,0,20"/>
+
+                        <lvc:PieChart Series="{Binding SeriesTipo}"
+                                      LegendLocation="Bottom"
+                                      HoverPushOut="15"
+                                      InnerRadius="30"
+                                      Height="420"/>
+
+                    </StackPanel>
+
+                </Border>
+
+            </Grid>
+
+        </Grid>
+
+    </ScrollViewer>
+
+</UserControl>
