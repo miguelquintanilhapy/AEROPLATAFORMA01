@@ -110,9 +110,13 @@
                 <DataGrid ItemsSource="{Binding ClientesView}" 
                           AutoGenerateColumns="False" IsReadOnly="True"
                           Background="Transparent" BorderThickness="0"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          CanUserResizeColumns="False"
+                          CanUserReorderColumns="False"
                           GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9"
                           HeadersVisibility="Column" 
-                          RowHeight="60" CanUserAddRows="False" SelectionMode="Single"
+                          RowHeight="60" SelectionMode="Single"
                           FontSize="14">
 
                     <DataGrid.Resources>

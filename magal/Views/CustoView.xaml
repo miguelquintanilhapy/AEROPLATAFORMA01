@@ -111,8 +111,12 @@
                           AutoGenerateColumns="False" IsReadOnly="True"
                           Background="Transparent" BorderThickness="0"
                           GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9"
-                          HeadersVisibility="Column" 
-                          RowHeight="60" CanUserAddRows="False" SelectionMode="Single"
+                          HeadersVisibility="Column"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          CanUserResizeColumns="False"
+                          CanUserReorderColumns="False"
+                          RowHeight="60" SelectionMode="Single"
                           FontSize="14">
 
                     <DataGrid.Resources>
