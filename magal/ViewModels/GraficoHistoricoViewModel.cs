@@ -129,10 +129,9 @@ namespace magal.ViewModels
             AtualizarCommand = new RelayCommand(_ => CarregarDados());
             Formatter = value => value.ToString("C0", _ptBR);
 
-            _periodoSelecionado = "6 Meses";
-            _categoriaMargemSelecionada = "Margem Média por tipo de projeto";
-
-            CarregarDados();
+            // CORREÇÃO: Atribuição direta nas propriedades públicas para disparar o set, OnPropertyChanged e as atualizações de tela
+            PeriodoSelecionado = Periodos.FirstOrDefault(p => p.Equals("30 Dias", StringComparison.OrdinalIgnoreCase)) ?? "30 Dias";
+            CategoriaMargemSelecionada = CategoriasMargem.FirstOrDefault(c => c.Equals("Margem Média por periodo", StringComparison.OrdinalIgnoreCase)) ?? "Margem Média por periodo";
         }
 
         #endregion
