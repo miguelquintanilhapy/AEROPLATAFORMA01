@@ -570,7 +570,7 @@ namespace magal.ViewModels
 
             FiltrarItensPorCategoria();
 
-            _itemSelecionado = _listaMestraCustos.FirstOrDefault(x => x.id_catalogo_custo == this.id_catalogo_custo)?? _listaMestraCustos.FirstOrDefault(x => x.nome == this.nome && x.categoria == this.categoria);
+            _itemSelecionado = _listaMestraCustos.FirstOrDefault(x => x.id_catalogo_custo == this.id_catalogo_custo) ?? _listaMestraCustos.FirstOrDefault(x => x.nome == this.nome && x.categoria == this.categoria);
         }
 
         public ObservableCollection<CatalogoCusto> ItensFiltrados

@@ -29,7 +29,7 @@ namespace magal.Views
             if (temCaractereInvalido)
             {
                 MessageBox.Show("Este campo aceita apenas números positivos.", "Entrada Inválida", MessageBoxButton.OK, MessageBoxImage.Information);
-                e.Handled = true; // Bloqueia a entrada da letra/símbolo
+                e.Handled = true; 
             }
         }
 

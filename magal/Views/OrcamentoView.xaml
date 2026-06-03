@@ -47,7 +47,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-       
+
 
         <Style x:Key="SecondaryBtn" TargetType="Button">
             <Setter Property="Background"   Value="{StaticResource AeroTextMuted}"/>
@@ -295,7 +295,7 @@
                                                FontWeight="Bold" HorizontalAlignment="Center"
                                                VerticalAlignment="Center"/>
                                 </Border>
-                               
+
                                 <TextBlock Text="COMPOSIÇÃO DE MÃO DE OBRA" FontSize="12"
                                            FontWeight="Bold" Foreground="{StaticResource AzulAero}"
                                            VerticalAlignment="Center"/>
@@ -418,7 +418,7 @@
                                                                   Cursor="Hand" 
                                                                   BorderThickness="0.4" 
                                                                   BorderBrush="{StaticResource AeroBorder}"
-                                                                  Background="#F8FAFC"/>    
+                                                                  Background="#F8FAFC"/>
                                                     </StackPanel>
 
                                                     <StackPanel Grid.Column="1" VerticalAlignment="Bottom" Margin="10,0">
