@@ -527,11 +527,13 @@
 
                             <StackPanel Grid.Row="0" Grid.Column="1" Margin="10,0,0,14">
                                 <TextBlock Text="PRAZO DE ENTREGA" FontSize="12" FontWeight="Bold" 
-                           Foreground="{StaticResource AeroTextDark}" Margin="0,0,0,4"/>
-                                <TextBox Text="{Binding ProjetoAtual.Orcamento.prazo_entrega, UpdateSourceTrigger=PropertyChanged}"
-                         FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AeroTextDark}"
-                         Background="Transparent" BorderThickness="1" BorderBrush="{StaticResource AeroBorder}" 
-                         Padding="8,0" Height="40" VerticalContentAlignment="Center"/>
+               Foreground="{StaticResource AeroTextDark}" Margin="0,0,0,4"/>
+
+                                <DatePicker SelectedDate="{Binding ProjetoAtual.Orcamento.prazo_entrega, UpdateSourceTrigger=PropertyChanged}"
+                FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AeroTextDark}"
+                Background="Transparent" BorderThickness="1" BorderBrush="{StaticResource AeroBorder}" 
+                Padding="8,0" Height="40" VerticalContentAlignment="Center"
+                Language="pt-BR"/>
                             </StackPanel>
 
                             <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,4,0,0">

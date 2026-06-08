@@ -220,21 +220,15 @@ namespace magal.Services
                     c.Item().Text($"Cód. Projeto: PRJ-{projeto.id_projeto}").FontSize(8).FontColor("#555555");
                 });
 
-                row.ConstantItem(15);
-
-                // ADICIONADO: Esse item relativo vazio vai empurrar tudo o que vem depois para a extrema direita
-                row.RelativeItem();
-
-                // Sua coluna de datas (agora colada na borda direita)
                 row.ConstantItem(120).Column(c =>
                 {
-                    c.Item().Text("DATA DE EMISSÃO").FontSize(7).FontColor("#999999").Bold();
-                    c.Item().Text(projeto.Orcamento?.data_criacao.ToString("dd/MM/yyyy") ?? DateTime.Now.ToString("dd/MM/yyyy")).FontSize(11).Bold().FontColor("#1E3A5F");
+                    c.Item().AlignRight().Text("DATA DE EMISSÃO").FontSize(7).FontColor("#999999").Bold();
+                    c.Item().AlignRight().Text(projeto.Orcamento?.data_criacao.ToString("dd/MM/yyyy") ?? DateTime.Now.ToString("dd/MM/yyyy")).FontSize(11).Bold().FontColor("#1E3A5F");
 
                     c.Item().PaddingTop(4);
 
-                    c.Item().Text("VÁLIDO ATÉ").FontSize(7).FontColor("#999999").Bold();
-                    c.Item().Text(projeto.DataExpiracao.ToString("dd/MM/yyyy")).FontSize(11).Bold().FontColor("#EF4444");
+                    c.Item().AlignRight().Text("VÁLIDO ATÉ").FontSize(7).FontColor("#999999").Bold();
+                    c.Item().AlignRight().Text(projeto.DataExpiracao.ToString("dd/MM/yyyy")).FontSize(11).Bold().FontColor("#EF4444");
                 });
             });
         }
@@ -320,8 +314,11 @@ namespace magal.Services
                     header.Cell().Background("#1E3A5F").Padding(8).Text("FORMA DE PAGAMENTO").FontColor(Colors.White).Bold().FontSize(9);
                 });
 
+                // ALTERADO AQUI: Verifica se há data e formata para o padrão brasileiro, senão exibe "A combinar"
+                string prazoExibicao = projeto.Orcamento?.prazo_entrega?.ToString("dd/MM/yyyy") ?? "A combinar";
+
                 tCondicoes.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8)
-                    .Text(projeto.Orcamento?.prazo_entrega ?? "A combinar").FontSize(9);
+                    .Text(prazoExibicao).FontSize(9);
 
                 tCondicoes.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8)
                     .Text(projeto.Orcamento?.forma_pagamento ?? "A combinar").FontSize(9);
@@ -394,7 +391,7 @@ namespace magal.Services
             });
 
             // 6. BLOCO DE ASSINATURAS 
-            col.Item().PaddingTop(40).Row(row =>
+            col.Item().PaddingTop(80).Row(row =>
             {
                 // Assinatura da Empresa Emitente
                 row.RelativeItem().Column(assinaturaEmpresa =>

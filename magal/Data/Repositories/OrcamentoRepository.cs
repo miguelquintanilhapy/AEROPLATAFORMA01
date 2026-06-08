@@ -90,7 +90,7 @@ namespace magal.Data.Repositories
 
                                 // Mapeamento dos novos campos comerciais
                                 forma_pagamento = reader["forma_pagamento"] != DBNull.Value ? reader["forma_pagamento"].ToString() : string.Empty,
-                                prazo_entrega = reader["prazo_entrega"] != DBNull.Value ? reader["prazo_entrega"].ToString() : string.Empty,
+                                prazo_entrega = reader["prazo_entrega"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["prazo_entrega"]) : null,
                                 observacoes = reader["observacoes"] != DBNull.Value ? reader["observacoes"].ToString() : string.Empty
                             };
                         }

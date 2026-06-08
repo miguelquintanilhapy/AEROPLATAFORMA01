@@ -34,9 +34,7 @@ namespace magal.Models
             set { _validade_dias = value; OnPropertyChanged(); }
         }
 
-        // =========================================================================
-        // NOVOS CAMPOS PARA PROFISSIONALIZAÇÃO DO PDF (ALINHADOS COM O BANCO)
-        // =========================================================================
+  
         private string _forma_pagamento;
         public string forma_pagamento
         {
@@ -44,8 +42,8 @@ namespace magal.Models
             set { _forma_pagamento = value; OnPropertyChanged(); }
         }
 
-        private string _prazo_entrega;
-        public string prazo_entrega
+        private DateTime? _prazo_entrega; 
+        public DateTime? prazo_entrega   
         {
             get => _prazo_entrega;
             set { _prazo_entrega = value; OnPropertyChanged(); }

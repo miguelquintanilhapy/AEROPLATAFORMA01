@@ -337,7 +337,7 @@ namespace magal.ViewModels
                     percentual_impostos = 15,
                     validade_dias = 15,
                     forma_pagamento = "PIX", 
-                    prazo_entrega = "",
+                    prazo_entrega = null,
                     observacoes = ""
                 },
                 Tarefas = new ObservableCollection<Tarefa>(),

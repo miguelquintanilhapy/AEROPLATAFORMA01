@@ -84,7 +84,7 @@ namespace magal.Data.Repositories
 
                             // Parâmetros novos com tratamento para nulo
                             cmd.Parameters.AddWithValue("@formaPagamento", projeto.Orcamento.forma_pagamento ?? string.Empty);
-                            cmd.Parameters.AddWithValue("@prazoEntrega", projeto.Orcamento.prazo_entrega ?? string.Empty);
+                            cmd.Parameters.AddWithValue("@prazoEntrega", projeto.Orcamento.prazo_entrega.HasValue ? (object)projeto.Orcamento.prazo_entrega.Value : DBNull.Value);
                             cmd.Parameters.AddWithValue("@obs", projeto.Orcamento.observacoes ?? string.Empty);
 
                             cmd.ExecuteNonQuery();
@@ -199,7 +199,7 @@ namespace magal.Data.Repositories
 
                                 // Mapeamento dos novos campos de texto com verificação de nulo
                                 forma_pagamento = reader["forma_pagamento"] != DBNull.Value ? reader["forma_pagamento"].ToString() : string.Empty,
-                                prazo_entrega = reader["prazo_entrega"] != DBNull.Value ? reader["prazo_entrega"].ToString() : string.Empty,
+                                prazo_entrega = reader["prazo_entrega"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["prazo_entrega"]) : null,
                                 observacoes = reader["observacoes"] != DBNull.Value ? reader["observacoes"].ToString() : string.Empty
                             };
                         }
@@ -338,7 +338,7 @@ namespace magal.Data.Repositories
 
                                     // Mapeamento dos novos campos na listagem geral
                                     forma_pagamento = reader["forma_pagamento"] != DBNull.Value ? reader["forma_pagamento"].ToString() : string.Empty,
-                                    prazo_entrega = reader["prazo_entrega"] != DBNull.Value ? reader["prazo_entrega"].ToString() : string.Empty,
+                                    prazo_entrega = reader["prazo_entrega"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["prazo_entrega"]) : null,
                                     observacoes = reader["observacoes"] != DBNull.Value ? reader["observacoes"].ToString() : string.Empty
                                 };
                             }
@@ -350,7 +350,7 @@ namespace magal.Data.Repositories
                                     valor_margem = 0,
                                     validade_dias = 15,
                                     forma_pagamento = string.Empty,
-                                    prazo_entrega = string.Empty,
+                                    prazo_entrega = null,
                                     observacoes = string.Empty
                                 };
                             }

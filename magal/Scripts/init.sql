@@ -104,13 +104,13 @@
 --    valor_margem DECIMAL(18, 2) DEFAULT 0,
 --    valor_final DECIMAL(18, 2) DEFAULT 0,
 --    validade_dias INT DEFAULT 15,
-    
+
 --    -- NOVOS CAMPOS PARA PROFISSIONALIZAR O PDF --
 --    forma_pagamento VARCHAR(150) NULL,
---    prazo_entrega VARCHAR(50) NULL,
+--    prazo_entrega DATE NULL, -- ALTERADO: De VARCHAR(50) para DATE
 --    observacoes TEXT NULL,
---    ---------------------------------------------
-    
+--    
+
 --    data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
 --    FOREIGN KEY (id_projeto) REFERENCES projeto(id_projeto) ON DELETE CASCADE
 --);
