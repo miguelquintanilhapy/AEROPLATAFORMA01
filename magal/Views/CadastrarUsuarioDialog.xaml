@@ -23,9 +23,50 @@
             <Setter Property="Padding" Value="10,0"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="BorderBrush" Value="{StaticResource AeroBorder}"/>
-            <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Background" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Bd"
+                                BorderBrush="{StaticResource AeroBorder}"
+                                BorderThickness="1.5"
+                                Background="{TemplateBinding Background}">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PasswordStyle" TargetType="PasswordBox">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border x:Name="Bd"
+                                BorderBrush="{StaticResource AeroBorder}"
+                                BorderThickness="1.5"
+                                Background="{TemplateBinding Background}">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style x:Key="PrimaryBtn" TargetType="Button">
@@ -69,22 +110,12 @@
 
         <TextBlock Text="SENHA" Style="{StaticResource LabelStyle}"/>
         <PasswordBox x:Name="TxtSenha" 
-                     Height="36" 
-                     Padding="10,0" 
-                     VerticalContentAlignment="Center"
-                     BorderBrush="{StaticResource AeroBorder}"
-                     BorderThickness="1"
-                     Background="White"
+                     Style="{StaticResource PasswordStyle}"
                      Margin="0,0,0,14"/>
 
         <TextBlock Text="CONFIRMAR SENHA" Style="{StaticResource LabelStyle}"/>
         <PasswordBox x:Name="TxtConfirmarSenha" 
-                     Height="36" 
-                     Padding="10,0" 
-                     VerticalContentAlignment="Center"
-                     BorderBrush="{StaticResource AeroBorder}"
-                     BorderThickness="1"
-                     Background="White"
+                     Style="{StaticResource PasswordStyle}"
                      Margin="0,0,0,24"/>
 
         <Button Content="SALVAR USUÁRIO"
