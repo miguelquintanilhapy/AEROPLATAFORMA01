@@ -220,15 +220,15 @@ namespace magal.Services
                     c.Item().Text($"Cód. Projeto: PRJ-{projeto.id_projeto}").FontSize(8).FontColor("#555555");
                 });
 
-                row.ConstantItem(120).Column(c =>
+                row.ConstantItem(120).AlignRight().Column(c =>
                 {
-                    c.Item().AlignRight().Text("DATA DE EMISSÃO").FontSize(7).FontColor("#999999").Bold();
-                    c.Item().AlignRight().Text(projeto.Orcamento?.data_criacao.ToString("dd/MM/yyyy") ?? DateTime.Now.ToString("dd/MM/yyyy")).FontSize(11).Bold().FontColor("#1E3A5F");
+                    c.Item().Text("DATA DE EMISSÃO").FontSize(7).FontColor("#999999").Bold();
+                    c.Item().Text(projeto.Orcamento?.data_criacao.ToString("dd/MM/yyyy") ?? DateTime.Now.ToString("dd/MM/yyyy")).FontSize(11).Bold().FontColor("#1E3A5F");
 
                     c.Item().PaddingTop(4);
 
-                    c.Item().AlignRight().Text("VÁLIDO ATÉ").FontSize(7).FontColor("#999999").Bold();
-                    c.Item().AlignRight().Text(projeto.DataExpiracao.ToString("dd/MM/yyyy")).FontSize(11).Bold().FontColor("#EF4444");
+                    c.Item().Text("VÁLIDO ATÉ").FontSize(7).FontColor("#999999").Bold();
+                    c.Item().Text(projeto.DataExpiracao.ToString("dd/MM/yyyy")).FontSize(11).Bold().FontColor("#EF4444");
                 });
             });
         }
@@ -314,9 +314,7 @@ namespace magal.Services
                     header.Cell().Background("#1E3A5F").Padding(8).Text("FORMA DE PAGAMENTO").FontColor(Colors.White).Bold().FontSize(9);
                 });
 
-                // ALTERADO AQUI: Verifica se há data e formata para o padrão brasileiro, senão exibe "A combinar"
                 string prazoExibicao = projeto.Orcamento?.prazo_entrega?.ToString("dd/MM/yyyy") ?? "A combinar";
-
                 tCondicoes.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8)
                     .Text(prazoExibicao).FontSize(9);
 
@@ -327,18 +325,41 @@ namespace magal.Services
             // 4. OBSERVAÇÕES DA PROPOSTA
             if (!string.IsNullOrWhiteSpace(projeto.Orcamento?.observacoes))
             {
-                col.Item().Text("4. OBSERVAÇÕES DA PROPOSTA").FontSize(9).Bold().FontColor("#555555");
-                col.Item().PaddingTop(6).PaddingBottom(15).Table(tObs =>
+                col.Item().Column(obsCol =>
                 {
-                    tObs.ColumnsDefinition(c => c.RelativeColumn());
+                    obsCol.Item().Text("4. OBSERVAÇÕES DA PROPOSTA").FontSize(9).Bold().FontColor("#555555");
 
-                    tObs.Header(header =>
+                    obsCol.Item().PaddingTop(6).PaddingBottom(15).Table(tObs =>
                     {
-                        header.Cell().Background("#1E3A5F").Padding(8).Text("NOTAS E OBSERVAÇÕES COMPLEMENTARES").FontColor(Colors.White).Bold().FontSize(9);
-                    });
+                        tObs.ColumnsDefinition(c => c.RelativeColumn());
 
-                    tObs.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8)
-                        .Text(projeto.Orcamento.observacoes).FontSize(9);
+                        // O cabeçalho se repetirá no topo da página 2 caso o texto quebre
+                        tObs.Header(header =>
+                        {
+                            header.Cell().Background("#1E3A5F").Padding(8)
+                                .Text("NOTAS E OBSERVAÇÕES COMPLEMENTARES").FontColor(Colors.White).Bold().FontSize(9);
+                        });
+
+                        // Renderiza o texto permitindo quebra de página limpa entre os parágrafos
+                        tObs.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).Text(txt =>
+                        {
+                            // Quebra a string em linhas para o QuestPDF gerenciar o fluxo perfeitamente
+                            var linhas = projeto.Orcamento.observacoes.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+                            foreach (var linha in linhas)
+                            {
+                                if (!string.IsNullOrWhiteSpace(linha))
+                                {
+                                    txt.Line(linha).FontSize(9);
+                                }
+                                else
+                                {
+                                    // Preserva quebras de linha intencionais do usuário para espaçamento
+                                    txt.Line("");
+                                }
+                            }
+                        });
+                    });
                 });
             }
 
