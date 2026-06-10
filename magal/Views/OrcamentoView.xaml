@@ -246,8 +246,26 @@
 
                             <StackPanel Grid.Column="0" Margin="0,0,15,0">
                                 <TextBlock Text="NOME DO PROJETO" FontSize="12" FontWeight="Bold" Foreground="{StaticResource AeroTextDark}" Margin="0,-4,0,6" />
-                                <TextBox Text="{Binding ProjetoAtual.nome, UpdateSourceTrigger=PropertyChanged}" 
-                         FontWeight="SemiBold" Height="40" VerticalContentAlignment="Center" BorderThickness="1.5 " Padding="10,0"/>
+
+                                <Border BorderThickness="1.5" Height="40" Background="Transparent">
+                                    <Border.Style>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="BorderBrush" Value="{StaticResource AeroBorder}"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+
+                                    <TextBox Text="{Binding ProjetoAtual.nome, UpdateSourceTrigger=PropertyChanged}" 
+                                        FontWeight="SemiBold" 
+                                        BorderThickness="0" 
+                                        Padding="10,0"
+                                        VerticalContentAlignment="Center"
+                                        Background="Transparent"/>
+                                </Border>
                             </StackPanel>
 
                             <StackPanel Grid.Column="1" Margin="0,0,15,0">
@@ -323,23 +341,58 @@
 
                                             <StackPanel Grid.Column="0" VerticalAlignment="Bottom" Margin="-1,0">
                                                 <TextBlock Text="HORAS" FontSize="12" FontWeight="Bold" 
-                   Foreground="{StaticResource AeroTextDark}" Margin="0,0,33,4" 
-                   HorizontalAlignment="Center"/>
-                                                <TextBox Text="{Binding horas_estimadas, UpdateSourceTrigger=PropertyChanged, StringFormat='{}{0:0.##}'}" 
-                 FontSize="18" FontWeight="Black" Foreground="{StaticResource AeroPrimary}"
-                 PreviewTextInput="ValidarEntradaSemNegativo" Background="#F8FAFC" 
-                 BorderThickness="1.5" BorderBrush="{StaticResource AeroBorder}" 
-                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                 Height="40"/>
+                                                    Foreground="{StaticResource AeroTextDark}" Margin="0,0,33,4" 
+                                                    HorizontalAlignment="Center"/>
+
+                                                <Border BorderThickness="1.5" Height="40" Background="Transparent">
+                                                    <Border.Style>
+                                                        <Style TargetType="{x:Type Border}">
+                                                            <Setter Property="BorderBrush" Value="{StaticResource AeroBorder}"/>
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                                                                </Trigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+
+                                                    <TextBox Text="{Binding horas_estimadas, UpdateSourceTrigger=PropertyChanged, StringFormat='{}{0:0.##}'}" 
+                                                        FontSize="18" 
+                                                        FontWeight="Black" 
+                                                        Foreground="{StaticResource AeroPrimary}"
+                                                        PreviewTextInput="ValidarEntradaSemNegativo" 
+                                                        Background="#F8FAFC" 
+                                                        BorderThickness="0" 
+                                                        HorizontalContentAlignment="Center" 
+                                                        VerticalContentAlignment="Center"/>
+                                                </Border>
                                             </StackPanel>
 
                                             <StackPanel Grid.Column="1" VerticalAlignment="Bottom" Margin="10,0">
                                                 <TextBlock Text="DESCRIÇÃO DA TAREFA" FontSize="12" FontWeight="Bold" 
-                   Foreground="{StaticResource AeroTextDark}" Margin="0,0,0,4"/>
-                                                <TextBox Text="{Binding descricao, UpdateSourceTrigger=PropertyChanged}"
-                 FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource AeroTextDark}"
-                 Background="Transparent" BorderThickness="1.5" BorderBrush="{StaticResource AeroBorder}" 
-                 Padding="8,0" Height="40" VerticalContentAlignment="Center"/>
+               Foreground="{StaticResource AeroTextDark}" Margin="0,0,0,4"/>
+
+                                                <Border BorderThickness="1.0" Height="40" Background="Transparent">
+                                                    <Border.Style>
+                                                        <Style TargetType="{x:Type Border}">
+                                                            <Setter Property="BorderBrush" Value="{StaticResource AeroBorder}"/>
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                                                                </Trigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+
+                                                    <TextBox Text="{Binding descricao, UpdateSourceTrigger=PropertyChanged}"
+                                                         FontSize="15" 
+                                                         FontWeight="SemiBold" 
+                                                         Foreground="{StaticResource AeroTextDark}"
+                                                         Background="Transparent" 
+                                                         BorderThickness="0" 
+                                                         Padding="8,0" 
+                                                         VerticalContentAlignment="Center"/>    
+                                                </Border>
                                             </StackPanel>
 
                                             <StackPanel Grid.Column="2" VerticalAlignment="Bottom" Margin="10,0">
@@ -363,10 +416,10 @@
                                             </StackPanel>
 
                                             <Button Grid.Column="4" Content="✕" 
-            Command="{Binding DataContext.DeletarTarefaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-            CommandParameter="{Binding}"
-            Style="{StaticResource IconDeleteBtn}" 
-            VerticalAlignment="Bottom" Height="40" Margin="0,0,0,0"/>
+                                                Command="{Binding DataContext.DeletarTarefaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource IconDeleteBtn}" 
+                                                VerticalAlignment="Bottom" Height="40" Margin="0,0,0,0"/>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -438,23 +491,35 @@
 
                                                     <StackPanel Grid.Column="2" VerticalAlignment="Bottom" Margin="10,0">
                                                         <TextBlock Text="VALOR (R$)" 
-                                                                   FontSize="12" 
-                                                                   FontWeight="Bold" 
-                                                                   Foreground="{StaticResource AeroTextDark}" 
-                                                                   HorizontalAlignment="Right" 
-                                                                   Margin="0,0,0,4"/>
-                                                        <TextBox Text="{Binding valor, UpdateSourceTrigger=PropertyChanged, StringFormat='{}{0:N2}'}"
+                                                                 FontSize="12" 
+                                                                 FontWeight="Bold" 
+                                                                 Foreground="{StaticResource AeroTextDark}" 
+                                                                 HorizontalAlignment="Right" 
+                                                                 Margin="0,0,0,4"/>
+
+                                                        <Border BorderThickness="1" Height="40" Background="Transparent">
+                                                            <Border.Style>
+                                                                <Style TargetType="{x:Type Border}">
+                                                                    <Setter Property="BorderBrush" Value="{StaticResource AeroBorder}"/>
+                                                                    <Style.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                                                                        </Trigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Border.Style>
+
+                                                            <TextBox Text="{Binding valor, UpdateSourceTrigger=PropertyChanged, StringFormat='{}{0:N2}'}"
                                                                  FontSize="15" 
                                                                  FontWeight="Bold" 
                                                                  Foreground="{StaticResource AeroTextDark}"
                                                                  Background="Transparent" 
-                                                                 BorderThickness="1" 
-                                                                 BorderBrush="{StaticResource AeroBorder}"
+                                                                 BorderThickness="0" 
                                                                  HorizontalContentAlignment="Right" 
-                                                                 Height="40" 
                                                                  VerticalContentAlignment="Center" 
                                                                  Padding="8,0"
                                                                  PreviewTextInput="ValidarEntradaSemNegativo"/>
+                                                        </Border>
                                                     </StackPanel>
 
                                                     <Button Grid.Column="3" Content="✕"
@@ -526,24 +591,67 @@
                             </StackPanel>
 
                             <StackPanel Grid.Row="0" Grid.Column="1" Margin="10,0,0,14">
-                                <TextBlock Text="PRAZO DE ENTREGA" FontSize="12" FontWeight="Bold" 
-               Foreground="{StaticResource AeroTextDark}" Margin="0,0,0,4"/>
+                                <TextBlock Text="PRAZO DE ENTREGA" FontSize="12" FontWeight="Bold" Foreground="{StaticResource AeroTextDark}" Margin="0,0,0,4"/>
 
-                                <DatePicker SelectedDate="{Binding ProjetoAtual.Orcamento.prazo_entrega, UpdateSourceTrigger=PropertyChanged}"
-                FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AeroTextDark}"
-                Background="Transparent" BorderThickness="1" BorderBrush="{StaticResource AeroBorder}" 
-                Padding="8,0" Height="40" VerticalContentAlignment="Center"
-                Language="pt-BR"/>
+                                <DatePicker SelectedDate="{Binding ProjetoAtual.Orcamento.prazo_entrega, UpdateSourceTrigger=PropertyChanged}" 
+            FontSize="14" 
+            FontWeight="SemiBold" 
+            Foreground="{StaticResource AeroTextDark}" 
+            Background="Transparent" 
+            BorderThickness="1" 
+            Padding="8,0" 
+            Height="40" 
+            Cursor="Hand" 
+            VerticalContentAlignment="Center" 
+            Language="pt-BR">
+                                    <DatePicker.Resources>
+                                        <Style TargetType="{x:Type DatePickerTextBox}">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type DatePickerTextBox}">
+                                                        <ScrollViewer x:Name="PART_ContentHost" 
+                                      Focusable="False" 
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" 
+                                      Padding="{TemplateBinding Padding}"/>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+
+                                        <Style TargetType="{x:Type DatePicker}">
+                                            <Setter Property="BorderBrush" Value="{StaticResource AeroBorder}"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DatePicker.Resources>
+                                </DatePicker>
                             </StackPanel>
 
                             <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,4,0,0">
-                                <TextBlock Text="OBSERVAÇÕES" FontSize="12" FontWeight="Bold" 
-                           Foreground="{StaticResource AeroTextDark}" Margin="0,0,0,4"/>
-                                <TextBox Text="{Binding ProjetoAtual.Orcamento.observacoes, UpdateSourceTrigger=PropertyChanged}"
-                         FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AeroTextDark}"
-                         Background="Transparent" BorderThickness="1" BorderBrush="{StaticResource AeroBorder}" 
-                         Padding="8,6" Height="80" VerticalContentAlignment="Top"
-                         AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
+                                <TextBlock Text="OBSERVAÇÕES" FontSize="12" FontWeight="Bold" Foreground="{StaticResource AeroTextDark}" Margin="0,0,0,4"/>
+
+                                <Border BorderThickness="1" Height="80" Background="Transparent">
+                                    <Border.Style>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="BorderBrush" Value="{StaticResource AeroBorder}"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+
+                                    <TextBox Text="{Binding ProjetoAtual.Orcamento.observacoes, UpdateSourceTrigger=PropertyChanged}"
+                 FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AeroTextDark}"
+                 Background="Transparent" BorderThickness="0" Padding="8,6"
+                 VerticalContentAlignment="Top" AcceptsReturn="True" TextWrapping="Wrap" 
+                 VerticalScrollBarVisibility="Auto"/>
+                                </Border>
                             </StackPanel>
                         </Grid>
                     </StackPanel>

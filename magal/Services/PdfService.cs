@@ -328,22 +328,17 @@ namespace magal.Services
                 col.Item().Column(obsCol =>
                 {
                     obsCol.Item().Text("4. OBSERVAÇÕES DA PROPOSTA").FontSize(9).Bold().FontColor("#555555");
-
                     obsCol.Item().PaddingTop(6).PaddingBottom(15).Table(tObs =>
                     {
                         tObs.ColumnsDefinition(c => c.RelativeColumn());
-
-                        // O cabeçalho se repetirá no topo da página 2 caso o texto quebre
                         tObs.Header(header =>
                         {
                             header.Cell().Background("#1E3A5F").Padding(8)
                                 .Text("NOTAS E OBSERVAÇÕES COMPLEMENTARES").FontColor(Colors.White).Bold().FontSize(9);
                         });
 
-                        // Renderiza o texto permitindo quebra de página limpa entre os parágrafos
                         tObs.Cell().BorderBottom(1).BorderColor("#E8EDF2").Padding(8).Text(txt =>
                         {
-                            // Quebra a string em linhas para o QuestPDF gerenciar o fluxo perfeitamente
                             var linhas = projeto.Orcamento.observacoes.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
                             foreach (var linha in linhas)
@@ -354,7 +349,6 @@ namespace magal.Services
                                 }
                                 else
                                 {
-                                    // Preserva quebras de linha intencionais do usuário para espaçamento
                                     txt.Line("");
                                 }
                             }
@@ -363,7 +357,7 @@ namespace magal.Services
                 });
             }
 
-            // 5. RESUMO FINANCEIRO FINAL (Ajustado padding para dar mais respiro)
+            // 5. RESUMO FINANCEIRO FINAL 
             col.Item().PaddingTop(15).Row(row =>
             {
                 row.RelativeItem();
