@@ -25,9 +25,25 @@
             <Setter Property="Padding" Value="10,0"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="BorderBrush" Value="{StaticResource AeroBorder}"/>
-            <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Background" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Bd"
+                                BorderBrush="{StaticResource AeroBorder}"
+                                BorderThickness="1.5"
+                                Background="{TemplateBinding Background}">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style x:Key="ComboStyle" TargetType="ComboBox">
@@ -51,26 +67,20 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-
                         <Border x:Name="Bd"
                                 Background="{TemplateBinding Background}"
                                 CornerRadius="8"
                                 Padding="14,7">
-
                             <ContentPresenter HorizontalAlignment="Center"
                                               VerticalAlignment="Center"/>
                         </Border>
-
                         <ControlTemplate.Triggers>
-
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Bd"
                                         Property="Background"
                                         Value="#1E3A8A"/>
                             </Trigger>
-
                         </ControlTemplate.Triggers>
-
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -88,16 +98,16 @@
 
         <TextBlock Text="NOME DO CARGO"
                    Style="{StaticResource LabelStyle}"/>
-
         <TextBox x:Name="TxtNome"
                  Style="{StaticResource InputStyle}"
+                 FontWeight="SemiBold"
                  Margin="0,0,0,16"/>
-     
+
         <TextBlock Text="CUSTO MÉDIO/HORA (R$)"
                    Style="{StaticResource LabelStyle}"/>
-
         <TextBox x:Name="TxtCustoHora"
                  Style="{StaticResource InputStyle}"
+                 FontWeight="SemiBold"
                  Margin="0,0,0,16"/>
 
         <Button Content="SALVAR ALTERAÇÕES"
@@ -105,5 +115,4 @@
                 Click="BtnSalvar_Click"/>
 
     </StackPanel>
-
 </Window>

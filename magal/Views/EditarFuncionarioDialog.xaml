@@ -13,7 +13,6 @@
         <SolidColorBrush x:Key="AzulAero" Color="#131C49"/>
         <SolidColorBrush x:Key="AeroBorder" Color="#E2E8F0"/>
 
-        <!-- LABEL -->
         <Style x:Key="LabelStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="11"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -21,18 +20,32 @@
             <Setter Property="Margin" Value="0,0,0,4"/>
         </Style>
 
-        <!-- INPUT -->
         <Style x:Key="InputStyle" TargetType="TextBox">
             <Setter Property="Height" Value="36"/>
             <Setter Property="Padding" Value="10,0"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="BorderBrush" Value="{StaticResource AeroBorder}"/>
-            <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Background" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Bd"
+                                BorderBrush="{StaticResource AeroBorder}"
+                                BorderThickness="1"
+                                Background="{TemplateBinding Background}">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
-        <!-- COMBO -->
         <Style x:Key="ComboStyle" TargetType="ComboBox">
             <Setter Property="Height" Value="36"/>
             <Setter Property="FontSize" Value="13"/>
@@ -43,7 +56,6 @@
             <Setter Property="Cursor" Value="Hand"/>
         </Style>
 
-        <!-- BOTÃO -->
         <Style x:Key="PrimaryBtn" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource AzulAero}"/>
             <Setter Property="Foreground" Value="White"/>
@@ -55,33 +67,22 @@
 
             <Setter Property="Template">
                 <Setter.Value>
-
                     <ControlTemplate TargetType="Button">
-
                         <Border x:Name="Bd"
                                 Background="{TemplateBinding Background}"
                                 CornerRadius="8"
                                 Padding="14,7">
-
                             <ContentPresenter HorizontalAlignment="Center"
                                               VerticalAlignment="Center"/>
-
                         </Border>
-
                         <ControlTemplate.Triggers>
-
                             <Trigger Property="IsMouseOver" Value="True">
-
                                 <Setter TargetName="Bd"
                                         Property="Background"
                                         Value="#1E3A8A"/>
-
                             </Trigger>
-
                         </ControlTemplate.Triggers>
-
                     </ControlTemplate>
-
                 </Setter.Value>
             </Setter>
         </Style>
@@ -90,25 +91,21 @@
 
     <StackPanel Margin="32,28">
 
-        <!-- TÍTULO -->
         <TextBlock Text="Editar Funcionário"
                    FontSize="24"
                    FontWeight="Bold"
                    Foreground="{StaticResource AzulAero}"
                    Margin="0,0,0,24"/>
 
-        <!-- NOME -->
         <TextBlock Text="NOME"
                    Style="{StaticResource LabelStyle}"/>
-
         <TextBox x:Name="TxtNome"
                  Style="{StaticResource InputStyle}"
+                 FontWeight="SemiBold"
                  Margin="0,0,0,14"/>
 
-        <!-- CARGO -->
         <TextBlock Text="CARGO"
                    Style="{StaticResource LabelStyle}"/>
-
         <ComboBox x:Name="ComboCargo"
                   Style="{StaticResource ComboStyle}"
                   DisplayMemberPath="nome"
@@ -116,57 +113,42 @@
                   Margin="0,0,0,14"
                   FontWeight="SemiBold"/>
 
-        <!-- NÍVEL -->
         <TextBlock Text="NÍVEL"
                    Style="{StaticResource LabelStyle}"/>
-
         <ComboBox x:Name="ComboNivel"
                   Style="{StaticResource ComboStyle}"
                   Margin="0,0,0,14"
                   FontWeight="SemiBold">
-
             <ComboBoxItem Content="Júnior"/>
             <ComboBoxItem Content="Pleno"/>
             <ComboBoxItem Content="Sênior"/>
             <ComboBoxItem Content="Especialista"/>
-
         </ComboBox>
 
-
-        <!-- TIPO VÍNCULO -->
         <TextBlock Text="TIPO VÍNCULO"
                    Style="{StaticResource LabelStyle}"/>
-
         <ComboBox x:Name="ComboTipoVinculo"
                   Style="{StaticResource ComboStyle}"
                   Margin="0,0,0,14"
                   FontWeight="SemiBold">
-
             <ComboBoxItem Content="CLT"/>
             <ComboBoxItem Content="PJ"/>
             <ComboBoxItem Content="Autônomo"/>
-
         </ComboBox>
 
-        <!-- STATUS -->
         <TextBlock Text="STATUS"
                    Style="{StaticResource LabelStyle}"/>
-
         <ComboBox x:Name="ComboStatus"
                   Style="{StaticResource ComboStyle}"
                   Margin="0,0,0,24"
                   FontWeight="SemiBold">
-
             <ComboBoxItem Content="Ativo"/>
             <ComboBoxItem Content="Inativo"/>
-
         </ComboBox>
 
-        <!-- BOTÃO -->
         <Button Content="SALVAR ALTERAÇÕES"
                 Style="{StaticResource PrimaryBtn}"
                 Click="BtnSalvar_Click"/>
 
     </StackPanel>
-
 </Window>

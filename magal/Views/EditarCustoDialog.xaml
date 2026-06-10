@@ -24,9 +24,25 @@
             <Setter Property="Padding" Value="10,0"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="BorderBrush" Value="{StaticResource AeroBorder}"/>
-            <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Background" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Bd"
+                                BorderBrush="{StaticResource AeroBorder}"
+                                BorderThickness="1"
+                                Background="{TemplateBinding Background}">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style x:Key="ComboStyle" TargetType="ComboBox">
@@ -81,6 +97,7 @@
                    Style="{StaticResource LabelStyle}"/>
         <TextBox x:Name="TxtNome"
                  Style="{StaticResource InputStyle}"
+                 FontWeight="SemiBold"
                  Margin="0,0,0,14"/>
 
         <Grid Margin="0,0,0,14">
@@ -92,13 +109,13 @@
             <StackPanel Grid.Column="0" Margin="0,0,10,0">
                 <TextBlock Text="CATEGORIA" Style="{StaticResource LabelStyle}"/>
                 <ComboBox x:Name="ComboCategoria" Style="{StaticResource ComboStyle}" FontWeight="SemiBold">
-                        <ComboBoxItem Content="Equipamentos"/>
-                        <ComboBoxItem Content="Licenças de Software"/>
-                        <ComboBoxItem Content="Energia Elétrica"/>
-                        <ComboBoxItem Content="Transporte/Deslcamento"/>
-                        <ComboBoxItem Content="Manutenção"/>
-                        <ComboBoxItem Content="Aluguel/Estrutura"/>
-                        <ComboBoxItem Content="EPIs/Ferramentas"/>
+                    <ComboBoxItem Content="Equipamentos"/>
+                    <ComboBoxItem Content="Licenças de Software"/>
+                    <ComboBoxItem Content="Energia Elétrica"/>
+                    <ComboBoxItem Content="Transporte/Deslcamento"/>
+                    <ComboBoxItem Content="Manutenção"/>
+                    <ComboBoxItem Content="Aluguel/Estrutura"/>
+                    <ComboBoxItem Content="EPIs/Ferramentas"/>
                 </ComboBox>
             </StackPanel>
 
@@ -117,6 +134,7 @@
                    Style="{StaticResource LabelStyle}"/>
         <TextBox x:Name="TxtValor"
                  Style="{StaticResource InputStyle}"
+                 FontWeight="SemiBold"
                  Margin="0,0,0,28"/>
 
         <Button Content="SALVAR ALTERAÇÕES"
