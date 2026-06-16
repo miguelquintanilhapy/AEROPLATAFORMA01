@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Windows;
 using System.Linq;
+using System.Threading.Tasks;
 using magal.Models;
 using magal.Data.Repositories;
 
 namespace magal.ViewModels
 {
-    /// <summary>
-    /// ViewModel responsável por gerenciar a tela de visão geral e indicadores do sistema,
-    /// consolidando dados volumétricos de funcionários, clientes, cargos e custos.
-    /// </summary>
     public class GerenciamentoViewModel : BaseModel
     {
         #region Atributos e Campos Privados
@@ -23,41 +20,39 @@ namespace magal.ViewModels
         private string _totalClientes;
         private string _totalCargos;
         private string _totalCustos;
+        private bool _isLoading = true;
 
         #endregion
 
-        #region Propriedades de Indicadores (KPIs)
+        #region Propriedades do Sistema
 
         /// <summary>
-        /// Obtém ou define o total de funcionários cadastrados formatado com dois dígitos.
+        /// Sinaliza se a View está buscando informações assíncronas do banco de dados.
         /// </summary>
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set { _isLoading = value; OnPropertyChanged(); }
+        }
+
         public string TotalFuncionarios
         {
             get => _totalFuncionarios;
             set { _totalFuncionarios = value; OnPropertyChanged(); }
         }
 
-        /// <summary>
-        /// Obtém ou define o total de clientes cadastrados formatado com dois dígitos.
-        /// </summary>
         public string TotalClientes
         {
             get => _totalClientes;
             set { _totalClientes = value; OnPropertyChanged(); }
         }
 
-        /// <summary>
-        /// Obtém ou define o total de cargos cadastrados formatado com dois dígitos.
-        /// </summary>
         public string TotalCargos
         {
             get => _totalCargos;
             set { _totalCargos = value; OnPropertyChanged(); }
         }
 
-        /// <summary>
-        /// Obtém ou define o total de custos cadastrados formatado com dois dígitos.
-        /// </summary>
         public string TotalCustos
         {
             get => _totalCustos;
@@ -68,18 +63,14 @@ namespace magal.ViewModels
 
         #region Construtores
 
-        /// <summary>
-        /// Inicializa uma nova instância da classe <see cref="GerenciamentoViewModel"/>, configurando os repositórios e carregando os indicadores iniciais.
-        /// </summary>
         public GerenciamentoViewModel()
         {
-            // Inicialização dos repositórios
             _funcionarioRepo = new FuncionarioRepository();
             _clienteRepo = new ClienteRepository();
             _cargoRepo = new CargoRepository();
             _catalogoCustoRepo = new CatalogoCustoRepository();
 
-            CarregarIndicadores();
+            // O carregamento agora é gerenciado pelo ciclo de vida da View (Loaded)
         }
 
         #endregion
@@ -87,12 +78,14 @@ namespace magal.ViewModels
         #region Métodos Públicos
 
         /// <summary>
-        /// Consulta os repositórios para obter a contagem atualizada de cada entidade e atualiza as propriedades visíveis na tela.
+        /// Consulta assincronamente os repositórios para preencher os indicadores na interface.
         /// </summary>
-        public async void CarregarIndicadores()
+        public async Task CarregarIndicadores()
         {
             try
             {
+                IsLoading = true;
+
                 var funcionarios = await _funcionarioRepo.ListarTodos();
                 TotalFuncionarios = (funcionarios?.Count ?? 0).ToString("D2");
 
@@ -102,18 +95,23 @@ namespace magal.ViewModels
                 var cargos = await _cargoRepo.ListarTodos();
                 TotalCargos = (cargos?.Count ?? 0).ToString("D2");
 
-                var custos =  await _catalogoCustoRepo.ListarTodos();
+                var custos = await _catalogoCustoRepo.ListarTodos();
                 TotalCustos = (custos?.Count ?? 0).ToString("D2");
+
+                await Task.Delay(100); // Garante a estabilização visual da renderização do WPF
             }
             catch (Exception ex)
             {
-                // Fallback amigável para a interface
                 TotalFuncionarios = "00";
                 TotalClientes = "00";
                 TotalCargos = "00";
                 TotalCustos = "00";
 
                 System.Diagnostics.Debug.WriteLine($"[Erro GerenciamentoVM]: {ex.Message}");
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 

@@ -17,9 +17,10 @@ namespace magal.Views
             this.DataContext = _viewModel;
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        // ATUALIZADO: Executa a tarefa em segundo plano de forma assíncrona limpa
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            _viewModel.CarregarIndicadores();
+            await _viewModel.CarregarIndicadores();
         }
 
         private void BtnFuncionarios_Click(object sender, RoutedEventArgs e)
@@ -49,7 +50,6 @@ namespace magal.Views
             }
         }
 
-        // método adicionado para abrir a tela de Custos
         private void BtnCustos_Click(object sender, RoutedEventArgs e)
         {
             var janelaPrincipal = Window.GetWindow(this) as MainWindow;

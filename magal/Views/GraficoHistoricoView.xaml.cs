@@ -24,10 +24,8 @@ namespace magal.Views
         public GraficoHistoricoView()
         {
             InitializeComponent();
-
             var viewModel = new GraficoHistoricoViewModel();
             this.DataContext = viewModel;
-
             this.Loaded += async (s, e) => await viewModel.CarregarDados();
         }
     }

@@ -2,7 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.expression/blend/2008"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d" 
              Language="pt-BR"
              d:DesignHeight="900" d:DesignWidth="1200"
@@ -10,6 +10,8 @@
              Loaded="UserControl_Loaded">
 
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
         <SolidColorBrush x:Key="AzulAero" Color="#131C49"/>
         <SolidColorBrush x:Key="AeroAccent" Color="#3B82F6"/>
         <SolidColorBrush x:Key="AeroTextMuted" Color="#64748B"/>
@@ -66,7 +68,6 @@
                                         <Storyboard>
                                             <ColorAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="#F0F4FA" Duration="0:0:0.12"/>
                                             <ColorAnimation Storyboard.TargetName="IconBg" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="#E2EBF5" Duration="0:0:0.12"/>
-
                                             <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)" To="28" Duration="0:0:0.12"/>
                                             <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)" To="0.10" Duration="0:0:0.12"/>
                                             <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.ShadowDepth)" To="5" Duration="0:0:0.12"/>
@@ -78,7 +79,6 @@
                                         <Storyboard>
                                             <ColorAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="White" Duration="0:0:0.12"/>
                                             <ColorAnimation Storyboard.TargetName="IconBg" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="#F8FAFC" Duration="0:0:0.12"/>
-
                                             <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)" To="20" Duration="0:0:0.12"/>
                                             <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)" To="0.04" Duration="0:0:0.12"/>
                                             <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.ShadowDepth)" To="2" Duration="0:0:0.12"/>
@@ -102,97 +102,56 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Height="80" Margin="0,0,0,10">
-            <TextBlock Text="Central de Gerenciamento"
-                       FontSize="28" 
-                       FontWeight="Bold"
-                       Foreground="{StaticResource AzulAero}"
-                       VerticalAlignment="Center"/>
+            <TextBlock Text="Central de Gerenciamento" FontSize="28" FontWeight="Bold" Foreground="{StaticResource AzulAero}" VerticalAlignment="Center"/>
         </Grid>
 
         <UniformGrid Grid.Row="1" Columns="4">
             <Border Style="{StaticResource KpiCardBorder}" Margin="0,0,10,0">
                 <StackPanel>
-                    <TextBlock Text="FUNCIONÁRIOS" 
-                               FontSize="10" 
-                               FontWeight="Bold" 
-                               Foreground="{StaticResource AeroTextHint}"
-                               Margin="0,0,0,5"/>
-                    <TextBlock Text="{Binding TotalFuncionarios, FallbackValue='24'}"
-                               FontSize="24" 
-                               FontWeight="Bold" 
-                               Foreground="{StaticResource AzulAero}"/>
+                    <TextBlock Text="FUNCIONÁRIOS" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AeroTextHint}" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding TotalFuncionarios, FallbackValue='24'}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource AzulAero}"/>
                 </StackPanel>
             </Border>
 
             <Border Style="{StaticResource KpiCardBorder}" Margin="5,0">
                 <StackPanel>
-                    <TextBlock Text="CLIENTES" 
-                               FontSize="10" 
-                               FontWeight="Bold" 
-                               Foreground="{StaticResource AeroTextHint}" 
-                               Margin="0,0,0,5"/>
-                    <TextBlock Text="{Binding TotalClientes, FallbackValue='112'}"
-                               FontSize="24" 
-                               FontWeight="Bold" 
-                               Foreground="{StaticResource AzulAero}"/>
+                    <TextBlock Text="CLIENTES" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AeroTextHint}" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding TotalClientes, FallbackValue='112'}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource AzulAero}"/>
                 </StackPanel>
             </Border>
 
             <Border Style="{StaticResource KpiCardBorder}" Margin="5,0">
                 <StackPanel>
-                    <TextBlock Text="CARGOS DEFINIDOS" 
-                               FontSize="10" 
-                               FontWeight="Bold" 
-                               Foreground="{StaticResource AeroTextHint}" 
-                               Margin="0,0,0,5"/>
-                    <TextBlock Text="{Binding TotalCargos, FallbackValue='08'}"
-                               FontSize="24" 
-                               FontWeight="Bold" 
-                               Foreground="{StaticResource AzulAero}"/>
+                    <TextBlock Text="CARGOS DEFINIDOS" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AeroTextHint}" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding TotalCargos, FallbackValue='08'}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource AzulAero}"/>
                 </StackPanel>
             </Border>
 
             <Border Style="{StaticResource KpiCardBorder}" Margin="10,0,0,0">
                 <StackPanel>
-                    <TextBlock Text="CUSTOS OPERACIONAIS"
-                               FontSize="10" 
-                               FontWeight="Bold" 
-                               Foreground="{StaticResource AeroTextHint}" 
-                               Margin="0,0,0,5"/>
-                    <TextBlock Text="{Binding TotalCustos, FallbackValue='15'}" 
-                               FontSize="24" 
-                               FontWeight="Bold" 
-                               Foreground="{StaticResource AzulAero}"/>
+                    <TextBlock Text="CUSTOS OPERACIONAIS" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AeroTextHint}" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding TotalCustos, FallbackValue='15'}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource AzulAero}"/>
                 </StackPanel>
             </Border>
         </UniformGrid>
 
         <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto" Padding="0,0,10,0">
             <UniformGrid Columns="2" VerticalAlignment="Top">
-                <Button Style="{StaticResource CardButtonStyle}"
-                        Content="👥" 
-                        Tag="Funcionários"
-                        Uid="Gerencie os funcionários, dados pessoais, contratos e informações profissionais." 
-                        Click="BtnFuncionarios_Click"/>
-
-                <Button Style="{StaticResource CardButtonStyle}" 
-                        Content="💼" 
-                        Tag="Cargos" 
-                        Uid="Cadastre e gerencie os cargos da empresa, salários e atribuições." 
-                        Click="BtnCargos_Click"/>
-
-                <Button Style="{StaticResource CardButtonStyle}"
-                        Content="🏢" 
-                        Tag="Clientes" 
-                        Uid="Gerencie os clientes, contatos, endereços e informações comerciais."
-                        Click="BtnClientes_Click"/>
-
-                <Button Style="{StaticResource CardButtonStyle}" 
-                        Content="💰" 
-                        Tag="Custos" 
-                        Uid="Gerencie os custos diretos e indiretos utilizados nos orçamentos."
-                        Click="BtnCustos_Click"/>
+                <Button Style="{StaticResource CardButtonStyle}" Content="👥" Tag="Funcionários" Uid="Gerencie os funcionários, dados pessoais, contratos e informações profissionais." Click="BtnFuncionarios_Click"/>
+                <Button Style="{StaticResource CardButtonStyle}" Content="💼" Tag="Cargos" Uid="Cadastre e gerencie os cargos da empresa, salários e atribuições." Click="BtnCargos_Click"/>
+                <Button Style="{StaticResource CardButtonStyle}" Content="🏢" Tag="Clientes" Uid="Gerencie os clientes, contatos, endereços e informações comerciais." Click="BtnClientes_Click"/>
+                <Button Style="{StaticResource CardButtonStyle}" Content="💰" Tag="Custos" Uid="Gerencie os custos diretos e indiretos utilizados nos orçamentos." Click="BtnCustos_Click"/>
             </UniformGrid>
         </ScrollViewer>
+
+        <Grid Grid.Row="0" Grid.RowSpan="4" 
+              x:Name="LoadingOverlay"
+              Background="#CCFFFFFF" 
+              Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ProgressBar IsIndeterminate="True" Width="200" Height="6" Foreground="{StaticResource AzulAero}" Background="#E2E8F0" BorderThickness="0"/>
+                <TextBlock Text="Carregando..." Margin="0,12,0,0" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource AzulAero}" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>
