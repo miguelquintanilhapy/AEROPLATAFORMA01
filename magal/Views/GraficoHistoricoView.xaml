@@ -11,6 +11,8 @@
              Background="#F0F4FA">
 
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
         <SolidColorBrush x:Key="AzulAero" Color="#131C49"/>
         <SolidColorBrush x:Key="AeroAccent" Color="#3B82F6"/>
         <SolidColorBrush x:Key="AeroDanger" Color="#EF4444"/>
@@ -187,5 +189,26 @@
 
             </StackPanel>
         </ScrollViewer>
+
+        <Grid Grid.Row="0" Grid.RowSpan="3" 
+              x:Name="LoadingOverlay"
+              Background="#CCFFFFFF" 
+              Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ProgressBar IsIndeterminate="True" 
+                             Width="200" 
+                             Height="6" 
+                             Foreground="{StaticResource AzulAero}" 
+                             Background="#E2E8F0" 
+                             BorderThickness="0"/>
+                <TextBlock Text="Carregando..." 
+                           Margin="0,12,0,0" 
+                           FontSize="13" 
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource AzulAero}" 
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+
     </Grid>
 </UserControl>

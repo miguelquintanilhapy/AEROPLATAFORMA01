@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks; // ADICIONADO: Para suporte ao Task
 using System.Windows;
 
 namespace magal.ViewModels
@@ -21,6 +22,7 @@ namespace magal.ViewModels
         private int _quantidadeProjetos;
         private string _periodoSelecionado;
         private string _categoriaMargemSelecionada;
+        private bool _isLoading = true; // ADICIONADO: Estado inicial começa como carregando
 
         #endregion
 
@@ -31,6 +33,12 @@ namespace magal.ViewModels
         #endregion
 
         #region Indicadores
+
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set { _isLoading = value; OnPropertyChanged(); }
+        }
 
         public string TotalFinanceiro
         {
@@ -111,7 +119,7 @@ namespace magal.ViewModels
             {
                 _periodoSelecionado = value;
                 OnPropertyChanged();
-                CarregarDados();
+                _ = CarregarDados();
             }
         }
 
@@ -124,9 +132,8 @@ namespace magal.ViewModels
         public GraficoHistoricoViewModel()
         {
             _repository = new ProjetoRepository();
-            AtualizarCommand = new RelayCommand(_ => CarregarDados());
+            AtualizarCommand = new RelayCommand(async _ => await CarregarDados());
             Formatter = value => value.ToString("C0", _ptBR);
-
             PeriodoSelecionado = Periodos.FirstOrDefault(p => p.Equals("30 Dias", StringComparison.OrdinalIgnoreCase)) ?? "30 Dias";
             CategoriaMargemSelecionada = CategoriasMargem.FirstOrDefault(c => c.Equals("Margem Média por periodo", StringComparison.OrdinalIgnoreCase)) ?? "Margem Média por periodo";
         }
@@ -135,10 +142,12 @@ namespace magal.ViewModels
 
         #region Métodos de Carregamento
 
-        public async void CarregarDados()
+        public async Task CarregarDados()
         {
             try
             {
+                IsLoading = true;
+
                 var projetos = await _repository.BuscarTodosPorUsuario(1) ?? new List<Projeto>();
                 DateTime dataLimite = DateTime.MinValue;
 
@@ -160,6 +169,7 @@ namespace magal.ViewModels
                 }
 
                 _projetosFiltradosCache = projetos;
+                await Task.Delay(100);
 
                 AtualizarIndicadores(projetos);
                 AtualizarGraficoMensal(projetos);
@@ -170,6 +180,10 @@ namespace magal.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show($"Erro ao carregar gráficos:\n\n{ex}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 
@@ -344,7 +358,7 @@ namespace magal.ViewModels
             OnPropertyChanged(nameof(SeriesStatus));
         }
 
-        private void AtualizarGraficoTipo(List<Projeto> projetos)
+        private void UpdateSeriesTipo(List<Projeto> projetos)
         {
             var agrupado = projetos
                 .GroupBy(p => p.tipo ?? "Sem Tipo")
@@ -369,6 +383,11 @@ namespace magal.ViewModels
                 });
                 index++;
             }
+        }
+
+        private void AtualizarGraficoTipo(List<Projeto> projetos)
+        {
+            UpdateSeriesTipo(projetos);
             OnPropertyChanged(nameof(SeriesTipo));
         }
 
