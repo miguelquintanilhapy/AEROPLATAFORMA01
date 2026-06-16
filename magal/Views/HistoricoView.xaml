@@ -17,6 +17,8 @@
         <SolidColorBrush x:Key="AeroBorder"      Color="#E2E8F0"/>
         <SolidColorBrush x:Key="VerdeAero"       Color="#009140"/>
 
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
         <Style x:Key="PrimaryBtn" TargetType="Button">
             <Setter Property="Background"   Value="{StaticResource AzulAero}"/>
             <Setter Property="Foreground"   Value="White"/>
@@ -33,6 +35,9 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Bd" Property="Background" Value="#1E3A8A"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Background" Value="#94A3B8"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -54,38 +59,35 @@
                        FontSize="28" FontWeight="Bold"
                        Foreground="{StaticResource AzulAero}"
                        VerticalAlignment="Center"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
 
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                 <Button Command="{Binding AtualizarCommand}"
-            Style="{StaticResource PrimaryBtn}">
+                        Style="{StaticResource PrimaryBtn}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="&#xE72C;" 
-                       FontFamily="Segoe MDL2 Assets" 
-                       FontSize="12" 
-                       VerticalAlignment="Center" 
-                       Margin="0,0,8,0"/>
+                                   FontFamily="Segoe MDL2 Assets" 
+                                   FontSize="12" 
+                                   VerticalAlignment="Center" 
+                                   Margin="0,0,8,0"/>
                         <TextBlock Text="ATUALIZAR LISTA" 
-                       VerticalAlignment="Center"/>
+                                   VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
 
                 <Button Command="{Binding ExportarPdfCommand}"
-            Style="{StaticResource PrimaryBtn}"
-            Margin="10,0,0,0">
+                        Style="{StaticResource PrimaryBtn}"
+                        Margin="10,0,0,0">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="&#xE72D;" 
-                       FontFamily="Segoe MDL2 Assets" 
-                       FontSize="12" 
-                       VerticalAlignment="Center" 
-                       Margin="0,0,8,0"/>
+                                   FontFamily="Segoe MDL2 Assets" 
+                                   FontSize="12" 
+                                   VerticalAlignment="Center" 
+                                   Margin="0,0,8,0"/>
                         <TextBlock Text="EXPORTAR RELATÓRIO" 
-                       VerticalAlignment="Center"/>
+                                   VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-
             </StackPanel>
-
-
         </Grid>
 
         <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,25">
@@ -130,11 +132,11 @@
 
                 <Grid>
                     <TextBox Text="{Binding FiltroTexto, UpdateSourceTrigger=PropertyChanged}"
-                     VerticalContentAlignment="Center" 
-                     Padding="12,0,40,0"
-                     FontSize="14" 
-                     Background="Transparent" 
-                     BorderThickness="0"/>
+                             VerticalContentAlignment="Center" 
+                             Padding="12,0,40,0"
+                             FontSize="14" 
+                             Background="Transparent" 
+                             BorderThickness="0"/>
 
                     <TextBlock Text="🔍" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0" Foreground="{StaticResource AeroTextHint}" IsHitTestVisible="False"/>
                 </Grid>
@@ -148,7 +150,8 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <DataGrid ItemsSource="{Binding ProjetosView}" 
+                <DataGrid x:Name="meuDataGrid"
+                          ItemsSource="{Binding ProjetosView}" 
                           SelectedItem="{Binding ProjetoSelecionado}"
                           AutoGenerateColumns="False" IsReadOnly="True"
                           Background="Transparent" BorderThickness="0"
@@ -164,13 +167,13 @@
                     <DataGrid.Resources>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="#F8FAFC"/>
-                            <Setter Property="Foreground" Value="{StaticResource AeroTextMuted}"/>
-                            <Setter Property="FontWeight" Value="Bold"/>
-                            <Setter Property="FontSize" Value="13"/>
-                            <Setter Property="Padding" Value="15,12"/>
-                            <Setter Property="Cursor" Value="Hand"/>
-                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                            <Setter Property="BorderBrush" Value="{StaticResource AeroBorder}"/>
+                                <Setter Property="Foreground" Value="{StaticResource AeroTextMuted}"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="FontSize" Value="13"/>
+                                <Setter Property="Padding" Value="15,12"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource AeroBorder}"/>
                         </Style>
 
                         <Style TargetType="DataGridCell">
@@ -298,6 +301,27 @@
                     <TextBlock Text="{Binding ProjetosView.Count, StringFormat='{}{0} projetos listados'}"
                                FontSize="12" Foreground="{StaticResource AeroTextHint}" VerticalAlignment="Center"/>
                 </Border>
+
+                <Grid Grid.Row="0" Grid.RowSpan="2" 
+                      x:Name="LoadingOverlay"
+                      Background="#CCFFFFFF" 
+                      Visibility="Collapsed">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <ProgressBar IsIndeterminate="True" 
+                                     Width="200" 
+                                     Height="6" 
+                                     Foreground="{StaticResource AzulAero}" 
+                                     Background="#E2E8F0" 
+                                     BorderThickness="0"/>
+                        <TextBlock Text="Carregando..." 
+                                   Margin="0,12,0,0" 
+                                   FontSize="13" 
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource AzulAero}" 
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+
             </Grid>
         </Border>
     </Grid>

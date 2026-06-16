@@ -6,10 +6,11 @@ using System.ComponentModel;
 using System.Windows.Data;
 using System.Collections.Generic;
 using System.Globalization;
-using Microsoft.Win32; 
+using System.Threading.Tasks; // Adicionado para garantir o tipo Task
+using Microsoft.Win32;
 using magal.Models;
 using magal.Data.Repositories;
-using magal.Services; 
+using magal.Services;
 
 namespace magal.ViewModels
 {
@@ -28,6 +29,9 @@ namespace magal.ViewModels
         private string _totalLucro;
         private int _quantidadeProjetos;
 
+        // MUDANÇA CRÍTICA: O estado inicial DEVE ser true para prender a tela no milissegundo em que ela abre
+        private bool _isLoading = true;
+
         /// <summary>
         /// Cultura padrão para formatação monetária nacional.
         /// </summary>
@@ -36,6 +40,15 @@ namespace magal.ViewModels
         #endregion
 
         #region Propriedades de Indicadores e Filtros
+
+        /// <summary>
+        /// Obtém ou define o estado de carregamento atual da ViewModel.
+        /// </summary>
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set { _isLoading = value; OnPropertyChanged(); }
+        }
 
         /// <summary>
         /// Obtém ou define o valor formatado do faturamento total dos projetos visíveis.
@@ -144,10 +157,14 @@ namespace magal.ViewModels
             // Inicialização dos comandos mapeados para os botões da tela
             ExcluirCommand = new RelayCommand(p => ExecutarExclusao(p as Projeto));
             EditarCommand = new RelayCommand(p => ExecutarEdicao(p as Projeto));
-            AtualizarCommand = new RelayCommand(_ => CarregarHistorico());
+
+            // Alterado para chamar a Task de forma assíncrona com segurança
+            AtualizarCommand = new RelayCommand(async _ => await CarregarHistorico());
             ExportarPdfCommand = new RelayCommand(_ => ExecutarExportacaoPdf());
 
-            CarregarHistorico();
+            // ATENÇÃO: NÃO chamamos o CarregarHistorico() aqui dentro do construtor da VM!
+            // Deixamos para a View chamá-lo logo após se inscrever no PropertyChanged.
+            // Isso evita a "corrida de linha de código" onde a busca começava antes da View estar pronta para ler.
         }
 
         #endregion
@@ -161,16 +178,18 @@ namespace magal.ViewModels
         {
             try
             {
+                // Garante que o estado seja verdadeiro ao iniciar (útil para cliques subsequentes em Atualizar)
+                IsLoading = true;
+
                 _filtroTexto = string.Empty;
                 OnPropertyChanged(nameof(FiltroTexto));
 
+                // Executa a busca demorada no banco de dados
                 var lista = await _repository.BuscarTodosPorUsuario(1);
                 Projetos.Clear();
 
                 foreach (var p in lista)
                 {
-                    // Se o banco trouxe o orçamento nulo nesta query simplificada,
-                    // criamos uma instância vazia para evitar que a propriedade jogue a data para o passado.
                     if (p.Orcamento == null)
                     {
                         p.Orcamento = new Orcamento();
@@ -189,6 +208,11 @@ namespace magal.ViewModels
             {
                 MessageBox.Show($"Erro ao carregar histórico: {ex.Message}", "Aviso de Sistema", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+            finally
+            {
+                // O bloco finally garante que o loading caia mesmo se houver erro de rede
+                IsLoading = false;
+            }
         }
 
         #endregion
@@ -198,8 +222,6 @@ namespace magal.ViewModels
         /// <summary>
         /// Avalia se um projeto deve ser exibido no DataGrid com base no texto inserido no campo de busca.
         /// </summary>
-        /// <param name="obj">O objeto de projeto encapsulado pela view.</param>
-        /// <returns><c>true</c> se o projeto corresponder aos critérios de busca; caso contrário, <c>false</c>.</returns>
         private bool FiltroDeProjetos(object obj)
         {
             if (string.IsNullOrWhiteSpace(FiltroTexto)) return true;
@@ -207,7 +229,6 @@ namespace magal.ViewModels
 
             var busca = FiltroTexto.ToLower().Trim();
 
-            // Verifica correspondência na data de expiração gerada pela Model
             bool dataExpiracaoBate = projeto.Orcamento != null &&
                                      projeto.DataExpiracao.ToString("dd/MM/yyyy").Contains(busca);
 
@@ -244,10 +265,9 @@ namespace magal.ViewModels
         /// </summary>
         private void ExecutarExportacaoPdf()
         {
-            // Obtém estritamente a lista filtrada que o usuário está vendo na interface
-            var projetosVisiveis = ProjetosView.Cast<Projeto>().ToList();
+            var proyectosVisiveis = ProjetosView.Cast<Projeto>().ToList();
 
-            if (!projetosVisiveis.Any())
+            if (!proyectosVisiveis.Any())
             {
                 MessageBox.Show("Não há dados na tabela atual para exportar o relatório.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -263,9 +283,7 @@ namespace magal.ViewModels
             {
                 try
                 {
-                    // Invoca o método de geração no PdfService passando os dados visíveis
-                    new PdfService().GerarRelatorioTabelaProjetos(projetosVisiveis, sfd.FileName);
-
+                    new PdfService().GerarRelatorioTabelaProjetos(proyectosVisiveis, sfd.FileName);
                     MessageBox.Show("Relatório de listagem exportado com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
@@ -312,6 +330,8 @@ namespace magal.ViewModels
 
             try
             {
+                IsLoading = true;
+
                 var projetoCompleto = await _repository.CarregarProjetoCompleto(projeto.id_projeto);
 
                 if (projetoCompleto != null)
@@ -328,7 +348,7 @@ namespace magal.ViewModels
             {
                 MessageBox.Show($"Erro ao carregar edição: {ex.Message}", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-        }
+           }
 
         #endregion
     }
