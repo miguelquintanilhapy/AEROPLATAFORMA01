@@ -1,75 +1,163 @@
 ﻿using System;
-using MySql.Data.MySqlClient;
-using magal.Data;
-using magal.Models;
 using System.Collections.Generic;
-using System.Threading.Tasks; 
+using System.Threading.Tasks;
+using MySql.Data.MySqlClient;
+using magal.Models;
+using magal.Data;
 
 namespace magal.Data.Repositories
 {
     public class UsuarioRepository
     {
-        public async Task Salvar(Usuario usuario)
-        {
-            using (var conn = (MySqlConnection)DbConnectionFactory.CreateConnection())
-            {
-                await conn.OpenAsync();
-
-                string sql = @"INSERT INTO usuario (nome, email, senha, status) 
-                               VALUES (@nome, @email, @senha, @status)";
-
-                using (var cmd = new MySqlCommand(sql, conn))
-                {
-                    cmd.Parameters.AddWithValue("@nome", usuario.nome);
-                    cmd.Parameters.AddWithValue("@email", usuario.email);
-                    cmd.Parameters.AddWithValue("@senha", usuario.senha);
-                    cmd.Parameters.AddWithValue("@status", usuario.status ?? "Ativo");
-
-                    await cmd.ExecuteNonQueryAsync();
-                }
-            }
-        }
-
-        public async Task<List<Usuario>> BuscarTodos()
+        public async Task<List<Usuario>> ListarTodos()
         {
             var lista = new List<Usuario>();
-            using (var conn = (MySqlConnection)DbConnectionFactory.CreateConnection())
-            {
-                await conn.OpenAsync();
-                string sql = "SELECT * FROM usuario ORDER BY nome ASC";
 
-                using (var cmd = new MySqlCommand(sql, conn))
+            try
+            {
+                using (var conn = (MySqlConnection)DbConnectionFactory.CreateConnection())
                 {
-                    using (var reader = await cmd.ExecuteReaderAsync())
+                    await conn.OpenAsync();
+
+                    string sql = @"SELECT id_usuario, 
+                                          nome, 
+                                          email, 
+                                          senha, 
+                                          status 
+                                   FROM usuario 
+                                   ORDER BY nome ASC";
+
+                    using (var cmd = new MySqlCommand(sql, conn))
                     {
-                        while (await reader.ReadAsync())
+                        using (var reader = await cmd.ExecuteReaderAsync())
                         {
-                            lista.Add(new Usuario
+                            while (await reader.ReadAsync())
                             {
-                                id_usuario = Convert.ToInt32(reader["id_usuario"]),
-                                nome = reader["nome"].ToString(),
-                                email = reader["email"].ToString(),
-                                senha = reader["senha"].ToString(),
-                                status = reader["status"].ToString()
-                            });
+                                lista.Add(new Usuario
+                                {
+                                    id_usuario = reader.GetInt32(reader.GetOrdinal("id_usuario")),
+
+                                    nome = reader.IsDBNull(reader.GetOrdinal("nome"))
+                                           ? "" : reader.GetString(reader.GetOrdinal("nome")),
+
+                                    email = reader.IsDBNull(reader.GetOrdinal("email"))
+                                            ? "" : reader.GetString(reader.GetOrdinal("email")),
+
+                                    senha = reader.IsDBNull(reader.GetOrdinal("senha"))
+                                            ? "" : reader.GetString(reader.GetOrdinal("senha")),
+
+                                    status = reader.IsDBNull(reader.GetOrdinal("status"))
+                                             ? "Ativo" : reader.GetString(reader.GetOrdinal("status"))
+                                });
+                            }
                         }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro no UsuarioRepository ao listar: " + ex.Message);
+            }
+
             return lista;
         }
 
-        public async Task ExcluirUsuario(int idUsuario)
+        public async Task Inserir(Usuario usuario)
         {
-            using (var conn = (MySqlConnection)DbConnectionFactory.CreateConnection())
+            try
             {
-                await conn.OpenAsync();
-                string sql = "DELETE FROM usuario WHERE id_usuario = @id";
-                using (var cmd = new MySqlCommand(sql, conn))
+                using (var conn = (MySqlConnection)DbConnectionFactory.CreateConnection())
                 {
-                    cmd.Parameters.AddWithValue("@id", idUsuario);
-                    await cmd.ExecuteNonQueryAsync();
+                    await conn.OpenAsync();
+
+                    string sql = @"
+                        INSERT INTO usuario (
+                            nome,
+                            email,
+                            senha,
+                            status
+                        )
+                        VALUES
+                        (
+                            @nome,
+                            @email,
+                            @senha,
+                            @status
+                        )";
+
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@nome", usuario.nome ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@email", usuario.email ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@senha", usuario.senha ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@status", usuario.status ?? "Ativo");
+
+                        await cmd.ExecuteNonQueryAsync();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao inserir usuário: " + ex.Message);
+            }
+        }
+
+        public async Task Atualizar(Usuario usuario)
+        {
+            try
+            {
+                using (var conn = (MySqlConnection)DbConnectionFactory.CreateConnection())
+                {
+                    await conn.OpenAsync();
+
+                    string sql = @"
+                        UPDATE usuario
+                        SET
+                            nome = @nome,
+                            email = @email,
+                            senha = @senha,
+                            status = @status
+                        WHERE id_usuario = @id";
+
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@id", usuario.id_usuario);
+                        cmd.Parameters.AddWithValue("@nome", usuario.nome ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@email", usuario.email ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@senha", usuario.senha ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@status", usuario.status ?? "Ativo");
+
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao atualizar usuário: " + ex.Message);
+            }
+        }
+
+        public async Task Excluir(int idUsuario)
+        {
+            try
+            {
+                using (var conn = (MySqlConnection)DbConnectionFactory.CreateConnection())
+                {
+                    await conn.OpenAsync();
+
+                    string sql = "DELETE FROM usuario WHERE id_usuario = @id";
+
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@id", idUsuario);
+
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao excluir usuário: " + ex.Message);
             }
         }
     }

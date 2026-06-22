@@ -239,7 +239,6 @@ namespace magal.ViewModels
                     };
                 }
             }
-            // ... restante do método CarregarProjetoParaEdicao igual ...
             catch (Exception ex)
             {
                 MessageBox.Show("Erro ao carregar edição: " + ex.Message, "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -249,26 +248,18 @@ namespace magal.ViewModels
                 _isUpdating = false;
                 AtualizarFinanceiro();
                 OnPropertyChanged(nameof(ProjetoAtual));
-
-                // 1. Primeiro desliga o carregamento para a View de custos aparecer de fato na tela
                 IsLoading = false;
-
-                // 2. Aguarda um curtíssimo delay para o WPF criar os ComboBoxes físicos na interface
                 await System.Threading.Tasks.Task.Delay(50);
 
-                // 3. Força a atualização reinjetando a referência do objeto para o ComboBox acordar
                 if (this.CustosExtras != null)
                 {
                     foreach (var linhaCusto in this.CustosExtras)
                     {
-                        // Busca o objeto correto dentro da lista de itens filtrados daquela linha
                         var itemReal = linhaCusto.ItensFiltrados?.FirstOrDefault(x => x.id_catalogo_custo == linhaCusto.id_catalogo_custo);
 
                         if (itemReal != null)
                         {
-                            // Reseta temporariamente a referência da ViewModel e a reaplica
-                            // Isso força o acionamento do PropertyChanged com a tela 100% aberta
-                            var backup = itemReal;
+                                            var backup = itemReal;
                             linhaCusto.ItemSelecionado = null;
                             linhaCusto.ItemSelecionado = backup;
                         }
@@ -342,17 +333,13 @@ namespace magal.ViewModels
                 return;
             }
 
-            // ====================================================================
-            // INTERCEPTAÇÃO: ABRE O NOVO MODAL DE CONDIÇÕES DE PAGAMENTO
-            // ====================================================================
+    
             var activeWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
             var dialog = new magal.Views.FinalizarPropostaDialog(this.ProjetoAtual.Orcamento);
             dialog.Owner = activeWindow;
 
-            // Se o usuário fechar o modal ou não confirmar, cancela a gravação
             if (dialog.ShowDialog() != true) return;
 
-            // Se confirmou no modal, segue para a confirmação de gravação física
             var confirm = MessageBox.Show("Deseja salvar as alterações deste projeto?", "Confirmar Salvamento", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (confirm != MessageBoxResult.Yes) return;
 
@@ -444,7 +431,6 @@ namespace magal.ViewModels
         {
             try
             {
-                // Força o loading a ligar assim que a tela nasce
                 IsLoading = true;
 
                 var listaClientes = await new ClienteRepository().ListarTodos();
@@ -500,7 +486,6 @@ namespace magal.ViewModels
                     AtualizarFinanceiro();
                 }
 
-                // Avisa que acabou o carregamento base do sistema
                 _dadosIniciaisCarregados.TrySetResult(true);
             }
             catch (Exception ex)
@@ -510,9 +495,7 @@ namespace magal.ViewModels
             }
             finally
             {
-                // Se for um projeto novo (_projetoOriginal é nulo), pode desligar o loading.
-                // Se for edição, deixa que o CarregarProjetoParaEdicao cuide do desligamento no final dele.
-                if (_projetoOriginal == null)
+                             if (_projetoOriginal == null)
                 {
                     IsLoading = false;
                 }
@@ -565,8 +548,7 @@ namespace magal.ViewModels
 
         private void AdicionarCustoExtra()
         {
-            // Garante que se a lista mestra estiver nula, passe uma lista vazia ao invés de quebrar,
-            // mas usa a referência direta da ViewModel principal.
+        
             var novoCusto = new CustoItemViewModel(_todosOsCustosCadastrados ?? new List<CatalogoCusto>())
             {
                 categoria = "Equipamentos",
@@ -722,7 +704,7 @@ namespace magal.ViewModels
         private readonly List<CatalogoCusto> _listaMestraCustos;
         private ObservableCollection<CatalogoCusto> _itensFiltrados = new ObservableCollection<CatalogoCusto>();
         private CatalogoCusto _itemSelecionado;
-        private bool _isSuppressingFilter = false; // Flag para evitar quebras durante a inicialização
+        private bool _isSuppressingFilter = false; 
 
         public new string categoria
         {
@@ -802,7 +784,6 @@ namespace magal.ViewModels
 
                     if (_itemSelecionado != null)
                     {
-                        // Altera a propriedade new (pública) para que o binding do SelectedValue acompanhe
                         this.id_catalogo_custo = _itemSelecionado.id_catalogo_custo;
                         this.nome = _itemSelecionado.nome;
                         this.valor = _itemSelecionado.valor;
@@ -820,7 +801,6 @@ namespace magal.ViewModels
             }
         }
 
-        // Construtor para item Novo
         public CustoItemViewModel(List<CatalogoCusto> listaMestra)
         {
             _listaMestraCustos = listaMestra ?? new List<CatalogoCusto>();

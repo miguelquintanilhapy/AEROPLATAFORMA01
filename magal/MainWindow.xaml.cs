@@ -148,9 +148,15 @@ namespace magal
             dialog.ShowDialog();
         }
 
+        private void MenuVisualizarUsuarios_Click(object sender, RoutedEventArgs e)
+        {
+            MainContent.Content = new UsuariosListaView(); 
+            AtualizarBotaoAtivo(BtnGerenciamento);
+        }
+
         private void MenuLogoff_Click(object sender, RoutedEventArgs e)
         {
-            var resultado = MessageBox.Show("Deseja realmente sair e voltar para o login?", "Logoff",
+            var resultado = MessageBox.Show("Deseja realmente sair e voltar para o login?", "LogOut",
                                             MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (resultado == MessageBoxResult.Yes)

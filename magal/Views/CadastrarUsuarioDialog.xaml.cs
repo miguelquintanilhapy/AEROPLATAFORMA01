@@ -51,7 +51,7 @@ namespace magal.Views
                 };
 
                 var repo = new UsuarioRepository();
-                repo.Salvar(novoUsuario);
+                 repo.Inserir(novoUsuario);
 
                 MessageBox.Show("Usuário cadastrado com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
 

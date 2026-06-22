@@ -161,6 +161,27 @@ namespace magal.Services
             }).GeneratePdf(caminhoArquivo);
         }
 
+        /// <summary>
+        /// Gera e salva um relatório gerencial em PDF contendo a listagem tabular dos usuários cadastrados.
+        /// </summary>
+        public void GerarRelatorioTabelaUsuarios(List<Usuario> usuarios, string caminhoArquivo)
+        {
+            Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4.Landscape());
+                    page.Margin(0.6f, Unit.Centimetre);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(11).FontFamily("Arial"));
+
+                    page.Header().Column(col => ConstruirCabecalhoRelatorio(col, "USUÁRIOS", usuarios.Count));
+                    page.Content().PaddingTop(16).Column(col => ConstruirTabelaRelatorioUsuarios(col, usuarios));
+                    page.Footer().BorderTop(1).BorderColor("#E0E0E0").PaddingTop(8).Row(ConstruirRodape);
+                });
+            }).GeneratePdf(caminhoArquivo);
+        }
+
         #endregion
 
         #region Métodos Auxiliares / Privados
@@ -663,6 +684,43 @@ namespace magal.Services
 
                 t.Cell().Background("#1E3A5F").Padding(6).Text("Valor Acumulado:").FontSize(10).FontColor(Colors.White).Bold();
                 t.Cell().Background("#1E3A5F").Padding(6).AlignRight().Text(somaCustos.ToString("C2", _ptBR)).FontSize(10).FontColor(Colors.White).Bold();
+            });
+        }
+
+        private void ConstruirTabelaRelatorioUsuarios(ColumnDescriptor col, List<Usuario> usuarios)
+        {
+            col.Item().Table(table =>
+            {
+                table.ColumnsDefinition(cols =>
+                {
+                    cols.ConstantColumn(50);   // ID
+                    cols.RelativeColumn(3.5f); // Nome Completo
+                    cols.RelativeColumn(3.5f); // E-mail de Acesso
+                    cols.RelativeColumn(2.0f); // Perfil / Permissão
+                });
+
+                table.Header(header =>
+                {
+                    header.Cell().Background("#2D3748").Padding(8).Text("ID").FontColor(Colors.White).Bold().FontSize(9.5f);
+                    header.Cell().Background("#2D3748").Padding(8).Text("NOME COMPLETO").FontColor(Colors.White).Bold().FontSize(9.5f);
+                    header.Cell().Background("#2D3748").Padding(8).Text("E-MAIL DE ACESSO").FontColor(Colors.White).Bold().FontSize(9.5f);
+                    header.Cell().Background("#2D3748").Padding(8).Text("PERFIL DE SISTEMA").FontColor(Colors.White).Bold().FontSize(9.5f);
+                });
+
+                bool listraAlternada = false;
+                foreach (var u in usuarios)
+                {
+                    string corFundo = listraAlternada ? "#F8FAFC" : "#FFFFFF";
+
+                    table.Cell().Background(corFundo).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).AlignCenter().Text(u.id_usuario.ToString()).FontSize(10);
+                    table.Cell().Background(corFundo).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).Text(u.nome ?? "-").FontSize(10).Bold();
+                    table.Cell().Background(corFundo).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).Text(u.email ?? "-").FontSize(10);
+
+                    // Perfil destacado em verde escuro igual ao custo dos cargos/status dos funcionários
+                    table.Cell().Background(corFundo).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).Text(u.status?.ToUpper() ?? "-").FontSize(10).Bold().FontColor("#009140");
+
+                    listraAlternada = !listraAlternada;
+                }
             });
         }
 
