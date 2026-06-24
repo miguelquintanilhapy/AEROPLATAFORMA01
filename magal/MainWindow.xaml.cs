@@ -105,8 +105,20 @@ namespace magal
 
         private void BtnDashboard_Click(object sender, RoutedEventArgs e)
         {
-            MainContent.Content = new GraficoHistoricoView();
+            //Impede usuários comuns de visualizarem o Dashboard
+            if (Sessao.UsuarioLogado == null || Sessao.UsuarioLogado.nivel != "Administrador")
+            {
+                MessageBox.Show(
+                    "Acesso Restrito!\nApenas usuários com o nível 'Administrador' possuem permissão para acessar o Dashboard.",
+                    "Aero Concepts - Segurança",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
 
+                return; // Interrompe a execução aqui e não altera a tela
+            }
+
+            // Se for Admin, segue o fluxo normal
+            MainContent.Content = new GraficoHistoricoView();
             AtualizarBotaoAtivo(BtnDashboard);
         }
 
