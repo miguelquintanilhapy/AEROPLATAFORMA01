@@ -1,4 +1,3 @@
-﻿//using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -6,7 +5,7 @@ using System.ComponentModel;
 using System.Windows.Data;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Threading.Tasks; // Adicionado para garantir o tipo Task
+using System.Threading.Tasks; 
 using Microsoft.Win32;
 using magal.Models;
 using magal.Data.Repositories;
@@ -29,7 +28,6 @@ namespace magal.ViewModels
         private string _totalLucro;
         private int _quantidadeProjetos;
 
-        // MUDANÇA CRÍTICA: O estado inicial DEVE ser true para prender a tela no milissegundo em que ela abre
         private bool _isLoading = true;
 
         /// <summary>
@@ -172,12 +170,10 @@ namespace magal.ViewModels
         {
             try
             {
-                // Garante que o estado seja verdadeiro ao iniciar 
                 IsLoading = true;
 
                 _filtroTexto = string.Empty;
                 OnPropertyChanged(nameof(FiltroTexto));
-
                 var lista = await _repository.BuscarTodosPorUsuario(1);
                 Projetos.Clear();
 
