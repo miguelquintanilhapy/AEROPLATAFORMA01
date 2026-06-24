@@ -26,7 +26,7 @@ namespace magal
 
         private void CarregarDadosUsuario()
         {
-            // Verificamos se a sessão global existe
+            // Verifica se a sessão global existe
             if (Sessao.UsuarioLogado != null)
             {
                 string nome = Sessao.UsuarioLogado.nome;
@@ -60,7 +60,6 @@ namespace magal
         private void BtnHistorico_Click(object sender, RoutedEventArgs e) => AbrirHistorico();
         private void BtnGerenciamento_Click(object sender, RoutedEventArgs e) => AbrirGerenciamento();
 
-        // Novo método para alternar a classe/tag ativa dos botões
         private void AtualizarBotaoAtivo(Button botaoAtivo)
         {
             // Lista com todos os seus botões da sidebar
@@ -86,21 +85,21 @@ namespace magal
         {
             if (_homeView == null) _homeView = new HomeView();
             MainContent.Content = _homeView;
-            AtualizarBotaoAtivo(BtnHome); // <-- ADICIONE AQUI
+            AtualizarBotaoAtivo(BtnHome); 
         }
 
         public void AbrirOrcamento()
         {
             _orcamentoView = new OrcamentoView();
             MainContent.Content = _orcamentoView;
-            AtualizarBotaoAtivo(BtnOrcamentos); // <-- ADICIONE AQUI
+            AtualizarBotaoAtivo(BtnOrcamentos); 
         }
 
         public void AbrirHistorico()
         {
             if (_historicoView == null) _historicoView = new HistoricoView();
             MainContent.Content = _historicoView;
-            AtualizarBotaoAtivo(BtnHistorico); // <-- ADICIONE AQUI
+            AtualizarBotaoAtivo(BtnHistorico);
         }
 
         private void BtnDashboard_Click(object sender, RoutedEventArgs e)
@@ -125,7 +124,7 @@ namespace magal
         public void AbrirGerenciamento()
         {
             MainContent.Content = new GerenciamentoView();
-            AtualizarBotaoAtivo(BtnGerenciamento); // <-- ADICIONE AQUI
+            AtualizarBotaoAtivo(BtnGerenciamento); 
         }
 
         public async void IrParaEdicao(Projeto projetoSimplificado)
@@ -155,6 +154,18 @@ namespace magal
 
         private void MenuCadastrarUsuario_Click(object sender, RoutedEventArgs e)
         {
+            //Impede usuários comuns de cadastrarem novos usuários
+            if (Sessao.UsuarioLogado == null || Sessao.UsuarioLogado.nivel != "Administrador")
+            {
+                MessageBox.Show(
+                    "Acesso Restrito!\nApenas administradores possuem permissão para cadastrar novos usuários.",
+                    "Aero Concepts - Segurança",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return; // Bloqueia a abertura 
+            }
+
             CadastrarUsuarioDialog dialog = new CadastrarUsuarioDialog();
             dialog.Owner = this;
             dialog.ShowDialog();
@@ -162,7 +173,19 @@ namespace magal
 
         private void MenuVisualizarUsuarios_Click(object sender, RoutedEventArgs e)
         {
-            MainContent.Content = new UsuariosListaView(); 
+            //Impede usuários comuns de visualizarem a lista de usuários
+            if (Sessao.UsuarioLogado == null || Sessao.UsuarioLogado.nivel != "Administrador")
+            {
+                MessageBox.Show(
+                    "Acesso Restrito!\nApenas administradores possuem permissão para gerenciar e visualizar usuários.",
+                    "Aero Concepts - Segurança",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return; // Bloqueia a troca de tela
+            }
+
+            MainContent.Content = new UsuariosListaView();
             AtualizarBotaoAtivo(BtnGerenciamento);
         }
 
