@@ -1,0 +1,496 @@
+﻿<UserControl x:Class="magal.Views.CalendarioView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             Language="pt-BR"
+             d:DesignHeight="900" d:DesignWidth="1200"
+             Background="#F0F4FA"
+             Loaded="UserControl_Loaded">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+
+        <SolidColorBrush x:Key="AzulAero"      Color="#131C49"/>
+        <SolidColorBrush x:Key="AeroAccent"    Color="#3B82F6"/>
+        <SolidColorBrush x:Key="AeroDanger"    Color="#EF4444"/>
+        <SolidColorBrush x:Key="AeroTextMuted" Color="#64748B"/>
+        <SolidColorBrush x:Key="AeroTextHint"  Color="#94A3B8"/>
+        <SolidColorBrush x:Key="AeroBorder"    Color="#E2E8F0"/>
+        <SolidColorBrush x:Key="VerdeAero"     Color="#009140"/>
+
+        <SolidColorBrush x:Key="CorFeriadoNac"  Color="#4472C4"/>
+        <SolidColorBrush x:Key="CorFeriadoEst"  Color="#ED7D31"/>
+        <SolidColorBrush x:Key="CorFacultativo" Color="#7030A0"/>
+        <SolidColorBrush x:Key="CorPonte"       Color="#BDD7EE"/>
+        <SolidColorBrush x:Key="CorFerias"      Color="#00B0F0"/>
+        <SolidColorBrush x:Key="CorFimSemana"   Color="#375623"/>
+
+        <Style x:Key="PrimaryBtn" TargetType="Button">
+            <Setter Property="Background"      Value="{StaticResource AzulAero}"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="FontWeight"      Value="Bold"/>
+            <Setter Property="FontSize"        Value="11"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="8" Padding="14,7">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1E3A8A"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Background" Value="#94A3B8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DangerBtn" TargetType="Button">
+            <Setter Property="Background"      Value="{StaticResource AeroDanger}"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="FontWeight"      Value="Bold"/>
+            <Setter Property="FontSize"        Value="11"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="8" Padding="14,7">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#DC2626"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Background" Value="#94A3B8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <DataTemplate x:Key="CelulaTemplate">
+            <Border MinWidth="26" MinHeight="20" Margin="1"
+                    Background="{Binding CorFundoBrush}"
+                    ToolTip="{Binding ToolTip}">
+                <TextBlock Text="{Binding Texto}"
+                           Foreground="{Binding CorTextoBrush}"
+                           FontWeight="{Binding PesoFonte}"
+                           FontSize="10"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid Margin="32,28">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- CABEÇALHO -->
+        <Grid Grid.Row="0" Height="80" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock Text="Calendário Corporativo"
+                           FontSize="28" FontWeight="Bold"
+                           Foreground="{StaticResource AzulAero}"
+                           VerticalAlignment="Center"/>
+                <TextBlock Text=" — " FontSize="28"
+                           Foreground="{StaticResource AeroTextHint}"
+                           VerticalAlignment="Center"/>
+                <ComboBox ItemsSource="{Binding AnosDisponiveis}"
+                          SelectedItem="{Binding AnoSelecionado, Mode=TwoWay}"
+                          Width="100" Height="36" FontSize="16" FontWeight="Bold"
+                          VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Button Command="{Binding CriarAnoCommand}" Style="{StaticResource PrimaryBtn}" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="NOVO ANO" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding EditarAnoCommand}" Style="{StaticResource PrimaryBtn}" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="EDITAR ANO" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding ExcluirAnoCommand}" Style="{StaticResource DangerBtn}" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="EXCLUIR ANO" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding ExportarPdfCommand}" Style="{StaticResource PrimaryBtn}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE72D;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="EXPORTAR PDF" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- KPI CARDS -->
+        <UniformGrid Grid.Row="1" Columns="5" Margin="0,0,0,20">
+            <Border Background="White" CornerRadius="12" Margin="0,0,10,0" Padding="20,15"
+                    BorderThickness="1" BorderBrush="{StaticResource AeroBorder}">
+                <StackPanel>
+                    <TextBlock Text="FÉRIAS COLETIVAS" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AeroTextHint}" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding FeriasColetivasFormatado}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource CorFerias}"/>
+                </StackPanel>
+            </Border>
+            <Border Background="White" CornerRadius="12" Margin="5,0" Padding="20,15"
+                    BorderThickness="1" BorderBrush="{StaticResource AeroBorder}">
+                <StackPanel>
+                    <TextBlock Text="TOTAL PONTES" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AeroTextHint}" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding TotalPontesFormatado}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource AzulAero}"/>
+                </StackPanel>
+            </Border>
+            <Border Background="White" CornerRadius="12" Margin="5,0" Padding="20,15"
+                    BorderThickness="1" BorderBrush="{StaticResource AeroBorder}">
+                <StackPanel>
+                    <TextBlock Text="DU s/PONTES" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AeroTextHint}" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding TotalDUSemPontesFormatado}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource AzulAero}"/>
+                </StackPanel>
+            </Border>
+            <Border Background="{StaticResource AzulAero}" CornerRadius="12" Margin="5,0" Padding="20,15">
+                <StackPanel>
+                    <TextBlock Text="DU c/PONTES" FontSize="10" FontWeight="Bold" Foreground="#93C5FD" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding TotalDUComPontesFormatado}" FontSize="24" FontWeight="Bold" Foreground="White"/>
+                </StackPanel>
+            </Border>
+            <Border Background="White" CornerRadius="12" Margin="10,0,0,0" Padding="20,15"
+                    BorderThickness="1" BorderBrush="{StaticResource AeroBorder}">
+                <StackPanel>
+                    <TextBlock Text="TOTAL HORAS/ANO" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AeroTextHint}" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding TotalHorasAnoFormatado}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource VerdeAero}"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+        <!-- TABCONTROL -->
+        <TabControl Grid.Row="2" Background="Transparent" BorderThickness="0"
+                    FontSize="13" FontWeight="SemiBold">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="Foreground"      Value="{StaticResource AeroTextMuted}"/>
+                    <Setter Property="Background"      Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Padding"         Value="16,10"/>
+                    <Setter Property="Cursor"          Value="Hand"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Border x:Name="TabBorder" Padding="{TemplateBinding Padding}"
+                                        Background="Transparent" BorderThickness="0,0,0,2"
+                                        BorderBrush="Transparent" Margin="0,0,4,0">
+                                    <ContentPresenter ContentSource="Header"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="TabBorder" Property="BorderBrush" Value="{StaticResource AzulAero}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource AzulAero}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="{StaticResource AzulAero}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Resources>
+
+            <!-- ABA 1 — CALENDÁRIO VISUAL -->
+            <TabItem Header="CALENDÁRIO VISUAL">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="0,12,0,0">
+                    <StackPanel>
+                        <ItemsControl ItemsSource="{Binding MesesCalendario}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Rows="4" Columns="3"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="White" CornerRadius="12" Margin="0,0,12,12"
+                                            BorderThickness="1" BorderBrush="{StaticResource AeroBorder}" Padding="10">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Nome}" FontSize="12" FontWeight="Bold"
+                                                       Foreground="{StaticResource AzulAero}" Margin="0,0,0,4"/>
+                                            <ItemsControl ItemsSource="{Binding Celulas}" ItemTemplate="{StaticResource CelulaTemplate}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <UniformGrid Columns="8"/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+                                            <TextBlock Text="{Binding NotasSubstituicao}" FontSize="9"
+                                                       Foreground="{StaticResource AeroTextMuted}"
+                                                       TextWrapping="Wrap" Margin="0,4,0,0"
+                                                       Visibility="{Binding TemNota, Converter={StaticResource BoolToVis}}"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- Legenda -->
+                        <Border Background="White" CornerRadius="12" Padding="16,10"
+                                BorderThickness="1" BorderBrush="{StaticResource AeroBorder}" Margin="0,0,12,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="LEGENDA:" FontWeight="Bold" FontSize="10"
+                                           Foreground="{StaticResource AeroTextMuted}" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                                <Border Width="12" Height="12" Background="{StaticResource CorFeriadoNac}" CornerRadius="2" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Feriado Nacional" FontSize="11" Foreground="{StaticResource AeroTextMuted}" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                                <Border Width="12" Height="12" Background="{StaticResource CorFeriadoEst}" CornerRadius="2" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Estadual/Municipal" FontSize="11" Foreground="{StaticResource AeroTextMuted}" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                                <Border Width="12" Height="12" Background="{StaticResource CorFacultativo}" CornerRadius="2" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Facultativo" FontSize="11" Foreground="{StaticResource AeroTextMuted}" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                                <Border Width="12" Height="12" Background="{StaticResource CorPonte}" CornerRadius="2" BorderBrush="#94A3B8" BorderThickness="1" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Ponte" FontSize="11" Foreground="{StaticResource AeroTextMuted}" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                                <Border Width="12" Height="12" Background="{StaticResource CorFerias}" CornerRadius="2" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Férias Coletivas" FontSize="11" Foreground="{StaticResource AeroTextMuted}" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                                <Border Width="12" Height="12" Background="{StaticResource CorFimSemana}" CornerRadius="2" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Fim de Semana" FontSize="11" Foreground="{StaticResource AeroTextMuted}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ABA 2 — RESUMO MENSAL -->
+            <TabItem Header="RESUMO MENSAL">
+                <Border Background="White" CornerRadius="16" BorderThickness="1"
+                        BorderBrush="{StaticResource AeroBorder}" Padding="1" Margin="0,12,0,0">
+                    <DataGrid ItemsSource="{Binding ResumoMensal}" AutoGenerateColumns="False" IsReadOnly="True"
+                              Background="Transparent" BorderThickness="0"
+                              CanUserAddRows="False" CanUserDeleteRows="False"
+                              CanUserResizeColumns="False" CanUserReorderColumns="False"
+                              GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9"
+                              HeadersVisibility="Column" RowHeight="52" SelectionMode="Single" FontSize="14">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#F8FAFC"/>
+                                <Setter Property="Foreground" Value="{StaticResource AeroTextMuted}"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="FontSize" Value="13"/>
+                                <Setter Property="Padding" Value="15,12"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource AeroBorder}"/>
+                            </Style>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Padding" Value="15,0"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="DataGridCell">
+                                            <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+                                                <ContentPresenter VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#EFF6FF"/>
+                                        <Setter Property="Foreground" Value="{StaticResource AzulAero}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#F1F5F9"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="MÊS" Binding="{Binding NomeMes}" Width="*" FontSize="15" FontWeight="SemiBold"/>
+                            <DataGridTextColumn Header="TOTAL DU" Binding="{Binding TotalDiasUteis}" Width="110" FontSize="14" FontWeight="SemiBold">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="FERIADOS DU" Binding="{Binding FeriadosEmDU}" Width="130" FontSize="14" FontWeight="SemiBold">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="PONTES" Binding="{Binding Pontes}" Width="100" FontSize="14" FontWeight="SemiBold">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="DU s/PONTES" Binding="{Binding DiasUteisSemPontes}" Width="130" FontSize="16" FontWeight="Bold">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Foreground" Value="{StaticResource AzulAero}"/>
+                                        <Setter Property="Padding" Value="0,0,20,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="DU c/PONTES" Binding="{Binding DiasUteisComPontes}" Width="130" FontSize="16" FontWeight="Bold">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Foreground" Value="{StaticResource VerdeAero}"/>
+                                        <Setter Property="Padding" Value="0,0,20,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
+            </TabItem>
+
+            <!-- ABA 3 — EVENTOS -->
+            <TabItem Header="EVENTOS">
+                <Grid Margin="0,12,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,15">
+                        <Button Command="{Binding CriarEventoCommand}" Style="{StaticResource PrimaryBtn}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock Text="NOVO EVENTO" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <Border Grid.Row="1" Background="White" CornerRadius="16"
+                            BorderThickness="1" BorderBrush="{StaticResource AeroBorder}" Padding="1">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <DataGrid Grid.Row="0"
+                                      ItemsSource="{Binding EventosDoAno}"
+                                      SelectedItem="{Binding EventoSelecionado, Mode=TwoWay}"
+                                      AutoGenerateColumns="False" IsReadOnly="True"
+                                      Background="Transparent" BorderThickness="0"
+                                      CanUserAddRows="False" CanUserDeleteRows="False"
+                                      CanUserResizeColumns="False" CanUserReorderColumns="False"
+                                      GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9"
+                                      HeadersVisibility="Column" RowHeight="60" SelectionMode="Single" FontSize="14">
+                                <DataGrid.Resources>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="Background" Value="#F8FAFC"/>
+                                        <Setter Property="Foreground" Value="{StaticResource AeroTextMuted}"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="FontSize" Value="13"/>
+                                        <Setter Property="Padding" Value="15,12"/>
+                                        <Setter Property="Cursor" Value="Hand"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                        <Setter Property="BorderBrush" Value="{StaticResource AeroBorder}"/>
+                                    </Style>
+                                    <Style TargetType="DataGridCell">
+                                        <Setter Property="Padding" Value="15,0"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="DataGridCell">
+                                                    <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+                                                        <ContentPresenter VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="#EFF6FF"/>
+                                                <Setter Property="Foreground" Value="{StaticResource AzulAero}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#F1F5F9"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.Resources>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="DATA OBSERVADA" Binding="{Binding data_observada, StringFormat=dd/MM/yyyy}" Width="150" FontSize="14" FontWeight="SemiBold"/>
+                                    <DataGridTextColumn Header="DESCRIÇÃO" Binding="{Binding DescricaoCompleta}" Width="*" FontSize="15" FontWeight="SemiBold">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                <Setter Property="Margin" Value="10,0"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="TIPO" Binding="{Binding tipo}" Width="200" FontSize="14" FontWeight="SemiBold"/>
+                                    <DataGridTextColumn Header="DATA ORIGINAL" Binding="{Binding data_original, StringFormat=dd/MM/yyyy}" Width="140" FontSize="14" FontWeight="SemiBold"/>
+                                    <DataGridTemplateColumn Header="AÇÕES" Width="150">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <Button Content="Editar"
+                                                            Command="{Binding DataContext.EditarEventoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}"
+                                                            FontSize="13" Foreground="{StaticResource AeroAccent}"
+                                                            Background="Transparent" BorderThickness="0"
+                                                            Cursor="Hand" FontWeight="Bold" Margin="0,0,15,0"/>
+                                                    <Button Content="Excluir"
+                                                            Command="{Binding DataContext.ExcluirEventoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}"
+                                                            FontSize="13" Foreground="{StaticResource AeroDanger}"
+                                                            Background="Transparent" BorderThickness="0"
+                                                            Cursor="Hand" FontWeight="Bold"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Border Grid.Row="1" Background="#F8FAFC" BorderThickness="0,1,0,0"
+                                    BorderBrush="#F1F5F9" CornerRadius="0,0,16,16" Padding="20,12">
+                                <TextBlock Text="{Binding EventosDoAno.Count, StringFormat='{}{0} eventos cadastrados'}"
+                                           FontSize="12" Foreground="{StaticResource AeroTextHint}" VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+        </TabControl>
+
+        <!-- LOADING OVERLAY -->
+        <Grid Grid.Row="0" Grid.RowSpan="3" Background="#CCFFFFFF"
+              Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ProgressBar IsIndeterminate="True" Width="200" Height="6"
+                             Foreground="{StaticResource AzulAero}" Background="#E2E8F0" BorderThickness="0"/>
+                <TextBlock Text="Carregando calendário..." Margin="0,12,0,0"
+                           FontSize="13" FontWeight="SemiBold"
+                           Foreground="{StaticResource AzulAero}" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+
+    </Grid>
+</UserControl>

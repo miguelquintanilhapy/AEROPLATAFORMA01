@@ -201,22 +201,22 @@ namespace magal.ViewModels
 
         #region Construtor
 
-        public CalendarioViewModel()
-        {
-            _anoRepo = new AnoCalendarioRepository();
-            _eventoRepo = new EventoCalendarioRepository();
-            _pdfService = new PdfService();
+        //public CalendarioViewModel()
+        //{
+        //    _anoRepo = new AnoCalendarioRepository();
+        //    _eventoRepo = new EventoCalendarioRepository();
+        //    _pdfService = new PdfService();
 
-            CarregarCommand = new RelayCommand(_ => Carregar());
-            CriarAnoCommand = new RelayCommand(_ => ExecutarCriarAno());
-            EditarAnoCommand = new RelayCommand(_ => ExecutarEditarAno(), _ => TemAnoSelecionado);
-            ExcluirAnoCommand = new RelayCommand(_ => ExecutarExcluirAno(), _ => TemAnoSelecionado);
-            CriarEventoCommand = new RelayCommand(_ => ExecutarCriarEvento(), _ => TemAnoSelecionado);
-            EditarEventoCommand = new RelayCommand(p => ExecutarEditarEvento(p as EventoCalendario));
-            ExcluirEventoCommand = new RelayCommand(p => ExecutarExcluirEvento(p as EventoCalendario));
-            ExportarPdfCommand = new RelayCommand(_ => ExecutarExportarPdf(),
-                _ => TemAnoSelecionado && MesesCalendario.Count > 0);
-        }
+        //    CarregarCommand = new RelayCommand(_ => Carregar());
+        //    CriarAnoCommand = new RelayCommand(_ => ExecutarCriarAno());
+        //    EditarAnoCommand = new RelayCommand(_ => ExecutarEditarAno(), _ => TemAnoSelecionado);
+        //    ExcluirAnoCommand = new RelayCommand(_ => ExecutarExcluirAno(), _ => TemAnoSelecionado);
+        //    CriarEventoCommand = new RelayCommand(_ => ExecutarCriarEvento(), _ => TemAnoSelecionado);
+        //    EditarEventoCommand = new RelayCommand(p => ExecutarEditarEvento(p as EventoCalendario));
+        //    ExcluirEventoCommand = new RelayCommand(p => ExecutarExcluirEvento(p as EventoCalendario));
+        //    ExportarPdfCommand = new RelayCommand(_ => ExecutarExportarPdf(),
+        //        _ => TemAnoSelecionado && MesesCalendario.Count > 0);
+        //}
 
         #endregion
 
@@ -442,20 +442,20 @@ namespace magal.ViewModels
 
         #region CRUD Ano
 
-        private void ExecutarCriarAno()
-        {
-            var dialog = new magal.Views.CadastrarAnoCalendarioDialog();
-            dialog.Owner = Application.Current.Windows.OfType<magal.MainWindow>().FirstOrDefault();
-            if (dialog.ShowDialog() == true) Carregar();
-        }
+        //private void ExecutarCriarAno()
+        //{
+        //    var dialog = new magal.Views.CadastrarAnoCalendarioDialog();
+        //    dialog.Owner = Application.Current.Windows.OfType<magal.MainWindow>().FirstOrDefault();
+      //      if (dialog.ShowDialog() == true) Carregar();
+//}
 
-        private void ExecutarEditarAno()
-        {
-            if (AnoSelecionado == null) return;
-            var dialog = new magal.Views.EditarAnoCalendarioDialog(AnoSelecionado);
-            dialog.Owner = Application.Current.Windows.OfType<magal.MainWindow>().FirstOrDefault();
-            if (dialog.ShowDialog() == true) Carregar();
-        }
+       //private void ExecutarEditarAno()
+        //{
+        //    if (AnoSelecionado == null) return;
+          //  var dialog = new magal.Views.EditarAnoCalendarioDialog(AnoSelecionado);
+         //   dialog.Owner = Application.Current.Windows.OfType<magal.MainWindow>().FirstOrDefault();
+        //    if (dialog.ShowDialog() == true) Carregar();
+       // }
 
         private async void ExecutarExcluirAno()
         {
@@ -477,23 +477,23 @@ namespace magal.ViewModels
 
         #region CRUD Evento
 
-        private void ExecutarCriarEvento()
-        {
-            if (AnoSelecionado == null) return;
-            var dialog = new magal.Views.CadastrarEventoCalendarioDialog(AnoSelecionado.id_ano_calendario);
-            dialog.Owner = Application.Current.Windows.OfType<magal.MainWindow>().FirstOrDefault();
-            if (dialog.ShowDialog() == true && _anoSelecionado != null)
-                _ = CarregarDadosDoAno(_anoSelecionado);
-        }
+        //private void ExecutarCriarEvento()
+       // {
+        //    if (AnoSelecionado == null) return;
+        //    var dialog = new magal.Views.CadastrarEventoCalendarioDialog(AnoSelecionado.id_ano_calendario);
+       //     dialog.Owner = Application.Current.Windows.OfType<magal.MainWindow>().FirstOrDefault();
+       //     if (dialog.ShowDialog() == true && _anoSelecionado != null)
+       //         _ = CarregarDadosDoAno(_anoSelecionado);
+      //  }
 
-        private void ExecutarEditarEvento(EventoCalendario? ev)
-        {
-            if (ev == null) return;
-            var dialog = new magal.Views.EditarEventoCalendarioDialog(ev);
-            dialog.Owner = Application.Current.Windows.OfType<magal.MainWindow>().FirstOrDefault();
-            if (dialog.ShowDialog() == true && _anoSelecionado != null)
-                _ = CarregarDadosDoAno(_anoSelecionado);
-        }
+       // private void ExecutarEditarEvento(EventoCalendario? ev)
+        //{
+       //     if (ev == null) return;
+       //     var dialog = new magal.Views.EditarEventoCalendarioDialog(ev);
+       //     dialog.Owner = Application.Current.Windows.OfType<magal.MainWindow>().FirstOrDefault();
+       //     if (dialog.ShowDialog() == true && _anoSelecionado != null)
+      //          _ = CarregarDadosDoAno(_anoSelecionado);
+      //  }
 
         private async void ExecutarExcluirEvento(EventoCalendario? ev)
         {
@@ -519,35 +519,36 @@ namespace magal.ViewModels
 
         #region PDF
 
-        private void ExecutarExportarPdf()
-        {
-            if (AnoSelecionado == null) return;
-            string pasta = System.IO.Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+//        private void ExecutarExportarPdf()
+//        {
+//            if (AnoSelecionado == null) return;
+//            string pasta = System.IO.Path.Combine(
+//                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 
-            var dlg = new SaveFileDialog
-            {
-                Filter = "Arquivos PDF (*.pdf)|*.pdf",
-                FileName = $"Calendario_{AnoSelecionado.ano}.pdf",
-                InitialDirectory = System.IO.Directory.Exists(pasta) ? pasta : string.Empty,
-                Title = "Exportar Calendário"
-            };
+//            var dlg = new SaveFileDialog
+//            {
+//                Filter = "Arquivos PDF (*.pdf)|*.pdf",
+//                FileName = $"Calendario_{AnoSelecionado.ano}.pdf",
+//                InitialDirectory = System.IO.Directory.Exists(pasta) ? pasta : string.Empty,
+//                Title = "Exportar Calendário"
+//            };
 
-            if (dlg.ShowDialog() != true) return;
+//            if (dlg.ShowDialog() != true) return;
 
-            try
-            {
-                _pdfService.GerarCalendarioCorporativo(
-                    AnoSelecionado, EventosDoAno.ToList(), ResumoMensal.ToList(), dlg.FileName);
-                MessageBox.Show("Calendário exportado com sucesso!", "Aero Concepts",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Erro ao exportar PDF: {ex.Message}", "Aero Concepts",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+//            try
+//            {
+//                //_pdfService.GerarCalendarioCorporativo(
+//                    AnoSelecionado}, EventosDoAno.ToList()}, ResumoMensal.ToList()}, dlg.FileName
+//});
+//                MessageBox.Show("Calendário exportado com sucesso!", "Aero Concepts",
+//                    MessageBoxButton.OK, MessageBoxImage.Information);
+//            }
+//            catch (Exception ex)
+//            {
+//                MessageBox.Show($"Erro ao exportar PDF: {ex.Message}", "Aero Concepts",
+//                    MessageBoxButton.OK, MessageBoxImage.Error);
+//            }
+//        }
 
         #endregion
     }
