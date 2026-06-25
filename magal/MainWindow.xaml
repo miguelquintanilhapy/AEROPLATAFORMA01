@@ -90,7 +90,13 @@
                             Style="{StaticResource MenuButtonStyle}" 
                             Padding="20,0,0,0"
                             FontWeight="SemiBold"
-                            Click="BtnDashboard_Click"/>         
+                            Click="BtnDashboard_Click"/>
+
+                    <Button x:Name="BtnCalendario" Content="Calendário"
+                            Style="{StaticResource MenuButtonStyle}"
+                            Padding="20,0,0,0"
+                            FontWeight="SemiBold"
+                            Click="BtnCalendario_Click"/>
 
                     <Button x:Name="BtnGerenciamento" Content="Gerenciamento" 
                             Style="{StaticResource MenuButtonStyle}" 

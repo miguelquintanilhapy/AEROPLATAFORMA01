@@ -14,6 +14,8 @@ namespace magal
         private HomeView _homeView;
         private HistoricoView _historicoView;
         private OrcamentoView _orcamentoView;
+        private CalendarioView _calendarioView; 
+
 
         public MainWindow()
         {
@@ -59,11 +61,12 @@ namespace magal
         private void BtnOrcamentos_Click(object sender, RoutedEventArgs e) => AbrirOrcamento();
         private void BtnHistorico_Click(object sender, RoutedEventArgs e) => AbrirHistorico();
         private void BtnGerenciamento_Click(object sender, RoutedEventArgs e) => AbrirGerenciamento();
+        private void BtnCalendario_Click(object sender, RoutedEventArgs e) => AbrirCalendario();
 
         private void AtualizarBotaoAtivo(Button botaoAtivo)
         {
             // Lista com todos os seus botões da sidebar
-            var botoes = new[] { BtnHome, BtnOrcamentos, BtnHistorico, BtnDashboard, BtnGerenciamento };
+            var botoes = new[] { BtnHome, BtnOrcamentos, BtnHistorico, BtnDashboard, BtnGerenciamento, BtnCalendario };
 
             foreach (var btn in botoes)
             {
@@ -120,6 +123,15 @@ namespace magal
             MainContent.Content = new GraficoHistoricoView();
             AtualizarBotaoAtivo(BtnDashboard);
         }
+
+
+        public void AbrirCalendario()
+        {
+            if (_calendarioView == null) _calendarioView = new CalendarioView();
+            MainContent.Content = _calendarioView;
+            AtualizarBotaoAtivo(BtnCalendario);
+        }
+
 
         public void AbrirGerenciamento()
         {
