@@ -115,7 +115,7 @@ namespace magal.ViewModels
                 {
                     if (naoEAdmin)
                     {
-                        f.CustoHoraExibicao = "—"; s
+                        f.CustoHoraExibicao = "—"; 
                     }
                     else
                     {
