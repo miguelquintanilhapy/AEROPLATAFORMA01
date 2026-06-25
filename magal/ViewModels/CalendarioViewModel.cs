@@ -36,6 +36,7 @@ namespace magal.ViewModels
         public SolidColorBrush CorFundoBrush { get; private set; } = new SolidColorBrush(Colors.White);
         public SolidColorBrush CorTextoBrush { get; private set; } = new SolidColorBrush(Color.FromRgb(30, 41, 59));
         public FontWeight PesoFonte { get; set; } = FontWeights.Normal;
+        public double TamanhoFonte { get; set; } = 12;
         public string? ToolTip { get; set; }
         public bool IsHeader { get; set; }
 
@@ -305,9 +306,9 @@ namespace magal.ViewModels
             var m = new MesCalendario { Numero = mes, Nome = NomesMeses[mes - 1], Ano = ano.ano };
 
             // Cabeçalho: SMA + dias da semana
-            m.Celulas.Add(Cell("SMA", "#1E293B", "#FFFFFF", FontWeights.Bold, isHeader: true));
+            m.Celulas.Add(Cell("SMA", "#1F3864", "#FFFFFF", FontWeights.Bold, isHeader: true));
             foreach (var label in new[] { "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom" })
-                m.Celulas.Add(Cell(label, "#1E293B", "#FFFFFF", FontWeights.SemiBold, isHeader: true));
+                m.Celulas.Add(Cell(label, "#1F3864", "#FFFFFF", FontWeights.SemiBold, isHeader: true));
 
             DateTime primeiroDia = new DateTime(ano.ano, mes, 1);
             DateTime ultimoDia = new DateTime(ano.ano, mes, DateTime.DaysInMonth(ano.ano, mes));
@@ -329,8 +330,7 @@ namespace magal.ViewModels
                     if (dia.Month == mes)
                     {
                         var (fundo, texto, tip) = ObterCorDia(dia, ano, eventosPorData);
-                        m.Celulas.Add(Cell(dia.Day.ToString(), fundo, texto, FontWeights.Normal, tip));
-
+                        m.Celulas.Add(Cell(dia.Day.ToString(), fundo, texto, FontWeights.Bold, tip, tamanhoFonte: 14));
                         var evSub = eventos.FirstOrDefault(e =>
                             e.data_observada.Date == dia.Date && e.IsSubstituido);
                         if (evSub != null)
@@ -412,8 +412,8 @@ namespace magal.ViewModels
                 return (f, t, ev.DescricaoCompleta);
             }
 
-            if (isDomingo) return ("#375623", "#FFFFFF", null);
-            if (isSabado) return ("#009140", "#FFFFFF", null);
+            if (isDomingo) return ("#2D9B6C", "#000000", null);
+            if (isSabado) return ("#00FF00", "#000000", null);
             return ("#FFFFFF", "#1E293B", null);
         }
 
@@ -429,7 +429,7 @@ namespace magal.ViewModels
         };
 
         private static CelulaCalendario Cell(string texto, string fundo, string texto2,
-            FontWeight peso, string? tip = null, bool isHeader = false)
+    FontWeight peso, string? tip = null, bool isHeader = false, double tamanhoFonte = 12)
         {
             return new CelulaCalendario
             {
@@ -438,7 +438,8 @@ namespace magal.ViewModels
                 CorTexto = texto2,
                 PesoFonte = peso,
                 ToolTip = tip,
-                IsHeader = isHeader
+                IsHeader = isHeader,
+                TamanhoFonte = tamanhoFonte
             };
         }
 
