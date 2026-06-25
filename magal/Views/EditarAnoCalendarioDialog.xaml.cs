@@ -40,7 +40,10 @@ namespace magal.Views
                 return;
             }
 
-            if (!decimal.TryParse(TxtHorasDia.Text, out decimal horasDia) || horasDia <= 0)
+            if (!decimal.TryParse(TxtHorasDia.Text,
+         System.Globalization.NumberStyles.Any,
+         System.Globalization.CultureInfo.CurrentCulture,
+         out decimal horasDia) || horasDia <= 0)
             {
                 MessageBox.Show(
                     "Horas por dia inválidas.",

@@ -182,6 +182,39 @@ namespace magal.Services
             }).GeneratePdf(caminhoArquivo);
         }
 
+        /// <summary>
+        /// Gera e salva um relatório gerencial em PDF contendo a listagem tabular do calendário.
+        /// </summary>
+        public void GerarCalendarioCorporativo(AnoCalendario ano, List<EventoCalendario> eventos, string caminhoArquivo)
+        {
+            Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4.Landscape());
+                    page.Margin(0.6f, Unit.Centimetre);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(10).FontFamily("Arial"));
+
+                    page.Header().Column(col => ConstruirCabecalhoRelatorio(col, $"CALENDÁRIO CORPORATIVO {ano.ano}", eventos.Count));
+                    page.Content().PaddingTop(16).Column(col => ConstruirTabelaEventosCalendario(col, ano, eventos));
+                    page.Footer().BorderTop(1).BorderColor("#E0E0E0").PaddingTop(8).Row(ConstruirRodape);
+                });
+
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4.Landscape());
+                    page.Margin(0.6f, Unit.Centimetre);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(10).FontFamily("Arial"));
+
+                    page.Header().Column(col => ConstruirCabecalhoRelatorio(col, $"RESUMO MENSAL DE DIAS ÚTEIS — {ano.ano}", 12));
+                    page.Content().PaddingTop(16).Column(col => ConstruirTabelaResumoMensalCalendario(col, ano, eventos));
+                    page.Footer().BorderTop(1).BorderColor("#E0E0E0").PaddingTop(8).Row(ConstruirRodape);
+                });
+            }).GeneratePdf(caminhoArquivo);
+        }
+
         #endregion
 
         #region Métodos Auxiliares / Privados
@@ -722,6 +755,168 @@ namespace magal.Services
                     listraAlternada = !listraAlternada;
                 }
             });
+        }
+
+        private void ConstruirTabelaEventosCalendario(ColumnDescriptor col, AnoCalendario ano, List<EventoCalendario> eventos)
+        {
+            var meses = System.Globalization.CultureInfo.GetCultureInfo("pt-BR").DateTimeFormat.MonthNames;
+
+            var eventosPorMes = eventos
+                .OrderBy(e => e.data_observada)
+                .GroupBy(e => e.data_observada.Month);
+
+            foreach (var grupo in eventosPorMes)
+            {
+                string nomeMes = meses[grupo.Key - 1].ToUpper();
+
+                col.Item().PaddingTop(10).Text(nomeMes)
+                    .FontSize(9).Bold().FontColor("#131C49");
+
+                col.Item().Table(table =>
+                {
+                    table.ColumnsDefinition(cols =>
+                    {
+                        cols.ConstantColumn(85);
+                        cols.RelativeColumn(5);
+                        cols.RelativeColumn(2);
+                        cols.ConstantColumn(85);
+                    });
+
+                    table.Header(header =>
+                    {
+                        header.Cell().Background("#2D3748").Padding(6).Text("DATA").FontColor(Colors.White).Bold().FontSize(9);
+                        header.Cell().Background("#2D3748").Padding(6).Text("DESCRIÇÃO").FontColor(Colors.White).Bold().FontSize(9);
+                        header.Cell().Background("#2D3748").Padding(6).Text("TIPO").FontColor(Colors.White).Bold().FontSize(9);
+                        header.Cell().Background("#2D3748").Padding(6).Text("DATA ORIGINAL").FontColor(Colors.White).Bold().FontSize(9);
+                    });
+
+                    bool listra = false;
+                    foreach (var ev in grupo)
+                    {
+                        string bg = listra ? "#F8FAFC" : "#FFFFFF";
+                        string corTipo = ev.tipo switch
+                        {
+                            "Feriado Nacional" => "#131C49",
+                            "Feriado Estadual" => "#1E40AF",
+                            "Feriado Municipal" => "#3B82F6",
+                            "Ponte" => "#D97706",
+                            "Ponto Facultativo" => "#7C3AED",
+                            _ => "#374151"
+                        };
+
+                        table.Cell().Background(bg).BorderBottom(1).BorderColor("#E2E8F0").Padding(6)
+                            .Text(ev.data_observada.ToString("dd/MM/yyyy (ddd)", _ptBR)).FontSize(9);
+                        table.Cell().Background(bg).BorderBottom(1).BorderColor("#E2E8F0").Padding(6)
+                            .Text(ev.descricao).FontSize(9).Bold();
+                        table.Cell().Background(bg).BorderBottom(1).BorderColor("#E2E8F0").Padding(6)
+                            .Text(ev.tipo ?? "-").FontSize(9).FontColor(corTipo);
+                        table.Cell().Background(bg).BorderBottom(1).BorderColor("#E2E8F0").Padding(6)
+                            .Text(ev.IsSubstituido ? ev.data_original.ToString("dd/MM/yyyy") : "-").FontSize(9).FontColor("#9CA3AF");
+
+                        listra = !listra;
+                    }
+                });
+            }
+
+            if (ano.inicio_ferias.HasValue && ano.fim_ferias.HasValue)
+            {
+                col.Item().PaddingTop(14).BorderTop(1).BorderColor("#E2E8F0").PaddingTop(8).Row(row =>
+                {
+                    row.AutoItem().Text("Férias Coletivas: ").FontSize(9).Bold().FontColor("#131C49");
+                    row.AutoItem().Text($"{ano.inicio_ferias.Value:dd/MM/yyyy}  até  {ano.fim_ferias.Value:dd/MM/yyyy}")
+                        .FontSize(9).FontColor("#374151");
+                });
+            }
+        }
+
+        private void ConstruirTabelaResumoMensalCalendario(ColumnDescriptor col, AnoCalendario ano, List<EventoCalendario> eventos)
+        {
+            var cultura = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+            var nomesMeses = cultura.DateTimeFormat.MonthNames;
+
+            col.Item().Table(table =>
+            {
+                table.ColumnsDefinition(cols =>
+                {
+                    cols.RelativeColumn(2.5f);
+                    cols.RelativeColumn(1.5f);
+                    cols.RelativeColumn(1.5f);
+                    cols.RelativeColumn(1.5f);
+                    cols.RelativeColumn(1.5f);
+                    cols.RelativeColumn(1.5f);
+                    cols.RelativeColumn(2);
+                });
+
+                table.Header(header =>
+                {
+                    header.Cell().Background("#2D3748").Padding(8).Text("MÊS").FontColor(Colors.White).Bold().FontSize(9);
+                    header.Cell().Background("#2D3748").Padding(8).AlignCenter().Text("TOTAL DU").FontColor(Colors.White).Bold().FontSize(9);
+                    header.Cell().Background("#2D3748").Padding(8).AlignCenter().Text("FERIADOS DU").FontColor(Colors.White).Bold().FontSize(9);
+                    header.Cell().Background("#2D3748").Padding(8).AlignCenter().Text("PONTES").FontColor(Colors.White).Bold().FontSize(9);
+                    header.Cell().Background("#2D3748").Padding(8).AlignCenter().Text("DU s/ PONTES").FontColor(Colors.White).Bold().FontSize(9);
+                    header.Cell().Background("#2D3748").Padding(8).AlignCenter().Text("DU c/ PONTES").FontColor(Colors.White).Bold().FontSize(9);
+                    header.Cell().Background("#2D3748").Padding(8).AlignCenter().Text("HORAS (s/ Pontes)").FontColor(Colors.White).Bold().FontSize(9);
+                });
+
+                int totalDU = 0, totalFer = 0, totalPontes = 0, totalSP = 0, totalCP = 0;
+                decimal totalHoras = 0;
+
+                bool listra = false;
+                for (int mes = 1; mes <= 12; mes++)
+                {
+                    var diasNoMes = Enumerable.Range(1, DateTime.DaysInMonth(ano.ano, mes))
+                        .Select(d => new DateTime(ano.ano, mes, d))
+                        .ToList();
+
+                    int du = diasNoMes.Count(d => d.DayOfWeek != DayOfWeek.Saturday && d.DayOfWeek != DayOfWeek.Sunday);
+
+                    var eventosMes = eventos.Where(e => e.data_observada.Month == mes).ToList();
+                    int feriadosDU = eventosMes.Count(e =>
+                        e.data_observada.DayOfWeek != DayOfWeek.Saturday &&
+                        e.data_observada.DayOfWeek != DayOfWeek.Sunday &&
+                        e.tipo != "Ponte");
+                    int pontesMes = eventosMes.Count(e =>
+                        e.tipo == "Ponte" &&
+                        e.data_observada.DayOfWeek != DayOfWeek.Saturday &&
+                        e.data_observada.DayOfWeek != DayOfWeek.Sunday);
+
+                    int duSP = du - feriadosDU;
+                    int duCP = duSP - pontesMes;
+                    decimal horas = duSP * ano.horas_dia;
+
+                    totalDU += du;
+                    totalFer += feriadosDU;
+                    totalPontes += pontesMes;
+                    totalSP += duSP;
+                    totalCP += duCP;
+                    totalHoras += horas;
+
+                    string bg = listra ? "#F8FAFC" : "#FFFFFF";
+                    string nomeMes = nomesMeses[mes - 1];
+                    nomeMes = char.ToUpper(nomeMes[0]) + nomeMes[1..];
+
+                    table.Cell().Background(bg).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).Text(nomeMes).FontSize(10).Bold();
+                    table.Cell().Background(bg).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).AlignCenter().Text(du.ToString()).FontSize(10);
+                    table.Cell().Background(bg).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).AlignCenter().Text(feriadosDU > 0 ? feriadosDU.ToString() : "-").FontSize(10).FontColor("#EF4444");
+                    table.Cell().Background(bg).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).AlignCenter().Text(pontesMes > 0 ? pontesMes.ToString() : "-").FontSize(10).FontColor("#D97706");
+                    table.Cell().Background(bg).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).AlignCenter().Text(duSP.ToString()).FontSize(10).Bold();
+                    table.Cell().Background(bg).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).AlignCenter().Text(duCP.ToString()).FontSize(10).Bold();
+                    table.Cell().Background(bg).BorderBottom(1).BorderColor("#E2E8F0").Padding(8).AlignCenter().Text($"{horas:0.#}h").FontSize(10);
+
+                    listra = !listra;
+                }
+
+                table.Cell().Background("#131C49").Padding(8).Text("TOTAL ANUAL").FontColor(Colors.White).Bold().FontSize(10);
+                table.Cell().Background("#131C49").Padding(8).AlignCenter().Text(totalDU.ToString()).FontColor(Colors.White).Bold().FontSize(10);
+                table.Cell().Background("#131C49").Padding(8).AlignCenter().Text(totalFer.ToString()).FontColor(Colors.White).Bold().FontSize(10);
+                table.Cell().Background("#131C49").Padding(8).AlignCenter().Text(totalPontes.ToString()).FontColor(Colors.White).Bold().FontSize(10);
+                table.Cell().Background("#131C49").Padding(8).AlignCenter().Text(totalSP.ToString()).FontColor(Colors.White).Bold().FontSize(10);
+                table.Cell().Background("#131C49").Padding(8).AlignCenter().Text(totalCP.ToString()).FontColor(Colors.White).Bold().FontSize(10);
+                table.Cell().Background("#131C49").Padding(8).AlignCenter().Text($"{totalHoras:0.#}h").FontColor(Colors.White).Bold().FontSize(10);
+            });
+
+            col.Item().PaddingTop(10).Text($"Jornada diária base: {ano.horas_dia:0.##}h/dia  |  Gerado em: {DateTime.Now:dd/MM/yyyy HH:mm}")
+                .FontSize(8).FontColor("#9CA3AF");
         }
 
         private void ConstruirRodape(RowDescriptor row)

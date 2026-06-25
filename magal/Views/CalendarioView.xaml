@@ -230,7 +230,7 @@
                                     <Border Background="White" CornerRadius="12" Margin="0,0,12,12"
                                             BorderThickness="1" BorderBrush="{StaticResource AeroBorder}" Padding="10">
                                         <StackPanel>
-                                            <TextBlock Text="{Binding Nome}" FontSize="12" FontWeight="Bold"
+                                            <TextBlock Text="{Binding Nome}" FontSize="15" HorizontalAlignment="Center" FontWeight="Bold"
                                                        Foreground="{StaticResource AzulAero}" Margin="0,0,0,4"/>
                                             <ItemsControl ItemsSource="{Binding Celulas}" ItemTemplate="{StaticResource CelulaTemplate}">
                                                 <ItemsControl.ItemsPanel>
@@ -260,13 +260,11 @@
                                 <Border Width="12" Height="12" Background="{StaticResource CorFeriadoEst}" CornerRadius="2" Margin="0,0,5,0" VerticalAlignment="Center"/>
                                 <TextBlock Text="Estadual/Municipal" FontSize="11" Foreground="{StaticResource AeroTextMuted}" VerticalAlignment="Center" Margin="0,0,14,0"/>
                                 <Border Width="12" Height="12" Background="{StaticResource CorFacultativo}" CornerRadius="2" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                                <TextBlock Text="Facultativo" FontSize="11" Foreground="{StaticResource AeroTextMuted}" VerticalAlignment="Center" Margin="0,0,14,0"/>
                                 <Border Width="12" Height="12" Background="{StaticResource CorPonte}" CornerRadius="2" BorderBrush="#94A3B8" BorderThickness="1" Margin="0,0,5,0" VerticalAlignment="Center"/>
                                 <TextBlock Text="Ponte" FontSize="11" Foreground="{StaticResource AeroTextMuted}" VerticalAlignment="Center" Margin="0,0,14,0"/>
                                 <Border Width="12" Height="12" Background="{StaticResource CorFerias}" CornerRadius="2" Margin="0,0,5,0" VerticalAlignment="Center"/>
                                 <TextBlock Text="Férias Coletivas" FontSize="11" Foreground="{StaticResource AeroTextMuted}" VerticalAlignment="Center" Margin="0,0,14,0"/>
                                 <Border Width="12" Height="12" Background="{StaticResource CorFimSemana}" CornerRadius="2" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                                <TextBlock Text="Fim de Semana" FontSize="11" Foreground="{StaticResource AeroTextMuted}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>

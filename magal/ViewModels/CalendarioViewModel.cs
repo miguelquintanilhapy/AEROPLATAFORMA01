@@ -373,8 +373,9 @@ namespace magal.ViewModels
                 switch (evento.tipo)
                 {
                     case "Feriado Nacional":
-                    case "Feriado Estadual/Municipal":
-                    case "Facultativo":
+                    case "Feriado Estadual":
+                    case "Feriado Municipal":
+                    case "Ponto Facultativo":
                         feriadosEmDU++;
                         break;
                     case "Ponte":
@@ -396,7 +397,8 @@ namespace magal.ViewModels
             DateTime dia, AnoCalendario ano,
             ILookup<DateTime, EventoCalendario> eventosPorData)
         {
-            bool fds = dia.DayOfWeek == DayOfWeek.Saturday || dia.DayOfWeek == DayOfWeek.Sunday;
+            bool isSabado = dia.DayOfWeek == DayOfWeek.Saturday;
+            bool isDomingo = dia.DayOfWeek == DayOfWeek.Sunday;
 
             if (ano.inicio_ferias.HasValue && ano.fim_ferias.HasValue &&
                 dia.Date >= ano.inicio_ferias.Value.Date &&
@@ -410,15 +412,17 @@ namespace magal.ViewModels
                 return (f, t, ev.DescricaoCompleta);
             }
 
-            if (fds) return ("#375623", "#FFFFFF", null);
+            if (isDomingo) return ("#375623", "#FFFFFF", null);
+            if (isSabado) return ("#009140", "#FFFFFF", null);
             return ("#FFFFFF", "#1E293B", null);
         }
 
         private static (string fundo, string texto) CorTipo(string tipo) => tipo switch
         {
             "Feriado Nacional" => ("#4472C4", "#FFFFFF"),
-            "Feriado Estadual/Municipal" => ("#ED7D31", "#FFFFFF"),
-            "Facultativo" => ("#7030A0", "#FFFFFF"),
+            "Feriado Estadual" => ("#ED7D31", "#FFFFFF"),
+            "Feriado Municipal" => ("#ED7D31", "#FFFFFF"),
+            "Ponto Facultativo" => ("#7030A0", "#FFFFFF"),
             "Ponte" => ("#BDD7EE", "#1E293B"),
             "Férias Coletivas" => ("#00B0F0", "#FFFFFF"),
             _ => ("#FFFFFF", "#1E293B")
@@ -538,7 +542,7 @@ namespace magal.ViewModels
             try
             {
                 _pdfService.GerarCalendarioCorporativo(
-                AnoSelecionado, EventosDoAno.ToList(), ResumoMensal.ToList(), dlg.FileName);
+                AnoSelecionado, EventosDoAno.ToList(), dlg.FileName);
                 MessageBox.Show("Calendário exportado com sucesso!", "Aero Concepts",
                     MessageBoxButton.OK, MessageBoxImage.Information);
             }
