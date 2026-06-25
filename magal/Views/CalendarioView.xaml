@@ -116,6 +116,7 @@
           Width="100" Height="40" FontSize="16" FontWeight="SemiBold"
           Cursor="Hand"
           VerticalContentAlignment="Center"
+          HorizontalContentAlignment="Center"
           BorderThickness="0"
           BorderBrush="{StaticResource AeroBorder}"
           Background="#F8FAFC"

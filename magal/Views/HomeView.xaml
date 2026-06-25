@@ -18,13 +18,13 @@
 
         <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,400,0,0">
 
-            <TextBlock Text="AERO CONCEPTS" 
+            <TextBlock Text="AERO PLATAFORMA" 
                        FontSize="75" 
                        FontWeight="ExtraBold" 
                        Foreground="{StaticResource AzulAero}" 
                        HorizontalAlignment="Center"/>
 
-            <TextBlock Text="SISTEMA DE APOIO À DECISÃO" 
+            <TextBlock Text="SISTEMA INTERNO AERO CONCEPTS" 
                        FontSize="18" 
                        FontWeight="SemiBold" 
                        Foreground="{StaticResource CinzaAero}" 
