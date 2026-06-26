@@ -89,8 +89,7 @@
     <StackPanel Margin="32,28">
 
         <TextBlock Text="Editar Evento"
-                   FontSize="24"
-                   FontWeight="Bold"
+                   FontSize="24" FontWeight="Bold"
                    Foreground="{StaticResource AzulAero}"
                    Margin="0,0,0,24"/>
 
@@ -105,24 +104,18 @@
                   Margin="0,0,0,14"
                   FontWeight="SemiBold">
             <ComboBoxItem Content="Feriado Nacional"/>
-            <ComboBoxItem Content="Feriado Estadual"/>
-            <ComboBoxItem Content="Feriado Municipal"/>
-            <ComboBoxItem Content="Ponto Facultativo"/>
+            <ComboBoxItem Content="Feriado Estadual/Municipal"/>
             <ComboBoxItem Content="Ponte"/>
+            <ComboBoxItem Content="Férias Coletivas"/>
         </ComboBox>
 
         <TextBlock Text="DATA" Style="{StaticResource LabelStyle}"/>
         <DatePicker x:Name="DpData"
-                    FontSize="13"
-                    FontWeight="SemiBold"
+                    FontSize="13" FontWeight="SemiBold"
                     Foreground="{StaticResource AeroTextDark}"
-                    BorderThickness="1.5"
-                    Padding="8,0"
-                    Height="40"
-                    Cursor="Hand"
-                    VerticalContentAlignment="Center"
-                    Language="pt-BR"
-                    Margin="0,0,0,14">
+                    BorderThickness="1.5" Padding="8,0" Height="40"
+                    Cursor="Hand" VerticalContentAlignment="Center"
+                    Language="pt-BR" Margin="0,0,0,14">
             <DatePicker.Resources>
                 <Style TargetType="{x:Type DatePickerTextBox}">
                     <Setter Property="Template">
@@ -151,16 +144,11 @@
         <TextBlock Text="DATA ORIGINAL (somente para substituições)"
                    Style="{StaticResource LabelStyle}"/>
         <DatePicker x:Name="DpDataOriginal"
-                    FontSize="13"
-                    FontWeight="SemiBold"
+                    FontSize="13" FontWeight="SemiBold"
                     Foreground="{StaticResource AeroTextDark}"
-                    BorderThickness="1.5"
-                    Padding="8,0"
-                    Height="40"
-                    Cursor="Hand"
-                    VerticalContentAlignment="Center"
-                    Language="pt-BR"
-                    Margin="0,0,0,24">
+                    BorderThickness="1.5" Padding="8,0" Height="40"
+                    Cursor="Hand" VerticalContentAlignment="Center"
+                    Language="pt-BR" Margin="0,0,0,24">
             <DatePicker.Resources>
                 <Style TargetType="{x:Type DatePickerTextBox}">
                     <Setter Property="Template">

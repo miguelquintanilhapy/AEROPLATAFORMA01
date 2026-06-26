@@ -400,9 +400,7 @@ namespace magal.ViewModels
                 switch (evento.tipo)
                 {
                     case "Feriado Nacional":
-                    case "Feriado Estadual":
-                    case "Feriado Municipal":
-                    case "Ponto Facultativo":
+                    case "Feriado Estadual/Municipal":
                         feriadosEmDU++;
                         break;
                     case "Ponte":
@@ -430,7 +428,7 @@ namespace magal.ViewModels
             if (ano.inicio_ferias.HasValue && ano.fim_ferias.HasValue &&
                 dia.Date >= ano.inicio_ferias.Value.Date &&
                 dia.Date <= ano.fim_ferias.Value.Date)
-                return ("#00B0F0", "#FFFFFF", "Férias Coletivas");
+                return ("#00B0F0", "#1E293B", "Férias Coletivas");
 
             var ev = eventosPorData[dia.Date].FirstOrDefault();
             if (ev != null)
@@ -446,12 +444,10 @@ namespace magal.ViewModels
 
         private static (string fundo, string texto) CorTipo(string tipo) => tipo switch
         {
-            "Feriado Nacional" => ("#4472C4", "#FFFFFF"),
-            "Feriado Estadual" => ("#ED7D31", "#FFFFFF"),
-            "Feriado Municipal" => ("#ED7D31", "#FFFFFF"),
-            "Ponto Facultativo" => ("#7030A0", "#FFFFFF"),
-            "Ponte" => ("#BDD7EE", "#1E293B"),
-            "Férias Coletivas" => ("#00B0F0", "#FFFFFF"),
+            "Feriado Nacional" => ("#4472C4", "#FFFFFF"),   // branco
+            "Feriado Estadual/Municipal" => ("#ED7D31", "#1E293B"),   // preto
+            "Ponte" => ("#BDD7EE", "#1E293B"),   // preto
+            "Férias Coletivas" => ("#00B0F0", "#1E293B"),   // preto
             _ => ("#FFFFFF", "#1E293B")
         };
 

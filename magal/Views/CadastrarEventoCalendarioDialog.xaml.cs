@@ -20,21 +20,15 @@ namespace magal.Views
         {
             if (string.IsNullOrWhiteSpace(TxtDescricao.Text))
             {
-                MessageBox.Show(
-                    "Preencha a descrição do evento.",
-                    "Aero Concepts",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
+                MessageBox.Show("Preencha a descrição do evento.", "Aero Concepts",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (DpData.SelectedDate == null)
             {
-                MessageBox.Show(
-                    "Selecione a data do evento.",
-                    "Aero Concepts",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
+                MessageBox.Show("Selecione a data do evento.", "Aero Concepts",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -55,22 +49,16 @@ namespace magal.Views
                 var repo = new EventoCalendarioRepository();
                 await repo.Inserir(evento);
 
-                MessageBox.Show(
-                    "Evento cadastrado com sucesso!",
-                    "Aero Concepts",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                MessageBox.Show("Evento cadastrado com sucesso!", "Aero Concepts",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
 
                 DialogResult = true;
                 Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Erro ao salvar evento:\n\n" + ex.Message,
-                    "Aero Concepts",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show("Erro ao salvar evento:\n\n" + ex.Message, "Aero Concepts",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
