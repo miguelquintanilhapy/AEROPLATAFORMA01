@@ -176,6 +176,17 @@ namespace magal.ViewModels
             }
         }
 
+        public IEnumerable<EventoCalendario> EventosLegenda =>
+    EventosDoAno.Where(e => e.tipo != "Ponte").OrderBy(e => e.data_observada);
+
+        public int TotalDiasUteis => ResumoMensal.Sum(r => r.TotalDiasUteis);
+        public int TotalFeriadosEmDU => ResumoMensal.Sum(r => r.FeriadosEmDU);
+        public int TotalPontes => ResumoMensal.Sum(r => r.Pontes);
+        public int TotalDUSemPontes => ResumoMensal.Sum(r => r.DiasUteisSemPontes);
+        public int TotalDUComPontes => ResumoMensal.Sum(r => r.DiasUteisComPontes);
+        public decimal HorasDia => AnoSelecionado?.horas_dia ?? 0;
+        public decimal TotalHorasAno => TotalDUSemPontes * HorasDia;
+
         #endregion
 
         #region Coleções
@@ -288,6 +299,14 @@ namespace magal.ViewModels
                 ResumoMensal.Add(ComputarResumoMes(ano, mes, eventos));
             }
 
+            ResumoMensal.Add(new ResumoMes
+            {
+                NomeMes = "TOTAL",
+                TotalDiasUteis = ResumoMensal.Sum(r => r.TotalDiasUteis),
+                FeriadosEmDU = ResumoMensal.Sum(r => r.FeriadosEmDU),
+                Pontes = ResumoMensal.Sum(r => r.Pontes)
+            });
+
             AtualizarTotais();
         }
 
@@ -297,6 +316,14 @@ namespace magal.ViewModels
             OnPropertyChanged(nameof(TotalDUSemPontesFormatado));
             OnPropertyChanged(nameof(TotalDUComPontesFormatado));
             OnPropertyChanged(nameof(TotalPontesFormatado));
+            OnPropertyChanged(nameof(EventosLegenda));
+            OnPropertyChanged(nameof(TotalDiasUteis));
+            OnPropertyChanged(nameof(TotalFeriadosEmDU));
+            OnPropertyChanged(nameof(TotalPontes));
+            OnPropertyChanged(nameof(TotalDUSemPontes));
+            OnPropertyChanged(nameof(TotalDUComPontes));
+            OnPropertyChanged(nameof(HorasDia));
+            OnPropertyChanged(nameof(TotalHorasAno));
         }
 
         private MesCalendario CriarMesCalendario(AnoCalendario ano, int mes,

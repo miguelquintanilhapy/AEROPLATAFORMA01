@@ -69,5 +69,23 @@ namespace magal.Models
         public string DescricaoCompleta => IsSubstituido
             ? $"{descricao} ({data_original:d/M} Substituído por {data_observada:d/M})"
             : descricao;
+
+        public System.Windows.Media.SolidColorBrush CorLegendaBrush
+        {
+            get
+            {
+                string hex = tipo switch
+                {
+                    "Feriado Nacional" => "#4472C4",
+                    "Feriado Estadual" => "#ED7D31",
+                    "Feriado Municipal" => "#ED7D31",
+                    "Ponto Facultativo" => "#7030A0",
+                    _ => "#00B0F0"
+                };
+                return new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(hex));
+            }
+        }
     }
+
 }
