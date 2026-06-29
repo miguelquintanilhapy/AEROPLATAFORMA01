@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using MySql.Data.MySqlClient;
 using Microsoft.Extensions.Configuration;
 using System.IO;
