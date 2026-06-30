@@ -300,7 +300,7 @@ namespace magal.ViewModels
             if (Sessao.UsuarioLogado == null || Sessao.UsuarioLogado.nivel != "Administrador")
             {
                 MessageBox.Show(
-                    "Acesso Negado!\nApenas usuários com nível 'Administrador' possuem permissão para excluir projetos.",
+                    "Acesso Restrito!\nApenas usuários com nível 'Administrador' possuem permissão para excluir projetos.",
                     "Aero Concepts - Segurança",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);

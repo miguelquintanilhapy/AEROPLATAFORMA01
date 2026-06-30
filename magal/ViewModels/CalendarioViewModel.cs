@@ -484,6 +484,11 @@ namespace magal.ViewModels
 
         private void ExecutarCriarAno()
         {
+            if (Sessao.UsuarioLogado?.nivel != "Administrador")
+            {
+                MessageBox.Show("Acesso Restrito! Apenas usuários com nível 'Administrador' possuem essa permissão.", "Aero Concepts - Segurança", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             var dialog = new magal.Views.CadastrarAnoCalendarioDialog();
             dialog.Owner = Application.Current.Windows.OfType<magal.MainWindow>().FirstOrDefault();
             if (dialog.ShowDialog() == true) Carregar();
@@ -491,6 +496,11 @@ namespace magal.ViewModels
 
         private void ExecutarEditarAno()
         {
+            if (Sessao.UsuarioLogado?.nivel != "Administrador")
+            {
+                MessageBox.Show("Acesso Restrito! Apenas usuários com nível 'Administrador' possuem essa permissão.", "Aero Concepts - Segurança", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             if (AnoSelecionado == null) return;
             var dialog = new magal.Views.EditarAnoCalendarioDialog(AnoSelecionado);
             dialog.Owner = Application.Current.Windows.OfType<magal.MainWindow>().FirstOrDefault();
@@ -499,6 +509,11 @@ namespace magal.ViewModels
 
         private async void ExecutarExcluirAno()
         {
+            if (Sessao.UsuarioLogado?.nivel != "Administrador")
+            {
+                MessageBox.Show("Acesso Restrito! Apenas usuários com nível 'Administrador' possuem essa permissão.", "Aero Concepts - Segurança", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             if (AnoSelecionado == null) return;
             var msg = $"Excluir o calendário de {AnoSelecionado.ano}?\n" +
                       "Todos os eventos vinculados serão removidos permanentemente.";
@@ -512,13 +527,17 @@ namespace magal.ViewModels
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         #endregion
 
         #region CRUD Evento
 
         private void ExecutarCriarEvento()
         {
+            if (Sessao.UsuarioLogado?.nivel != "Administrador")
+            {
+                MessageBox.Show("Acesso Restrito! Apenas usuários com nível 'Administrador' possuem essa permissão.", "Aero Concepts - Segurança", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             if (AnoSelecionado == null) return;
             var dialog = new magal.Views.CadastrarEventoCalendarioDialog(AnoSelecionado.id_ano_calendario);
             dialog.Owner = Application.Current.Windows.OfType<magal.MainWindow>().FirstOrDefault();
@@ -528,6 +547,11 @@ namespace magal.ViewModels
 
         private void ExecutarEditarEvento(EventoCalendario? ev)
         {
+            if (Sessao.UsuarioLogado?.nivel != "Administrador")
+            {
+                MessageBox.Show("Acesso Restrito! Apenas usuários com nível 'Administrador' possuem essa permissão.", "Aero Concepts - Segurança", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             if (ev == null) return;
             var dialog = new magal.Views.EditarEventoCalendarioDialog(ev);
             dialog.Owner = Application.Current.Windows.OfType<magal.MainWindow>().FirstOrDefault();
@@ -537,6 +561,11 @@ namespace magal.ViewModels
 
         private async void ExecutarExcluirEvento(EventoCalendario? ev)
         {
+            if (Sessao.UsuarioLogado?.nivel != "Administrador")
+            {
+                MessageBox.Show("Acesso Restrito! Apenas usuários com nível 'Administrador' possuem essa permissão.", "Aero Concepts - Segurança", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             if (ev == null) return;
             var msg = $"Excluir o evento '{ev.descricao}' ({ev.data_observada:dd/MM/yyyy})?";
             if (MessageBox.Show(msg, "Confirmar Exclusão",

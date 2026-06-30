@@ -147,7 +147,7 @@ namespace magal.ViewModels
             if (Sessao.UsuarioLogado == null || Sessao.UsuarioLogado.nivel != "Administrador")
             {
                 MessageBox.Show(
-                    "Acesso Negado!\nApenas usuários com o nível 'Administrador' possuem permissão para excluir custos do catálogo.",
+                    "Acesso Restrito!\nApenas usuários com o nível 'Administrador' possuem permissão para excluir custos do catálogo.",
                     "Aero Concepts - Segurança",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
@@ -183,7 +183,7 @@ namespace magal.ViewModels
             if (Sessao.UsuarioLogado == null || Sessao.UsuarioLogado.nivel != "Administrador")
             {
                 MessageBox.Show(
-                    "Acesso Negado!\nApenas usuários com o nível 'Administrador' possuem permissão para cadastrar novos custos.",
+                    "Acesso Restrito!\nApenas usuários com o nível 'Administrador' possuem permissão para cadastrar novos custos.",
                     "Aero Concepts - Segurança",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
@@ -207,7 +207,7 @@ namespace magal.ViewModels
             if (Sessao.UsuarioLogado == null || Sessao.UsuarioLogado.nivel != "Administrador")
             {
                 MessageBox.Show(
-                    "Acesso Negado!\nApenas usuários com o nível 'Administrador' possuem permissão para alterar os custos operacionais.",
+                    "Acesso Restrito!\nApenas usuários com o nível 'Administrador' possuem permissão para alterar os custos operacionais.",
                     "Aero Concepts - Segurança",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);

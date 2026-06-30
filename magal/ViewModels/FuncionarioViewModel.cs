@@ -163,7 +163,7 @@ namespace magal.ViewModels
             if (Sessao.UsuarioLogado == null || Sessao.UsuarioLogado.nivel != "Administrador")
             {
                 MessageBox.Show(
-                    "Acesso Negado!\nApenas usuários com o nível 'Administrador' possuem permissão para excluir funcionários.",
+                    "Acesso Restrito!\nApenas usuários com o nível 'Administrador' possuem permissão para excluir funcionários.",
                     "Aero Concepts - Segurança",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);

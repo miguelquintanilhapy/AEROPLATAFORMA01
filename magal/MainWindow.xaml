@@ -1,7 +1,7 @@
 ﻿<Window x:Class="magal.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title=" AERO Concepts - Sistema de Apoio a Decisão " 
+        Title=" AERO Plataforma - Sistema interno AERO CONCEPTS " 
         Height="700" Width="1100"
         WindowStartupLocation="CenterScreen" 
         Background="#F8FAFC">
