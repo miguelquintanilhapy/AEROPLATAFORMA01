@@ -292,10 +292,12 @@ namespace magal.ViewModels
             ResumoMensal.Clear();
 
             var eventosPorData = eventos.ToLookup(e => e.data_observada.Date);
+            var originaisSubstituidos = eventos.Where(e => e.IsSubstituido)
+                                               .ToLookup(e => e.data_original.Date);
 
             for (int mes = 1; mes <= 12; mes++)
             {
-                MesesCalendario.Add(CriarMesCalendario(ano, mes, eventos, eventosPorData));
+                MesesCalendario.Add(CriarMesCalendario(ano, mes, eventos, eventosPorData, originaisSubstituidos));
                 ResumoMensal.Add(ComputarResumoMes(ano, mes, eventos));
             }
 
@@ -327,12 +329,12 @@ namespace magal.ViewModels
         }
 
         private MesCalendario CriarMesCalendario(AnoCalendario ano, int mes,
-            List<EventoCalendario> eventos,
-            ILookup<DateTime, EventoCalendario> eventosPorData)
+    List<EventoCalendario> eventos,
+    ILookup<DateTime, EventoCalendario> eventosPorData,
+    ILookup<DateTime, EventoCalendario> originaisSubstituidos)
         {
             var m = new MesCalendario { Numero = mes, Nome = NomesMeses[mes - 1], Ano = ano.ano };
 
-            // Cabeçalho: SMA + dias da semana
             m.Celulas.Add(Cell("SMA", "#1F3864", "#FFFFFF", FontWeights.Bold, isHeader: true));
             foreach (var label in new[] { "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom" })
                 m.Celulas.Add(Cell(label, "#1F3864", "#FFFFFF", FontWeights.SemiBold, isHeader: true));
@@ -356,7 +358,7 @@ namespace magal.ViewModels
                     DateTime dia = inicioSemana.AddDays(d);
                     if (dia.Month == mes)
                     {
-                        var (fundo, texto, tip) = ObterCorDia(dia, ano, eventosPorData);
+                        var (fundo, texto, tip) = ObterCorDia(dia, ano, eventosPorData, originaisSubstituidos);
                         m.Celulas.Add(Cell(dia.Day.ToString(), fundo, texto, FontWeights.Bold, tip, tamanhoFonte: 14));
                         var evSub = eventos.FirstOrDefault(e =>
                             e.data_observada.Date == dia.Date && e.IsSubstituido);
@@ -365,7 +367,10 @@ namespace magal.ViewModels
                     }
                     else
                     {
-                        m.Celulas.Add(Cell(dia.Day.ToString(), "#F1F5F9", "#CBD5E1", FontWeights.Normal));
+                        if (dia > ultimoDia && mes == 12)
+                            m.Celulas.Add(Cell(dia.Day.ToString(), "#F1F5F9", "#CBD5E1", FontWeights.Normal));
+                        else
+                            m.Celulas.Add(Cell("", "#FFFFFF", "#FFFFFF", FontWeights.Normal));
                     }
                 }
 
@@ -419,8 +424,9 @@ namespace magal.ViewModels
         }
 
         private (string fundo, string texto, string? tip) ObterCorDia(
-            DateTime dia, AnoCalendario ano,
-            ILookup<DateTime, EventoCalendario> eventosPorData)
+    DateTime dia, AnoCalendario ano,
+    ILookup<DateTime, EventoCalendario> eventosPorData,
+    ILookup<DateTime, EventoCalendario> originaisSubstituidos)
         {
             bool isSabado = dia.DayOfWeek == DayOfWeek.Saturday;
             bool isDomingo = dia.DayOfWeek == DayOfWeek.Sunday;
@@ -430,6 +436,12 @@ namespace magal.ViewModels
                 dia.Date <= ano.fim_ferias.Value.Date)
                 return ("#00B0F0", "#1E293B", "Férias Coletivas");
 
+            // Data original de feriado substituído → cor de Ponte
+            var evOriginal = originaisSubstituidos[dia.Date].FirstOrDefault();
+            if (evOriginal != null)
+                return ("#BDD7EE", "#1E293B", $"{evOriginal.descricao} (transferido para {evOriginal.data_observada:dd/MM})");
+
+            // Evento normal
             var ev = eventosPorData[dia.Date].FirstOrDefault();
             if (ev != null)
             {

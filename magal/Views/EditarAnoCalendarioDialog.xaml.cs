@@ -19,8 +19,7 @@ namespace magal.Views
         private void PreencherCampos()
         {
             TxtAno.Text = _ano.ano.ToString();
-            TxtHorasDia.Text = _ano.horas_dia.ToString("G");
-
+            TxtHorasDia.Text = _ano.horas_dia.ToString(System.Globalization.CultureInfo.InvariantCulture);
             if (_ano.inicio_ferias.HasValue)
                 DpInicioFerias.SelectedDate = _ano.inicio_ferias.Value;
 
@@ -41,9 +40,9 @@ namespace magal.Views
             }
 
             if (!decimal.TryParse(TxtHorasDia.Text,
-         System.Globalization.NumberStyles.Any,
-         System.Globalization.CultureInfo.CurrentCulture,
-         out decimal horasDia) || horasDia <= 0)
+             System.Globalization.NumberStyles.Any,
+             System.Globalization.CultureInfo.InvariantCulture,
+             out decimal horasDia) || horasDia <= 0)
             {
                 MessageBox.Show(
                     "Horas por dia inválidas.",

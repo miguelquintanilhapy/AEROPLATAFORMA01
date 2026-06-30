@@ -165,7 +165,7 @@
                             <ControlTemplate TargetType="TabItem">
                                 <Border x:Name="TabBorder" Padding="{TemplateBinding Padding}"
                                         Background="Transparent" BorderThickness="0,0,0,2"
-                                        BorderBrush="Transparent" Margin="0,0,4,0">
+                                        BorderBrush="Transparent" Margin="0,-13,4,0">
                                     <ContentPresenter ContentSource="Header"
                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
@@ -190,6 +190,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <!-- Legenda de eventos -->
@@ -197,18 +198,18 @@
                         <ItemsControl ItemsSource="{Binding EventosLegenda}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <WrapPanel/>
+                                    <WrapPanel Orientation="Vertical" MaxHeight="55"/>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" Margin="0,2,28,2">
                                         <TextBlock Text="{Binding data_observada, StringFormat=dd.MM.}"
-                                                   FontSize="13" FontWeight="SemiBold"
-                                                   VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                       FontSize="13" FontWeight="SemiBold"
+                                       VerticalAlignment="Center" Margin="0,0,5,0"/>
                                         <TextBlock Text="{Binding descricao}"
-                                                   FontSize="13" FontWeight="SemiBold"
-                                                   VerticalAlignment="Center"/>
+                                       FontSize="13" FontWeight="SemiBold"
+                                       VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -216,54 +217,53 @@
                     </Border>
 
                     <!-- Grade do calendário -->
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Cursor="Arrow"> 
-                        <StackPanel>
-                            <ItemsControl ItemsSource="{Binding MesesCalendario}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <UniformGrid Rows="4" Columns="3"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Background="White" CornerRadius="0" Margin="0,0,12,12"
-                                                BorderThickness="1.5" BorderBrush="{StaticResource AeroBorder}" Padding="10">
-                                            <StackPanel>
-                                                <TextBlock Text="{Binding Nome}" FontSize="18" HorizontalAlignment="Center" FontWeight="Bold"
-                                                           Foreground="{StaticResource AzulHead}" Margin="0,0,0,4"/>
-                                                <ItemsControl ItemsSource="{Binding Celulas}" ItemTemplate="{StaticResource CelulaTemplate}">
-                                                    <ItemsControl.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <UniformGrid Columns="8"/>
-                                                        </ItemsPanelTemplate>
-                                                    </ItemsControl.ItemsPanel>
-                                                </ItemsControl>
-                                                <TextBlock Text="{Binding NotasSubstituicao}" FontSize="9"
-                                                           Foreground="{StaticResource AeroTextMuted}"
-                                                           TextWrapping="Wrap" Margin="0,4,0,0"
-                                                           Visibility="{Binding TemNota, Converter={StaticResource BoolToVis}}"/>
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-
-                            <!-- Legenda de cores -->
-                            <Border Background="White" Padding="16,10" Cursor="Arrow"
-                                    BorderThickness="1" BorderBrush="{StaticResource AeroBorder}" Margin="0,0,12,0">
-                                <StackPanel Orientation="Horizontal">
-                                    <Border Width="30" Height="18" Background="{StaticResource CorFeriadoNac}"  Margin="0,0,5,0" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Feriado Nacional" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,14,0"/>
-                                    <Border Width="30" Height="18" Background="{StaticResource CorFeriadoEst}"  Margin="0,0,5,0" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Estadual/Municipal" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,14,0"/>
-                                    <Border Width="30" Height="18" Background="{StaticResource CorPonte}" BorderBrush="#94A3B8"  Margin="0,0,5,0" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Ponte" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,14,0"/>
-                                    <Border Width="30" Height="18" Background="{StaticResource CorFerias}" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Férias Coletivas" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,14,0"/>
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Auto" Cursor="Arrow">
+                        <ItemsControl ItemsSource="{Binding MesesCalendario}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Rows="4" Columns="3"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="White" CornerRadius="0" Margin="0,0,12,12"
+                                BorderThickness="1.5" BorderBrush="{StaticResource AeroBorder}" Padding="10">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Nome}" FontSize="18" HorizontalAlignment="Center" FontWeight="Bold"
+                                           Foreground="{StaticResource AzulHead}" Margin="0,0,0,4"/>
+                                            <ItemsControl ItemsSource="{Binding Celulas}" ItemTemplate="{StaticResource CelulaTemplate}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <UniformGrid Columns="8"/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+                                            <TextBlock Text="{Binding NotasSubstituicao}" FontSize="10"
+                                           Foreground="{StaticResource AeroDanger}"
+                                           TextWrapping="Wrap" Margin="0,4,0,0" FontWeight="Bold"
+                                           Visibility="{Binding TemNota, Converter={StaticResource BoolToVis}}"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </ScrollViewer>
+
+                    <!-- Legenda de cores — fixa -->
+                    <Border Grid.Row="2" Background="White" Padding="16,10" Cursor="Arrow"
+                BorderThickness="1" BorderBrush="{StaticResource AeroBorder}" Margin="0,6,12,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="30" Height="18" Background="{StaticResource CorFeriadoNac}" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Feriado Nacional" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                            <Border Width="30" Height="18" Background="{StaticResource CorFeriadoEst}" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Estadual/Municipal" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                            <Border Width="30" Height="18" Background="{StaticResource CorPonte}" BorderBrush="#94A3B8" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Ponte" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                            <Border Width="30" Height="18" Background="{StaticResource CorFerias}" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Férias Coletivas" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
                 </Grid>
             </TabItem>
 
