@@ -22,7 +22,7 @@ namespace magal.ViewModels
         private int _quantidadeProjetos;
         private string _periodoSelecionado;
         private string _categoriaMargemSelecionada;
-        private bool _isLoading = true; // ADICIONADO: Estado inicial começa como carregando
+        private bool _isLoading = true; 
 
         #endregion
 
@@ -348,6 +348,7 @@ namespace magal.ViewModels
                     Title = item.Nome,
                     Values = new ChartValues<double> { item.Quantidade },
                     DataLabels = true,
+                    LabelPoint = point => $"{point.Participation:P0}",
                     Fill = new System.Windows.Media.SolidColorBrush(cor),
                     Foreground = System.Windows.Media.Brushes.White,
                     StrokeThickness = 2,
@@ -376,6 +377,7 @@ namespace magal.ViewModels
                     Title = item.Nome,
                     Values = new ChartValues<double> { item.Quantidade },
                     DataLabels = true,
+                    LabelPoint = point => $"{point.Participation:P0}",
                     Fill = new System.Windows.Media.SolidColorBrush(cor),
                     Foreground = System.Windows.Media.Brushes.White,
                     StrokeThickness = 2,
@@ -390,7 +392,6 @@ namespace magal.ViewModels
             UpdateSeriesTipo(projetos);
             OnPropertyChanged(nameof(SeriesTipo));
         }
-
         #endregion
     }
 }
