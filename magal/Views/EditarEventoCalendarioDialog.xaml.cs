@@ -68,15 +68,11 @@ namespace magal.Views
                 var repo = new EventoCalendarioRepository();
                 await repo.Atualizar(evento);
 
-                MessageBox.Show("Evento atualizado com sucesso!", "Aero Concepts",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-
                 DialogResult = true;
-                Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erro ao atualizar evento do calendário: " + ex.Message, "Aero Concepts",
+                MessageBox.Show("Erro ao salvar evento: " + ex.Message, "Aero Concepts",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

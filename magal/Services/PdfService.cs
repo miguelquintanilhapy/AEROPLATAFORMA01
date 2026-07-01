@@ -764,8 +764,10 @@ namespace magal.Services
 
                             legCol.Item().Padding(6).Row(row =>
                             {
-                                int porColuna = (int)Math.Ceiling(eventosLegenda.Count / 4.0);
-                                for (int i = 0; i < 4; i++)
+                                int porColuna = Math.Min(4, (int)Math.Ceiling(eventosLegenda.Count / 4.0));
+                                int numColunas = (int)Math.Ceiling(eventosLegenda.Count / (double)porColuna);
+
+                                for (int i = 0; i < numColunas; i++)
                                 {
                                     var grupo = eventosLegenda.Skip(i * porColuna).Take(porColuna).ToList();
                                     row.RelativeItem().Column(c =>
@@ -774,12 +776,11 @@ namespace magal.Services
                                             c.Item().Text($"{ev.data_observada:dd.MM.}  {ev.descricao}")
                                                 .FontSize(7).FontColor("#374151");
                                     });
-                                    if (i < 3) row.ConstantItem(8);
+                                    if (i < numColunas - 1) row.ConstantItem(8);
                                 }
                             });
                         });
                     }
-
                     // Grid 4×3 de meses
                     for (int row = 0; row < 4; row++)
                     {
@@ -916,16 +917,18 @@ namespace magal.Services
         }
 
         private Action<IContainer> ConstruirResumoCalendarioPdf(
-            List<magal.ViewModels.ResumoMes> resumo,
-            AnoCalendario ano)
+    List<magal.ViewModels.ResumoMes> resumo,
+    AnoCalendario ano)
         {
             return container =>
             {
+                // Exclui a linha "TOTAL" que o ViewModel já adiciona
+                var resumoMeses = resumo.Where(r => r.NomeMes != "TOTAL").ToList();
+
                 container.Column(col =>
                 {
                     col.Spacing(8);
-
-                    col.Item().Text("Resumo Anual — Dias Úteis").FontSize(12).Bold().FontColor("#1E293B");
+                    col.Item().Text("Resumo Anual).FontSize(12).Bold().FontColor("#1E293B");
 
                     col.Item().Table(table =>
                     {
@@ -948,7 +951,7 @@ namespace magal.Services
                         });
 
                         bool alt = false;
-                        foreach (var r in resumo)
+                        foreach (var r in resumoMeses)
                         {
                             string bg = alt ? "#F8FAFC" : "#FFFFFF";
                             table.Cell().Background(bg).BorderBottom(1).BorderColor("#E2E8F0").Padding(5)
@@ -960,17 +963,17 @@ namespace magal.Services
                             table.Cell().Background(bg).BorderBottom(1).BorderColor("#E2E8F0").Padding(5)
                                 .AlignCenter().Text(r.Pontes.ToString()).FontSize(9);
                             table.Cell().Background(bg).BorderBottom(1).BorderColor("#E2E8F0").Padding(5)
-                                .AlignCenter().Text((r.TotalDiasUteis).ToString()).FontSize(9);
+                                .AlignCenter().Text(r.TotalDiasUteis.ToString()).FontSize(9);
                             table.Cell().Background("#DCFCE7").BorderBottom(1).BorderColor("#E2E8F0").Padding(5)
                                 .AlignCenter().Text(r.DiasUteisComPontes.ToString()).FontSize(9);
                             alt = !alt;
                         }
 
-                        int totDUSP = resumo.Sum(r => r.DiasUteisSemPontes);
-                        int totFer = resumo.Sum(r => r.FeriadosEmDU);
-                        int totPontes = resumo.Sum(r => r.Pontes);
-                        int totTotal = resumo.Sum(r => r.TotalDiasUteis);
-                        int totDUCP = resumo.Sum(r => r.DiasUteisComPontes);
+                        int totDUSP = resumoMeses.Sum(r => r.DiasUteisSemPontes);
+                        int totFer = resumoMeses.Sum(r => r.FeriadosEmDU);
+                        int totPontes = resumoMeses.Sum(r => r.Pontes);
+                        int totTotal = resumoMeses.Sum(r => r.TotalDiasUteis);
+                        int totDUCP = resumoMeses.Sum(r => r.DiasUteisComPontes);
 
                         table.Cell().Background("#1E293B").Padding(5).Text("TOTAL").FontSize(9).Bold().FontColor("#FFFFFF");
                         table.Cell().Background("#1E293B").Padding(5).AlignCenter().Text(totDUSP.ToString()).FontSize(9).Bold().FontColor("#FFFFFF");
@@ -983,8 +986,8 @@ namespace magal.Services
                     col.Item().Row(row =>
                     {
                         row.RelativeItem().Background("#0F172A").Padding(10).Text(
-                            $"Total Horas/Ano: {(resumo.Sum(r => r.DiasUteisSemPontes) * ano.horas_dia):F1} h   " +
-                            $"({ano.horas_dia:F1} h/dia × {resumo.Sum(r => r.DiasUteisSemPontes)} DU s/Pontes)")
+                            $"Total Horas/Ano: {(resumoMeses.Sum(r => r.DiasUteisSemPontes) * ano.horas_dia):F1} h   " +
+                            $"({ano.horas_dia:F1} h/dia × {resumoMeses.Sum(r => r.DiasUteisSemPontes)} DU s/Pontes)")
                             .FontSize(10).Bold().FontColor("#FFFFFF");
                     });
                 });

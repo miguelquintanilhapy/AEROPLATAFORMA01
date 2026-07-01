@@ -198,17 +198,17 @@
                         <ItemsControl ItemsSource="{Binding EventosLegenda}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <WrapPanel Orientation="Vertical" MaxHeight="55"/>
+                                    <WrapPanel Orientation="Vertical" MaxHeight="70"/>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" Margin="0,2,28,2">
                                         <TextBlock Text="{Binding data_observada, StringFormat=dd.MM.}"
-                               FontSize="13" FontWeight="SemiBold"
+                               FontSize="12" FontWeight="SemiBold"
                                VerticalAlignment="Center" Margin="0,0,5,0"/>
                                         <TextBlock Text="{Binding descricao}"
-                               FontSize="13" FontWeight="SemiBold"
+                               FontSize="12" FontWeight="SemiBold"
                                VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </DataTemplate>
