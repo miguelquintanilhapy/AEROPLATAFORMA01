@@ -11,7 +11,7 @@ namespace magal.Models
         private string _descricao = string.Empty;
         private string _tipo = string.Empty;
 
-        public int id_evento
+        public string LegendaTexto => string.IsNullOrEmpty(descricao) ? "" : $"{data_observada:dd.MM.}  {descricao}"; public int id_evento
         {
             get => _idEvento;
             set { _idEvento = value; OnPropertyChanged(); }

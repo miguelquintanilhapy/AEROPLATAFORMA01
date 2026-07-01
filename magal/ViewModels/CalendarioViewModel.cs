@@ -179,6 +179,38 @@ namespace magal.ViewModels
         public IEnumerable<EventoCalendario> EventosLegenda =>
     EventosDoAno.Where(e => e.tipo != "Ponte").OrderBy(e => e.data_observada);
 
+        private IEnumerable<EventoCalendario> GetLegendaSlice(int colIndex)
+        {
+            var items = EventosLegenda.ToList();
+            return items.Skip(colIndex * 4).Take(4);
+        }
+
+        public int NumColunasLegenda => Math.Max(1, (int)Math.Ceiling(EventosLegenda.Count() / 4.0));
+        public bool TemEventosLegenda => EventosLegenda.Any();
+        public IEnumerable<EventoCalendario> EventosLegendaGrid
+        {
+            get
+            {
+                var items = EventosLegenda.ToList();
+                int numCols = NumColunasLegenda;
+                for (int r = 0; r < 4; r++)
+                    for (int c = 0; c < numCols; c++)
+                    {
+                        int idx = c * 4 + r;
+                        yield return idx < items.Count
+                            ? items[idx]
+                            : new EventoCalendario { descricao = "", data_observada = DateTime.MinValue };
+                    }
+            }
+        }
+
+        public IEnumerable<EventoCalendario> EventosLegendaCol1 => GetLegendaSlice(0);
+        public IEnumerable<EventoCalendario> EventosLegendaCol2 => GetLegendaSlice(1);
+        public IEnumerable<EventoCalendario> EventosLegendaCol3 => GetLegendaSlice(2);
+        public IEnumerable<EventoCalendario> EventosLegendaCol4 => GetLegendaSlice(3);
+        public IEnumerable<EventoCalendario> EventosLegendaCol5 => GetLegendaSlice(4);
+        public IEnumerable<EventoCalendario> EventosLegendaCol6 => GetLegendaSlice(5);
+
         public int TotalDiasUteis => ResumoMensal.Sum(r => r.TotalDiasUteis);
         public int TotalFeriadosEmDU => ResumoMensal.Sum(r => r.FeriadosEmDU);
         public int TotalPontes => ResumoMensal.Sum(r => r.Pontes);
@@ -326,6 +358,15 @@ namespace magal.ViewModels
             OnPropertyChanged(nameof(TotalDUComPontes));
             OnPropertyChanged(nameof(HorasDia));
             OnPropertyChanged(nameof(TotalHorasAno));
+            OnPropertyChanged(nameof(EventosLegendaCol1));
+            OnPropertyChanged(nameof(EventosLegendaCol2));
+            OnPropertyChanged(nameof(EventosLegendaCol3));
+            OnPropertyChanged(nameof(EventosLegendaCol4));
+            OnPropertyChanged(nameof(EventosLegendaCol5));
+            OnPropertyChanged(nameof(EventosLegendaCol6));
+            OnPropertyChanged(nameof(NumColunasLegenda));
+            OnPropertyChanged(nameof(EventosLegendaGrid));
+            OnPropertyChanged(nameof(TemEventosLegenda));
         }
 
         private MesCalendario CriarMesCalendario(AnoCalendario ano, int mes,

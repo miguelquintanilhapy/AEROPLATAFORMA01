@@ -754,8 +754,7 @@ namespace magal.Services
                     col.Spacing(6);
 
                     // Lista de eventos acima da grade
-                    var eventosLegenda = eventos.OrderBy(e => e.data_observada).ToList();
-                    if (eventosLegenda.Any())
+                    var eventosLegenda = eventos.Where(e => e.tipo != "Ponte").OrderBy(e => e.data_observada).ToList(); if (eventosLegenda.Any())
                     {
                         col.Item().Border(1).BorderColor("#CBD5E1").Column(legCol =>
                         {
@@ -922,14 +921,12 @@ namespace magal.Services
         {
             return container =>
             {
-                // Exclui a linha "TOTAL" que o ViewModel já adiciona
                 var resumoMeses = resumo.Where(r => r.NomeMes != "TOTAL").ToList();
 
                 container.Column(col =>
                 {
                     col.Spacing(8);
-                    col.Item().Text("Resumo Anual).FontSize(12).Bold().FontColor("#1E293B");
-
+                    col.Item().Text("Resumo Anual").FontSize(12).Bold().FontColor("#1E293B");
                     col.Item().Table(table =>
                     {
                         table.ColumnsDefinition(cols =>
@@ -986,7 +983,7 @@ namespace magal.Services
                     col.Item().Row(row =>
                     {
                         row.RelativeItem().Background("#0F172A").Padding(10).Text(
-                            $"Total Horas/Ano: {(resumoMeses.Sum(r => r.DiasUteisSemPontes) * ano.horas_dia):F1} h   " +
+                            $"Total Horas/Ano: {(resumoMeses.Sum(r => r.DiasUteisSemPontes) * ano.horas_dia):F1} h   "+
                             $"({ano.horas_dia:F1} h/dia × {resumoMeses.Sum(r => r.DiasUteisSemPontes)} DU s/Pontes)")
                             .FontSize(10).Bold().FontColor("#FFFFFF");
                     });
