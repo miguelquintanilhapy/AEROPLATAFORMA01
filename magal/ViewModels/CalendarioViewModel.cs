@@ -607,7 +607,7 @@ namespace magal.ViewModels
             try
             {
                 _pdfService.GerarCalendarioCorporativo(
-                AnoSelecionado, EventosDoAno.ToList(), dlg.FileName);
+     AnoSelecionado, EventosDoAno.ToList(), ResumoMensal.ToList(), dlg.FileName);
                 MessageBox.Show("Calendário exportado com sucesso!", "Aero Concepts",
                     MessageBoxButton.OK, MessageBoxImage.Information);
             }

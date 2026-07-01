@@ -81,15 +81,15 @@
         </Style>
 
         <DataTemplate x:Key="CelulaTemplate">
-            <Border MinWidth="26" MinHeight="20" Margin="1"
-                    Background="{Binding CorFundoBrush}"
-                    ToolTip="{Binding ToolTip}">
+            <Border MinWidth="16" MinHeight="12" Margin="0"
+            Background="{Binding CorFundoBrush}"
+            ToolTip="{Binding ToolTip}">
                 <TextBlock Text="{Binding Texto}"
-                           Foreground="{Binding CorTextoBrush}"
-                           FontSize="{Binding TamanhoFonte}"
-                           FontWeight="{Binding PesoFonte}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>
+                   Foreground="{Binding CorTextoBrush}"
+                   FontSize="{Binding TamanhoFonte}"
+                   FontWeight="{Binding PesoFonte}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"/>
             </Border>
         </DataTemplate>
     </UserControl.Resources>
@@ -205,11 +205,11 @@
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" Margin="0,2,28,2">
                                         <TextBlock Text="{Binding data_observada, StringFormat=dd.MM.}"
-                                       FontSize="13" FontWeight="SemiBold"
-                                       VerticalAlignment="Center" Margin="0,0,5,0"/>
+                               FontSize="13" FontWeight="SemiBold"
+                               VerticalAlignment="Center" Margin="0,0,5,0"/>
                                         <TextBlock Text="{Binding descricao}"
-                                       FontSize="13" FontWeight="SemiBold"
-                                       VerticalAlignment="Center"/>
+                               FontSize="13" FontWeight="SemiBold"
+                               VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -227,11 +227,11 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="White" CornerRadius="0" Margin="0,0,12,12"
-                                BorderThickness="1.5" BorderBrush="{StaticResource AeroBorder}" Padding="10">
+                                    <Border Background="White" CornerRadius="0" Margin="0,0,8,8"
+                                BorderThickness="1" BorderBrush="{StaticResource AeroBorder}" Padding="6">
                                         <StackPanel>
-                                            <TextBlock Text="{Binding Nome}" FontSize="18" HorizontalAlignment="Center" FontWeight="Bold"
-                                           Foreground="{StaticResource AzulHead}" Margin="0,0,0,4"/>
+                                            <TextBlock Text="{Binding Nome}" FontSize="13" HorizontalAlignment="Center" FontWeight="Bold"
+                                           Foreground="{StaticResource AzulHead}" Margin="0,0,0,2"/>
                                             <ItemsControl ItemsSource="{Binding Celulas}" ItemTemplate="{StaticResource CelulaTemplate}">
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>
@@ -252,7 +252,7 @@
 
                     <!-- Legenda de cores — fixa -->
                     <Border Grid.Row="2" Background="White" Padding="16,10" Cursor="Arrow"
-                BorderThickness="1" BorderBrush="{StaticResource AeroBorder}" Margin="0,6,12,0">
+                BorderThickness="1" BorderBrush="{StaticResource AeroBorder}" Margin="0,6,8,0">
                         <StackPanel Orientation="Horizontal">
                             <Border Width="30" Height="18" Background="{StaticResource CorFeriadoNac}" Margin="0,0,5,0" VerticalAlignment="Center"/>
                             <TextBlock Text="Feriado Nacional" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,14,0"/>
@@ -266,7 +266,6 @@
                     </Border>
                 </Grid>
             </TabItem>
-
             <!-- ABA 2 — RESUMO ANUAL -->
             <TabItem Header="RESUMO ANUAL">
                 <Border Margin="0,12,0,0" Background="White" CornerRadius="16" BorderThickness="1"
